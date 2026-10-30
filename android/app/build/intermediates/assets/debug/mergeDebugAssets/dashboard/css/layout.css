@@ -1,7 +1,7 @@
 /* ==========================================================================
    DESK OS — RESPONSIVE WORKSTATION LAYOUT
-   Optimized for Samsung Galaxy M01s (720 x 1520 PLS TFT LCD)
-   Supports Portrait & Landscape Orientations
+   Optimized for Samsung Galaxy M01s (720 x 1520 PLS TFT LCD) & Modern Displays
+   Supports Multi-Breakpoint Portrait (360x800, 393x873, 412x915) & Landscape (800x360, 915x412)
    ========================================================================== */
 
 * {
@@ -19,7 +19,8 @@ html, body {
     background-color: var(--color-bg);
     color: var(--color-text-primary);
     font-family: var(--font-sans);
-    font-size: 14px;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
 }
 
 #app-container {
@@ -32,36 +33,45 @@ html, body {
     overflow: hidden;
 }
 
-/* Header & Status Bar */
+/* ==========================================================================
+   HEADER & TOP STATUS NAVIGATION
+   ========================================================================== */
 .top-nav {
-    height: calc(48px + env(safe-area-inset-top, 0px));
-    min-height: calc(48px + env(safe-area-inset-top, 0px));
-    padding-top: env(safe-area-inset-top, 0px);
     background-color: var(--color-surface-card-subtle);
     border-bottom: var(--border-subtle);
     display: flex;
+    flex-direction: column;
+    padding: max(8px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) 8px max(12px, env(safe-area-inset-left, 0px));
+    z-index: 20;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+.top-nav-main {
+    display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-left: max(14px, env(safe-area-inset-left, 0px));
-    padding-right: max(14px, env(safe-area-inset-right, 0px));
-    z-index: 20;
+    width: 100%;
+    gap: 8px;
 }
 
 .brand-section {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    min-width: 0;
 }
 
 .logo-badge {
     font-family: var(--font-mono);
     font-weight: 800;
-    font-size: 13px;
-    letter-spacing: 1.5px;
+    font-size: 12px;
+    letter-spacing: 1px;
     color: var(--color-accent-primary);
     display: flex;
     align-items: center;
     gap: 6px;
+    white-space: nowrap;
 }
 
 .pulse-dot {
@@ -71,6 +81,7 @@ html, body {
     background-color: var(--color-accent-primary);
     box-shadow: 0 0 6px var(--color-accent-primary);
     animation: neon-pulse 2s infinite ease-in-out;
+    flex-shrink: 0;
 }
 
 @keyframes neon-pulse {
@@ -81,20 +92,22 @@ html, body {
 .nav-status-group {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 6px;
+    flex-shrink: 0;
 }
 
 .status-pill {
     font-family: var(--font-mono);
-    font-size: 11px;
-    padding: 3px 8px;
+    font-size: 10px;
+    padding: 3px 6px;
     border-radius: var(--radius-sm);
     background-color: var(--color-surface-card);
     border: var(--border-subtle);
     color: var(--color-text-muted);
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
+    white-space: nowrap;
 }
 
 .status-pill.active {
@@ -107,58 +120,191 @@ html, body {
     color: var(--color-accent-secondary);
 }
 
-/* Dashboard Viewport */
-.dashboard-viewport {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 12px;
-    -webkit-overflow-scrolling: touch;
+/* Visibility utilities for view navigation */
+.desktop-only {
+    display: none;
 }
 
-/* Custom Scrollbar */
+.mobile-only {
+    display: flex;
+    width: 100%;
+}
+
+.mobile-view-tabs {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    width: 100%;
+}
+
+.mobile-view-tabs .view-tab-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+    padding: 8px 4px;
+    font-size: 11px;
+}
+
+/* Landscape / Wide Display Adaptations */
+@media (min-width: 681px), (orientation: landscape) {
+    .top-nav {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: max(4px, env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) 4px max(14px, env(safe-area-inset-left, 0px));
+        height: calc(44px + env(safe-area-inset-top, 0px));
+        min-height: 44px;
+    }
+
+    .top-nav-main {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .desktop-only {
+        display: flex;
+    }
+
+    .mobile-only {
+        display: none !important;
+    }
+}
+
+/* ==========================================================================
+   MAIN DASHBOARD VIEWPORT
+   ========================================================================== */
+.dashboard-viewport {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .dashboard-viewport::-webkit-scrollbar {
-    width: 4px;
+    width: 3px;
 }
 .dashboard-viewport::-webkit-scrollbar-thumb {
     background: var(--color-surface-card);
     border-radius: 2px;
 }
 
-/* Grid System: Default Portrait (2 Columns) */
+/* ==========================================================================
+   COMMAND CENTER WIDGET GRID (Responsive Breakpoints)
+   ========================================================================== */
 .widget-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 10px;
     width: 100%;
+    box-sizing: border-box;
 }
 
-/* Landscape Mode Dock Layout (3 Columns) */
+.col-span-2 {
+    grid-column: span 1;
+}
+
+/* Tablet / Medium Portrait */
+@media (min-width: 580px) and (orientation: portrait) {
+    .widget-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .col-span-2 {
+        grid-column: span 2;
+    }
+}
+
+/* Landscape Mode (800x360, 915x412, etc.) */
 @media (orientation: landscape) {
+    .dashboard-viewport {
+        padding: 8px 12px;
+    }
+
     .widget-grid {
         grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
+        gap: 10px;
     }
 
-    .top-nav {
-        height: 42px;
-        min-height: 42px;
-        padding: 0 16px;
+    .col-span-2 {
+        grid-column: span 2;
     }
-}
 
-/* Full Width Card Utility */
-.col-span-2 {
-    grid-column: span 2;
-}
-
-@media (orientation: landscape) {
     .col-span-3 {
         grid-column: span 3;
     }
 }
 
-/* Modes Views Management */
+/* ==========================================================================
+   PERSONAL SPACE MAIN CONTAINER
+   ========================================================================== */
+#view-personal-space {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.personal-subnav {
+    display: flex;
+    gap: 6px;
+    padding: 6px 10px;
+    background-color: var(--color-surface-card-subtle);
+    border-bottom: var(--border-subtle);
+    flex-shrink: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.subnav-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 8px 4px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface-card);
+    border: var(--border-subtle);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.subnav-btn.active {
+    border-color: var(--color-accent-secondary);
+    color: var(--color-accent-secondary);
+    background-color: rgba(56, 189, 248, 0.14);
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
+}
+
+.personal-view-pane {
+    display: none;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.personal-view-pane.active {
+    display: flex;
+}
+
+/* Modes Views Management (Idle, Radar Screensaver, etc.) */
 .mode-view {
     display: none;
     width: 100%;
@@ -173,4 +319,3 @@ html, body {
 .mode-view.active {
     display: flex;
 }
-

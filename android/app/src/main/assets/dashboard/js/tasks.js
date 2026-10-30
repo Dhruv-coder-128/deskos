@@ -139,7 +139,7 @@ const TasksModule = (() => {
             });
         },
 
-        addTask() {
+        async addTask() {
             const input = document.getElementById('new-task-input');
             if (!input || !input.value.trim()) return;
 
@@ -155,14 +155,14 @@ const TasksModule = (() => {
 
             list.tasks.push(newTask);
             input.value = '';
-            this.saveTasks();
+            await this.saveTasks();
             this.renderTasks();
 
             AudioSynth.playChime('tick');
             UIBridge.triggerHaptic('pulse');
         },
 
-        createList() {
+        async createList() {
             const name = prompt('ENTER LIST IDENTIFIER:');
             if (!name || !name.trim()) return;
 
@@ -174,7 +174,7 @@ const TasksModule = (() => {
 
             taskLists.push(newList);
             activeListId = newList.id;
-            this.saveTasks();
+            await this.saveTasks();
             this.renderListTabs();
             this.renderTasks();
 
@@ -182,7 +182,7 @@ const TasksModule = (() => {
             UIBridge.triggerHaptic('pulse');
         },
 
-        deleteActiveList() {
+        async deleteActiveList() {
             if (taskLists.length <= 1) {
                 alert('AT LEAST ONE TASK LIST MUST REMAIN ACTIVE');
                 return;
@@ -192,7 +192,7 @@ const TasksModule = (() => {
 
             taskLists = taskLists.filter(l => l.id !== activeListId);
             activeListId = taskLists[0].id;
-            this.saveTasks();
+            await this.saveTasks();
             this.renderListTabs();
             this.renderTasks();
 
@@ -200,12 +200,12 @@ const TasksModule = (() => {
             UIBridge.triggerHaptic('warning');
         },
 
-        clearCompleted() {
+        async clearCompleted() {
             const list = taskLists.find(l => l.id === activeListId);
             if (!list) return;
 
             list.tasks = list.tasks.filter(t => !t.completed);
-            this.saveTasks();
+            await this.saveTasks();
             this.renderTasks();
             UIBridge.triggerHaptic('click');
         },

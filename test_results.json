@@ -1,0 +1,109 @@
+{
+  "viewports": [
+    {
+      "viewport": "Portrait: 360 x 800 (Samsung M01s / Small)",
+      "width": 360,
+      "height": 800,
+      "scrollWidth": 360,
+      "clientWidth": 360,
+      "horizontalOverflow": false,
+      "outOfBoundsCards": 0,
+      "batteryTelemetry": {
+        "voltage": "4.12 V (4120 mV)",
+        "temperature": "32.4°C",
+        "pct": "85%"
+      },
+      "viewSwitchingOk": true,
+      "consoleErrors": []
+    },
+    {
+      "viewport": "Portrait: 393 x 873 (Pixel / Medium)",
+      "width": 393,
+      "height": 873,
+      "scrollWidth": 393,
+      "clientWidth": 393,
+      "horizontalOverflow": false,
+      "outOfBoundsCards": 0,
+      "batteryTelemetry": {
+        "voltage": "4.12 V (4120 mV)",
+        "temperature": "32.4°C",
+        "pct": "85%"
+      },
+      "viewSwitchingOk": true,
+      "consoleErrors": []
+    },
+    {
+      "viewport": "Portrait: 412 x 915 (OPPO / Modern Standard)",
+      "width": 412,
+      "height": 915,
+      "scrollWidth": 412,
+      "clientWidth": 412,
+      "horizontalOverflow": false,
+      "outOfBoundsCards": 0,
+      "batteryTelemetry": {
+        "voltage": "4.12 V (4120 mV)",
+        "temperature": "32.4°C",
+        "pct": "85%"
+      },
+      "viewSwitchingOk": true,
+      "consoleErrors": []
+    },
+    {
+      "viewport": "Landscape: 800 x 360 (Small Docked / M01s)",
+      "width": 800,
+      "height": 360,
+      "scrollWidth": 800,
+      "clientWidth": 800,
+      "horizontalOverflow": false,
+      "outOfBoundsCards": 0,
+      "batteryTelemetry": {
+        "voltage": "4.12 V (4120 mV)",
+        "temperature": "32.4°C",
+        "pct": "85%"
+      },
+      "viewSwitchingOk": true,
+      "consoleErrors": []
+    },
+    {
+      "viewport": "Landscape: 915 x 412 (Wide Docked / Modern)",
+      "width": 915,
+      "height": 412,
+      "scrollWidth": 915,
+      "clientWidth": 915,
+      "horizontalOverflow": false,
+      "outOfBoundsCards": 0,
+      "batteryTelemetry": {
+        "voltage": "4.12 V (4120 mV)",
+        "temperature": "32.4°C",
+        "pct": "85%"
+      },
+      "viewSwitchingOk": true,
+      "consoleErrors": []
+    }
+  ],
+  "functional": {
+    "notes": {
+      "savedSuccessfully": true,
+      "filterWorked": true,
+      "deletedSuccessfully": true
+    },
+    "tasks": {
+      "taskAdded": true,
+      "progressUpdated": true,
+      "clearedSuccessfully": true
+    },
+    "timers": {
+      "pomoRunningText": "PAUSE",
+      "pomoPausedText": "START",
+      "pomoState": "SHORT BREAK",
+      "lapsRecorded": true,
+      "swResetTime": "00:00.00",
+      "countdownPresetSet": true
+    },
+    "calendar": {
+      "daysRendered": true,
+      "reminderSaved": true
+    }
+  },
+  "errors": []
+}

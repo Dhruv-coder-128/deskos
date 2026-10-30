@@ -56,11 +56,26 @@ class PowerHelper(private val context: Context) {
             else -> if (isCharging) "charging" else "unplugged"
         }
 
-        voltageMv = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0)
+        val rawVoltage = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1)
+        // Voltage unit normalization:
+        // 1. Standard Android reports millivolts (e.g. 3700-4450 mV for Li-ion).
+        // 2. Non-standard device HALs (e.g. MediaTek or custom ROMs) incorrectly report integer Volts (e.g. 3 or 4) -> convert to mV (*1000).
+        // 3. Some devices report microvolts (uV) > 100,000 -> convert to mV (/1000).
+        // 4. Any value <= 0 or missing -> -1 (N/A).
+        voltageMv = when {
+            rawVoltage <= 0 -> -1
+            rawVoltage in 1..10 -> rawVoltage * 1000
+            rawVoltage > 100_000 -> rawVoltage / 1000
+            else -> rawVoltage
+        }
 
         // Android reports temperature in tenths of a degree Celsius (e.g., 325 = 32.5°C)
-        val rawTemp = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)
-        temperatureCelsius = rawTemp / 10.0f
+        val rawTemp = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -999)
+        temperatureCelsius = if (rawTemp > -400 && rawTemp < 1000) {
+            rawTemp / 10.0f
+        } else {
+            -999.0f
+        }
     }
 
     fun startListening() {
@@ -101,13 +116,14 @@ class PowerHelper(private val context: Context) {
     }
 
     fun getStatusJson(): JSONObject {
+        val hasValidTemp = temperatureCelsius > -100.0f
         return JSONObject().apply {
             put("percent", batteryPercent)
             put("isCharging", isCharging)
             put("chargeType", chargeType)
             put("voltageMv", voltageMv)
-            put("temperatureC", String.format(java.util.Locale.US, "%.1f", temperatureCelsius))
-            put("isOverheating", temperatureCelsius >= 40.0f)
+            put("temperatureC", if (hasValidTemp) String.format(java.util.Locale.US, "%.1f", temperatureCelsius) else "N/A")
+            put("isOverheating", hasValidTemp && temperatureCelsius >= 40.0f)
             put("isNearLimit", batteryPercent >= 80 && isCharging)
         }
     }

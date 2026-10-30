@@ -18,13 +18,14 @@ class NativeBridge(
     private val activity: Activity,
     private val powerHelper: PowerHelper,
     private val sensorHelper: SensorHelper,
-    private val notificationHelper: NotificationHelper
+    private val notificationHelper: NotificationHelper,
+    private val pcAgentManager: PcAgentManager
 ) {
 
     @JavascriptInterface
     fun getDeviceInfo(): String {
         val json = JSONObject().apply {
-            put("appVersion", "1.1.0 (Phase 2 Personal Space)")
+            put("appVersion", "1.2.0 (Phase 3 Workstation Linked)")
             put("manufacturer", Build.MANUFACTURER)
             put("model", Build.MODEL)
             put("device", Build.DEVICE)
@@ -33,6 +34,7 @@ class NativeBridge(
             put("battery", powerHelper.getStatusJson())
             put("sensorCapabilities", sensorHelper.getCapabilitiesJson())
             put("hasNotificationPermission", notificationHelper.hasNotificationPermission())
+            put("agent", pcAgentManager.getStatusJson())
         }
         return json.toString()
     }
@@ -124,5 +126,64 @@ class NativeBridge(
         activity.runOnUiThread {
             notificationHelper.requestNotificationPermission(activity)
         }
+    }
+
+    @JavascriptInterface
+    fun getAgentStatus(): String {
+        return pcAgentManager.getStatusJson().toString()
+    }
+
+    @JavascriptInterface
+    fun pairAgent(hostIp: String?, port: Int, pairingCode: String?, fingerprint: String?): String {
+        val safeIp = hostIp?.trim()?.take(64) ?: ""
+        val safePort = if (port in 1..65535) port else 8765
+        val safePin = pairingCode?.trim()?.take(16) ?: ""
+        val safeFp = fingerprint?.trim()?.take(128) ?: ""
+
+        if (safeIp.isBlank() || safePin.isBlank() || safeFp.isBlank()) {
+            return JSONObject().apply {
+                put("success", false)
+                put("message", "IP, PIN, and TLS Fingerprint are required.")
+            }.toString()
+        }
+
+        val lock = java.util.concurrent.CountDownLatch(1)
+        var pairSuccess = false
+        var pairMessage = ""
+
+        pcAgentManager.pairDevice(safeIp, safePort, safePin, safeFp) { success, msg ->
+            pairSuccess = success
+            pairMessage = msg
+            lock.countDown()
+        }
+
+        try {
+            lock.await(8, java.util.concurrent.TimeUnit.SECONDS)
+        } catch (_: Exception) {
+            pairMessage = "Pairing request timed out."
+        }
+
+        return JSONObject().apply {
+            put("success", pairSuccess)
+            put("message", pairMessage)
+            put("state", pcAgentManager.connectionState)
+        }.toString()
+    }
+
+    @JavascriptInterface
+    fun connectAgent(): Boolean {
+        pcAgentManager.connect()
+        return true
+    }
+
+    @JavascriptInterface
+    fun disconnectAgent(): Boolean {
+        pcAgentManager.disconnect()
+        return true
+    }
+
+    @JavascriptInterface
+    fun forgetAgentDevice(): Boolean {
+        return pcAgentManager.forgetDevice()
     }
 }

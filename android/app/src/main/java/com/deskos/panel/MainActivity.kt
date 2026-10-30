@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var powerHelper: PowerHelper
     private lateinit var sensorHelper: SensorHelper
     private lateinit var notificationHelper: NotificationHelper
+    private lateinit var securityHelper: SecurityHelper
+    private lateinit var pcAgentManager: PcAgentManager
     private lateinit var assetLoader: WebViewAssetLoader
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -34,6 +36,8 @@ class MainActivity : AppCompatActivity() {
         powerHelper = PowerHelper(this)
         sensorHelper = SensorHelper(this)
         notificationHelper = NotificationHelper(this)
+        securityHelper = SecurityHelper(this)
+        pcAgentManager = PcAgentManager(this, securityHelper)
 
         // Configure hardened WebViewAssetLoader (serves local assets under virtual HTTPS origin)
         assetLoader = WebViewAssetLoader.Builder()
@@ -57,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
             // Bind sanitized native bridge to the local dashboard
             addJavascriptInterface(
-                NativeBridge(this@MainActivity, powerHelper, sensorHelper, notificationHelper),
+                NativeBridge(this@MainActivity, powerHelper, sensorHelper, notificationHelper, pcAgentManager),
                 "DeskOSBridge"
             )
 
@@ -129,6 +133,11 @@ class MainActivity : AppCompatActivity() {
         sensorHelper.startListening()
         webView.onResume()
         setupKioskWindow()
+
+        // Auto-reconnect if device is paired
+        if (pcAgentManager.isPaired()) {
+            pcAgentManager.connect()
+        }
     }
 
     override fun onPause() {
@@ -140,6 +149,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        pcAgentManager.disconnect()
         webView.destroy()
     }
 }

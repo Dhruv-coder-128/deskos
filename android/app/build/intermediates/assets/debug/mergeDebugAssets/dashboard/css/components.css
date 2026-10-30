@@ -1,8 +1,10 @@
 /* ==========================================================================
-   DESK OS — CYBERPUNK TERMINAL UI COMPONENTS (PALETTE 3)
+   DESK OS — CYBERPUNK COMPONENT STYLESHEET (PALETTE 3)
+   Background: #000000 | Primary: #00FF47 | Secondary Surface: #1F2937
+   Text: #E5E7EB | Cyan: #38BDF8 | Indigo: #35369C
    ========================================================================== */
 
-/* Dashboard Cards */
+/* Cyber Card Panel */
 .cyber-card {
     background-color: var(--color-surface-card);
     border: var(--border-subtle);
@@ -11,102 +13,104 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
     transition: border-color var(--transition-fast);
+    min-width: 0;
+    max-width: 100%;
 }
 
-.cyber-card:focus-within,
-.cyber-card:active {
-    border-color: rgba(0, 255, 71, 0.4);
-}
-
-.cyber-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--color-accent-tertiary), transparent);
-    opacity: 0.6;
+.cyber-card:hover {
+    border-color: rgba(0, 255, 71, 0.25);
 }
 
 .cyber-card.accent-border {
-    border-left: 2px solid var(--color-accent-primary);
+    border-color: rgba(0, 255, 71, 0.35);
 }
 
+.cyber-card.indigo-border {
+    border-color: var(--border-indigo);
+}
+
+/* Card Header */
 .card-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 8px;
+    gap: 8px;
+    min-width: 0;
 }
 
 .card-title {
     font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
+    letter-spacing: 0.5px;
+    color: var(--color-text-primary);
     display: flex;
     align-items: center;
     gap: 6px;
-}
-
-.card-title svg {
-    color: var(--color-accent-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
 }
 
 .card-badge {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 9px;
+    font-weight: 700;
     padding: 2px 6px;
     border-radius: var(--radius-sm);
-    background-color: rgba(0, 255, 71, 0.1);
+    background-color: var(--color-surface-card-subtle);
+    border: var(--border-subtle);
     color: var(--color-accent-primary);
-    border: 1px solid rgba(0, 255, 71, 0.25);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-/* Digital Clock Component */
+/* Chronometer Hero Typography */
 .clock-display {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 10px 0;
+    padding: 8px 0;
+    text-align: center;
+    width: 100%;
 }
 
 .clock-digits {
     font-family: var(--font-mono);
-    font-size: 38px;
+    font-size: 42px;
     font-weight: 800;
-    letter-spacing: 3px;
     color: var(--color-accent-primary);
-    text-shadow: 0 0 10px rgba(0, 255, 71, 0.4);
+    letter-spacing: 2px;
     line-height: 1;
+    text-shadow: 0 0 12px rgba(0, 255, 71, 0.4);
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
 }
 
 .clock-seconds {
-    font-size: 22px;
-    color: var(--color-text-primary);
-    opacity: 0.85;
+    font-size: 20px;
+    color: var(--color-accent-secondary);
+    margin-left: 2px;
 }
 
 .clock-date {
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-muted);
     letter-spacing: 1px;
-    color: var(--color-accent-secondary);
     margin-top: 6px;
-    text-transform: uppercase;
 }
 
 .clock-meta {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 9px;
     color: var(--color-text-dim);
     margin-top: 4px;
 }
@@ -114,12 +118,12 @@
 /* Telemetry Key-Value Rows */
 .telemetry-row {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     padding: 5px 0;
     border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
-    font-family: var(--font-mono);
-    font-size: 12px;
+    min-width: 0;
+    gap: 8px;
 }
 
 .telemetry-row:last-child {
@@ -127,16 +131,30 @@
 }
 
 .telemetry-label {
-    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--color-text-dim);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
 }
 
 .telemetry-val {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
     color: var(--color-text-primary);
-    font-weight: 600;
+    text-align: right;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .telemetry-val.neon {
     color: var(--color-accent-primary);
+    text-shadow: 0 0 6px rgba(0, 255, 71, 0.25);
 }
 
 .telemetry-val.cyan {
@@ -176,6 +194,11 @@
     box-shadow: 0 0 6px rgba(0, 255, 71, 0.35);
 }
 
+.meter-bar.cyan {
+    background-color: var(--color-accent-secondary);
+    box-shadow: 0 0 6px rgba(56, 189, 248, 0.35);
+}
+
 .meter-marker-80 {
     position: absolute;
     top: 0;
@@ -187,18 +210,18 @@
     opacity: 0.8;
 }
 
-/* Sensors Dynamic Table */
+/* Sensors Dynamic Chips & 3-Axis Readout */
 .sensor-chips-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 4px;
     margin-top: 4px;
 }
 
 .sensor-chip {
     font-family: var(--font-mono);
-    font-size: 10px;
-    padding: 3px 8px;
+    font-size: 9px;
+    padding: 2px 6px;
     border-radius: var(--radius-sm);
     background-color: var(--color-surface-card-subtle);
     border: var(--border-subtle);
@@ -219,7 +242,6 @@
     text-decoration: line-through;
 }
 
-/* Accelerometer 3-Axis Readout */
 .axis-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -232,19 +254,20 @@
     background-color: var(--color-surface-card-subtle);
     border: var(--border-subtle);
     border-radius: var(--radius-sm);
-    padding: 6px 4px;
+    padding: 6px 2px;
+    min-width: 0;
 }
 
 .axis-label {
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: 8px;
     color: var(--color-text-dim);
     text-transform: uppercase;
 }
 
 .axis-val {
     font-family: var(--font-mono);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--color-accent-secondary);
     margin-top: 2px;
@@ -258,14 +281,16 @@
     color: var(--color-text-primary);
     font-family: var(--font-mono);
     font-size: 11px;
-    font-weight: 600;
-    padding: 8px 12px;
+    font-weight: 700;
+    padding: 8px 10px;
+    min-height: 38px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
     transition: all var(--transition-fast);
+    box-sizing: border-box;
 }
 
 .cyber-btn:hover,
@@ -276,9 +301,10 @@
 }
 
 .cyber-btn.active {
-    background-color: rgba(0, 255, 71, 0.15);
+    background-color: rgba(0, 255, 71, 0.16);
     border-color: var(--color-accent-primary);
     color: var(--color-accent-primary);
+    box-shadow: 0 0 8px rgba(0, 255, 71, 0.25);
 }
 
 .btn-group {
@@ -286,130 +312,10 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
     margin-top: 8px;
-}
-
-/* Idle Mode Overlay */
-#idle-overlay {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #000000;
-    padding: 20px;
-}
-
-.idle-clock {
-    font-family: var(--font-mono);
-    font-size: 64px;
-    font-weight: 800;
-    color: var(--color-accent-primary);
-    opacity: 0.6;
-    letter-spacing: 4px;
-    text-shadow: 0 0 16px rgba(0, 255, 71, 0.3);
-}
-
-.idle-hint {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    color: var(--color-text-dim);
-    margin-top: 24px;
-    text-transform: uppercase;
-}
-
-/* Screensaver Mode Overlay */
-#screensaver-overlay {
-    background-color: #000000;
-    position: relative;
-    overflow: hidden;
-}
-
-#screensaver-canvas {
     width: 100%;
-    height: 100%;
-    display: block;
 }
 
-.screensaver-hud {
-    position: absolute;
-    bottom: 24px;
-    left: 24px;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--color-accent-primary);
-    opacity: 0.7;
-    pointer-events: none;
-}
-
-/* Customization Drawer / Modal */
-.modal-overlay {
-    display: none;
-    position: absolute;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.85);
-    z-index: 100;
-    backdrop-filter: blur(4px);
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-}
-
-.modal-overlay.active {
-    display: flex;
-}
-
-.modal-card {
-    background-color: var(--color-surface-card-subtle);
-    border: var(--border-accent);
-    border-radius: var(--radius-lg);
-    width: 100%;
-    max-width: 440px;
-    max-height: 85vh;
-    display: flex;
-    flex-direction: column;
-    padding: 16px;
-    box-shadow: 0 0 24px rgba(0, 255, 71, 0.15);
-}
-
-.modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 10px;
-    border-bottom: var(--border-subtle);
-}
-
-.modal-title {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--color-accent-primary);
-    letter-spacing: 1px;
-}
-
-.widget-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
-}
-
-.widget-toggle {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--color-text-primary);
-}
-
-
-/* ==========================================================================
-   DESK OS — PHASE 2 PERSONAL SPACE COMPONENTS
-   Notes, Tasks, Timers (Pomodoro / Stopwatch / Countdown), Calendar & Reminders
-   ========================================================================== */
-
-/* Main View Navigation Tabs */
+/* Main View Navigation Buttons */
 .view-nav-tabs {
     display: flex;
     gap: 6px;
@@ -420,14 +326,19 @@
     font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 1px;
-    padding: 6px 12px;
+    letter-spacing: 0.5px;
+    padding: 8px 12px;
+    min-height: 38px;
     border-radius: var(--radius-sm);
     background-color: var(--color-surface-card);
     border: var(--border-subtle);
     color: var(--color-text-muted);
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     transition: all var(--transition-fast);
+    box-sizing: border-box;
 }
 
 .view-tab-btn:hover,
@@ -438,64 +349,46 @@
     box-shadow: 0 0 8px rgba(0, 255, 71, 0.25);
 }
 
-/* Personal Space Sub-Navigation */
-.personal-subnav {
-    display: flex;
-    gap: 8px;
-    padding: 10px 14px 6px 14px;
+/* Inputs */
+.cyber-input {
     background-color: var(--color-surface-card-subtle);
-    border-bottom: var(--border-subtle);
-    overflow-x: auto;
-    white-space: nowrap;
-}
-
-.subnav-btn {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 600;
-    padding: 6px 14px;
-    border-radius: var(--radius-sm);
-    background-color: var(--color-surface-card);
     border: var(--border-subtle);
-    color: var(--color-text-muted);
-    cursor: pointer;
-    transition: all var(--transition-fast);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-primary);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 8px 10px;
+    min-height: 38px;
+    outline: none;
+    transition: border-color var(--transition-fast);
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.subnav-btn.active {
-    border-color: var(--color-accent-secondary);
-    color: var(--color-accent-secondary);
-    background-color: rgba(56, 189, 248, 0.12);
+.cyber-input:focus {
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 6px rgba(0, 255, 71, 0.2);
 }
 
-/* Personal Space Views Container */
-.personal-view-pane {
-    display: none;
-    flex-direction: column;
-    height: 100%;
-    overflow-y: auto;
-    padding: 12px;
-    gap: 12px;
-}
+/* ==========================================================================
+   PERSONAL SPACE SUB-MODULES
+   ========================================================================== */
 
-.personal-view-pane.active {
-    display: flex;
-}
-
-/* --------------------------------------------------------------------------
-   1. NOTES COMPONENT
-   -------------------------------------------------------------------------- */
+/* 1. NOTES SUBMODULE */
 .notes-container {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 12px;
-    height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
 }
 
-@media (max-width: 680px), (orientation: portrait) {
+@media (min-width: 681px), (orientation: landscape) {
     .notes-container {
-        grid-template-columns: 1fr;
-        height: auto;
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 12px;
     }
 }
 
@@ -506,15 +399,23 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    max-height: 400px;
+    min-height: 110px;
+    max-height: 150px;
+}
+
+@media (min-width: 681px), (orientation: landscape) {
+    .notes-sidebar {
+        max-height: none;
+        height: 100%;
+    }
 }
 
 .notes-sidebar-header {
-    padding: 10px;
+    padding: 8px;
     border-bottom: var(--border-subtle);
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    gap: 6px;
+    align-items: center;
 }
 
 .notes-list-scroll {
@@ -525,10 +426,11 @@
 }
 
 .note-list-item {
-    padding: 10px 12px;
+    padding: 8px 10px;
     border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
     cursor: pointer;
     transition: background var(--transition-fast);
+    min-width: 0;
 }
 
 .note-list-item:hover {
@@ -542,7 +444,7 @@
 
 .note-item-title {
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--color-text-primary);
     white-space: nowrap;
@@ -551,9 +453,9 @@
 }
 
 .note-item-preview {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--color-text-dim);
-    margin-top: 3px;
+    margin-top: 2px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -561,9 +463,9 @@
 
 .note-item-meta {
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: 8px;
     color: var(--color-accent-secondary);
-    margin-top: 4px;
+    margin-top: 2px;
 }
 
 .note-editor-area {
@@ -572,82 +474,72 @@
     border-radius: var(--radius-md);
     display: flex;
     flex-direction: column;
-    padding: 14px;
+    padding: 10px;
+    flex: 1;
+    min-height: 240px;
+    overflow: hidden;
 }
 
 .note-editor-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
-    gap: 10px;
+    margin-bottom: 8px;
+    gap: 8px;
 }
 
-.cyber-input {
+.note-body-text {
+    flex: 1;
+    min-height: 180px;
     background-color: var(--color-surface-card-subtle);
     border: var(--border-subtle);
     border-radius: var(--radius-sm);
     color: var(--color-text-primary);
     font-family: var(--font-mono);
     font-size: 12px;
-    padding: 8px 10px;
-    outline: none;
-    transition: border-color var(--transition-fast);
-    width: 100%;
-}
-
-.cyber-input:focus {
-    border-color: var(--color-accent-primary);
-}
-
-.note-body-text {
-    flex: 1;
-    min-height: 250px;
-    background-color: var(--color-surface-card-subtle);
-    border: var(--border-subtle);
-    border-radius: var(--radius-sm);
-    color: var(--color-text-primary);
-    font-family: var(--font-mono);
-    font-size: 13px;
     line-height: 1.5;
-    padding: 12px;
+    padding: 10px;
     resize: none;
     outline: none;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .note-body-text:focus {
     border-color: var(--color-accent-primary);
 }
 
-/* --------------------------------------------------------------------------
-   2. TASKS COMPONENT
-   -------------------------------------------------------------------------- */
+/* 2. TASKS SUBMODULE */
 .tasks-container {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     max-width: 800px;
     margin: 0 auto;
     width: 100%;
+    height: 100%;
+    min-height: 0;
 }
 
 .tasks-tabs-row {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     overflow-x: auto;
     align-items: center;
+    padding-bottom: 2px;
 }
 
 .task-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 12px;
+    padding: 8px 10px;
     background-color: var(--color-surface-card-subtle);
     border: var(--border-subtle);
     border-radius: var(--radius-sm);
     margin-bottom: 6px;
     transition: all var(--transition-fast);
+    min-width: 0;
 }
 
 .task-row:hover {
@@ -670,18 +562,20 @@
     gap: 10px;
     cursor: pointer;
     flex: 1;
+    min-width: 0;
 }
 
 .task-checkbox-label input[type="checkbox"] {
     accent-color: var(--color-accent-primary);
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     cursor: pointer;
+    flex-shrink: 0;
 }
 
 .task-text {
     font-family: var(--font-mono);
-    font-size: 13px;
+    font-size: 12px;
     color: var(--color-text-primary);
     word-break: break-word;
 }
@@ -690,30 +584,32 @@
     background: none;
     border: none;
     color: var(--color-text-dim);
-    font-size: 13px;
+    font-size: 14px;
     cursor: pointer;
-    padding: 4px 8px;
+    padding: 6px 8px;
     border-radius: var(--radius-sm);
     transition: color var(--transition-fast);
+    flex-shrink: 0;
 }
 
 .task-delete-btn:hover {
     color: var(--color-alert-danger);
 }
 
-/* --------------------------------------------------------------------------
-   3. TIMERS COMPONENT (POMODORO / STOPWATCH / COUNTDOWN)
-   -------------------------------------------------------------------------- */
+/* 3. TIMERS SUBMODULE */
 .timers-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     width: 100%;
 }
 
-@media (max-width: 768px), (orientation: portrait) {
+@media (min-width: 681px), (orientation: landscape) {
     .timers-grid {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        align-items: stretch;
     }
 }
 
@@ -721,19 +617,20 @@
     background-color: var(--color-surface-card);
     border: var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 16px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     position: relative;
+    box-sizing: border-box;
 }
 
 .pomo-circle-wrap {
     position: relative;
-    width: 130px;
-    height: 130px;
-    margin: 12px 0;
+    width: 110px;
+    height: 110px;
+    margin: 8px 0;
 }
 
 .pomo-svg {
@@ -745,13 +642,13 @@
 .pomo-circle-bg {
     fill: none;
     stroke: var(--color-surface-card-subtle);
-    stroke-width: 7;
+    stroke-width: 6;
 }
 
 .pomo-circle-bar {
     fill: none;
     stroke: var(--color-accent-primary);
-    stroke-width: 7;
+    stroke-width: 6;
     stroke-linecap: round;
     transition: stroke-dashoffset 0.5s ease;
     filter: drop-shadow(0 0 4px rgba(0, 255, 71, 0.4));
@@ -768,7 +665,7 @@
 
 .pomo-time-text {
     font-family: var(--font-mono);
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 800;
     color: var(--color-accent-primary);
     letter-spacing: 1px;
@@ -776,66 +673,64 @@
 
 .pomo-state-text {
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: 8px;
     color: var(--color-accent-secondary);
     letter-spacing: 1px;
     margin-top: 2px;
 }
 
-/* Stopwatch Display */
 .stopwatch-big-digits {
     font-family: var(--font-mono);
-    font-size: 34px;
+    font-size: 28px;
     font-weight: 800;
     color: var(--color-accent-secondary);
-    letter-spacing: 2px;
-    margin: 16px 0;
+    letter-spacing: 1px;
+    margin: 10px 0;
     text-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
 }
 
 .laps-scroll-box {
     width: 100%;
-    max-height: 140px;
+    max-height: 100px;
     overflow-y: auto;
-    margin-top: 10px;
+    margin-top: 8px;
     background-color: var(--color-surface-card-subtle);
     border-radius: var(--radius-sm);
-    padding: 6px;
+    padding: 4px;
     border: var(--border-subtle);
 }
 
-/* Countdown Display */
 .countdown-big-digits {
     font-family: var(--font-mono);
-    font-size: 34px;
+    font-size: 28px;
     font-weight: 800;
     color: var(--color-accent-primary);
-    letter-spacing: 2px;
-    margin: 16px 0;
+    letter-spacing: 1px;
+    margin: 10px 0;
     text-shadow: 0 0 10px rgba(0, 255, 71, 0.35);
 }
 
 .presets-row {
     display: flex;
-    gap: 6px;
+    gap: 4px;
     flex-wrap: wrap;
     justify-content: center;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
-/* --------------------------------------------------------------------------
-   4. CALENDAR & REMINDERS COMPONENT
-   -------------------------------------------------------------------------- */
+/* 4. CALENDAR & REMINDERS SUBMODULE */
 .calendar-layout {
-    display: grid;
-    grid-template-columns: 360px 1fr;
-    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     width: 100%;
 }
 
-@media (max-width: 768px), (orientation: portrait) {
+@media (min-width: 681px), (orientation: landscape) {
     .calendar-layout {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 12px;
     }
 }
 
@@ -843,23 +738,24 @@
     background-color: var(--color-surface-card);
     border: var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 14px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
 }
 
 .cal-header-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .cal-month-title {
     font-family: var(--font-mono);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 800;
-    letter-spacing: 1.5px;
+    letter-spacing: 1px;
     color: var(--color-accent-primary);
 }
 
@@ -868,16 +764,16 @@
     grid-template-columns: repeat(7, 1fr);
     text-align: center;
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
     color: var(--color-text-dim);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .cal-days-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
+    gap: 3px;
 }
 
 .cal-day-cell {
@@ -924,7 +820,7 @@
     border-radius: 50%;
     background-color: var(--color-accent-primary);
     position: absolute;
-    bottom: 3px;
+    bottom: 2px;
     box-shadow: 0 0 4px var(--color-accent-primary);
 }
 
@@ -932,21 +828,23 @@
     background-color: var(--color-surface-card);
     border: var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 14px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    box-sizing: border-box;
 }
 
 .reminder-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 12px;
+    padding: 8px 10px;
     background-color: var(--color-surface-card-subtle);
     border: var(--border-subtle);
     border-radius: var(--radius-sm);
     margin-bottom: 6px;
+    min-width: 0;
 }
 
 .reminder-row.completed {
@@ -955,9 +853,10 @@
 
 .reminder-title {
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--color-text-primary);
+    word-break: break-word;
 }
 
 .reminder-meta {
@@ -965,7 +864,78 @@
     gap: 8px;
     align-items: center;
     font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--color-text-dim);
+    margin-top: 2px;
+}
+
+/* Modals & Screensavers */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-card {
+    background-color: var(--color-surface-card);
+    border: var(--border-accent);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    width: 100%;
+    max-width: 450px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 255, 71, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: var(--border-subtle);
+    padding-bottom: 8px;
+}
+
+.modal-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--color-accent-primary);
+}
+
+.idle-clock {
+    font-family: var(--font-mono);
+    font-size: 56px;
+    font-weight: 800;
+    color: var(--color-accent-primary);
+    text-shadow: 0 0 15px rgba(0, 255, 71, 0.4);
+}
+
+.idle-hint {
+    margin-top: 20px;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--color-text-dim);
-    margin-top: 3px;
+    letter-spacing: 1px;
+}
+
+.screensaver-hud {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-accent-primary);
+    pointer-events: none;
 }

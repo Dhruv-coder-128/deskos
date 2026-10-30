@@ -130,6 +130,57 @@ const UIBridge = (() => {
             } else if ('Notification' in window && Notification.permission !== 'granted') {
                 Notification.requestPermission();
             }
+        },
+
+        // PC Agent Host Link Bridge Methods
+        getAgentStatus() {
+            if (isNative && window.DeskOSBridge.getAgentStatus) {
+                try {
+                    return JSON.parse(window.DeskOSBridge.getAgentStatus());
+                } catch (e) {
+                    console.error('[UIBridge] parse agent status error:', e);
+                }
+            }
+            return {
+                state: 'NOT_PAIRED',
+                isPaired: false,
+                hostName: 'Lenovo LOQ',
+                hostIp: '',
+                port: 8765
+            };
+        },
+
+        pairAgent(hostIp, port, pairingCode, fingerprint) {
+            if (isNative && window.DeskOSBridge.pairAgent) {
+                try {
+                    const res = window.DeskOSBridge.pairAgent(hostIp, Number(port), pairingCode, fingerprint);
+                    return JSON.parse(res);
+                } catch (e) {
+                    return { success: false, message: e.message || 'Bridge invocation failed' };
+                }
+            }
+            return { success: false, message: 'Native bridge unavailable in standalone browser' };
+        },
+
+        connectAgent() {
+            if (isNative && window.DeskOSBridge.connectAgent) {
+                return window.DeskOSBridge.connectAgent();
+            }
+            return false;
+        },
+
+        disconnectAgent() {
+            if (isNative && window.DeskOSBridge.disconnectAgent) {
+                return window.DeskOSBridge.disconnectAgent();
+            }
+            return false;
+        },
+
+        forgetAgentDevice() {
+            if (isNative && window.DeskOSBridge.forgetAgentDevice) {
+                return window.DeskOSBridge.forgetAgentDevice();
+            }
+            return false;
         }
     };
 })();
