@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var webView: WebView
     private lateinit var powerHelper: PowerHelper
     private lateinit var sensorHelper: SensorHelper
+    private lateinit var notificationHelper: NotificationHelper
     private lateinit var assetLoader: WebViewAssetLoader
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
         powerHelper = PowerHelper(this)
         sensorHelper = SensorHelper(this)
+        notificationHelper = NotificationHelper(this)
 
         // Configure hardened WebViewAssetLoader (serves local assets under virtual HTTPS origin)
         assetLoader = WebViewAssetLoader.Builder()
@@ -55,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 
             // Bind sanitized native bridge to the local dashboard
             addJavascriptInterface(
-                NativeBridge(this@MainActivity, powerHelper, sensorHelper),
+                NativeBridge(this@MainActivity, powerHelper, sensorHelper, notificationHelper),
                 "DeskOSBridge"
             )
 

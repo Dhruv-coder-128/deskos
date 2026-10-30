@@ -22,6 +22,12 @@
                 <span class="status-pill active" id="connection-mode-pill">STANDALONE (MODE A)</span>
             </div>
 
+            <!-- Main View Switcher Tabs -->
+            <div class="view-nav-tabs">
+                <button class="view-tab-btn active" id="tab-btn-cc" onclick="DeskOS.switchView('command-center')">COMMAND CENTER</button>
+                <button class="view-tab-btn" id="tab-btn-ps" onclick="DeskOS.switchView('personal-space')">PERSONAL SPACE</button>
+            </div>
+
             <div class="nav-status-group">
                 <span class="status-pill" id="battery-status-tag">INITIALIZING</span>
                 <button class="cyber-btn" onclick="DeskOS.setMode('idle')" title="Enter Dimmed Idle Mode">IDLE</button>
@@ -32,181 +38,419 @@
 
         <!-- Main Dashboard Viewport -->
         <main class="dashboard-viewport">
-            <div class="widget-grid" id="main-widget-grid">
 
-                <!-- Widget 1: System Clock & Telemetry Hero -->
-                <section class="cyber-card accent-border col-span-2" id="card-clock">
-                    <div class="card-header">
-                        <span class="card-title">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                            CHRONOMETER & TIMELINE
-                        </span>
-                        <span class="card-badge">LIVE 1.0 Hz</span>
-                    </div>
+            <!-- =============================================================== -->
+            <!-- VIEW 1: COMMAND CENTER (Phase 1 Grid & Telemetry)               -->
+            <!-- =============================================================== -->
+            <div id="view-command-center" style="display: block;">
+                <div class="widget-grid" id="main-widget-grid">
 
-                    <div class="clock-display">
-                        <div class="clock-digits">
-                            <span id="clock-hours-mins">00:00</span><span class="clock-seconds" id="clock-seconds">:00</span>
+                    <!-- Widget 1: System Clock & Telemetry Hero -->
+                    <section class="cyber-card accent-border col-span-2" id="card-clock">
+                        <div class="card-header">
+                            <span class="card-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                CHRONOMETER & TIMELINE
+                            </span>
+                            <span class="card-badge">LIVE 1.0 Hz</span>
                         </div>
-                        <div class="clock-date" id="clock-date">LOADING DATE...</div>
-                        <div class="clock-meta">TIMEZONE: LOCAL NODE // STANDALONE TIMEBASE</div>
-                    </div>
-                </section>
 
-                <!-- Widget 2: Hardware Health (Samsung Galaxy M01s) -->
-                <section class="cyber-card" id="card-battery">
-                    <div class="card-header">
-                        <span class="card-title">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="1" y="6" width="18" height="12" rx="2" ry="2"></rect>
-                                <line x1="23" y1="13" x2="23" y2="11"></line>
-                            </svg>
-                            HARDWARE POWER & THERMAL
-                        </span>
-                        <span class="telemetry-val neon" id="battery-pct-val">--%</span>
-                    </div>
+                        <div class="clock-display">
+                            <div class="clock-digits">
+                                <span id="clock-hours-mins">00:00</span><span class="clock-seconds" id="clock-seconds">:00</span>
+                            </div>
+                            <div class="clock-date" id="clock-date">LOADING DATE...</div>
+                            <div class="clock-meta">TIMEZONE: LOCAL NODE // STANDALONE TIMEBASE</div>
+                        </div>
+                    </section>
 
-                    <div class="meter-container">
-                        <div class="meter-track">
-                            <div class="meter-bar" id="battery-bar" style="width: 0%;"></div>
-                            <div class="meter-marker-80" title="80% Conservative Charging Target"></div>
+                    <!-- Widget 2: Hardware Health (Samsung Galaxy M01s) -->
+                    <section class="cyber-card" id="card-battery">
+                        <div class="card-header">
+                            <span class="card-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="1" y="6" width="18" height="12" rx="2" ry="2"></rect>
+                                    <line x1="23" y1="13" x2="23" y2="11"></line>
+                                </svg>
+                                HARDWARE POWER & THERMAL
+                            </span>
+                            <span class="telemetry-val neon" id="battery-pct-val">--%</span>
+                        </div>
+
+                        <div class="meter-container">
+                            <div class="meter-track">
+                                <div class="meter-bar" id="battery-bar" style="width: 0%;"></div>
+                                <div class="meter-marker-80" title="80% Conservative Charging Target"></div>
+                            </div>
+                        </div>
+
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">BATTERY TEMPERATURE</span>
+                            <span class="telemetry-val neon" id="battery-temp-val">--.-°C</span>
+                        </div>
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">BATTERY VOLTAGE</span>
+                            <span class="telemetry-val cyan" id="battery-volt-val">---- mV</span>
+                        </div>
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">DEVICE SOC</span>
+                            <span class="telemetry-val" id="device-model-val">Helio P22 / 3GB</span>
+                        </div>
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">ENVIRONMENT</span>
+                            <span class="telemetry-val" id="device-os-val">Android 11</span>
+                        </div>
+
+                        <div id="battery-alert-badge" style="display: none; font-family: var(--font-mono); font-size: 10px; margin-top: 8px; padding: 4px; border: 1px dashed #F59E0B; text-align: center;"></div>
+                    </section>
+
+                    <!-- Widget 3: Dynamic Sensors Lab Preview -->
+                    <section class="cyber-card" id="card-sensors">
+                        <div class="card-header">
+                            <span class="card-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="2"></circle>
+                                    <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path>
+                                </svg>
+                                SENSORS DISCOVERY
+                            </span>
+                            <span class="card-badge" style="color: var(--color-accent-secondary); border-color: rgba(56, 189, 248, 0.4);">PROBED</span>
+                        </div>
+
+                        <div class="sensor-chips-grid" id="sensors-chips-container">
+                            <!-- Dynamically populated by SensorsLab -->
+                        </div>
+
+                        <div class="axis-grid">
+                            <div class="axis-box">
+                                <div class="axis-label">ACCEL X</div>
+                                <div class="axis-val" id="accel-x">0.00</div>
+                            </div>
+                            <div class="axis-box">
+                                <div class="axis-label">ACCEL Y</div>
+                                <div class="axis-val" id="accel-y">0.00</div>
+                            </div>
+                            <div class="axis-box">
+                                <div class="axis-label">ACCEL Z</div>
+                                <div class="axis-val" id="accel-z">9.81</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 10px; width: 100%; height: 50px; background: var(--color-surface-card-subtle); border-radius: var(--radius-sm); overflow: hidden; border: var(--border-subtle);">
+                            <canvas id="sensor-sparkline" style="width: 100%; height: 100%;"></canvas>
+                        </div>
+                    </section>
+
+                    <!-- Widget 4: Workstation Link (PC Agent Status) -->
+                    <section class="cyber-card" id="card-pc">
+                        <div class="card-header">
+                            <span class="card-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                                </svg>
+                                HOST WORKSTATION LINK
+                            </span>
+                            <span class="status-pill" style="color: #9CA3AF;">OFFLINE</span>
+                        </div>
+
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">TARGET HOST</span>
+                            <span class="telemetry-val">Lenovo LOQ (Win 11)</span>
+                        </div>
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">GPU STATUS</span>
+                            <span class="telemetry-val cyan">RTX 3050 (Phase 4)</span>
+                        </div>
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">CHANNELS</span>
+                            <span class="telemetry-val" style="font-size: 10px;">[Wi-Fi] [USB] [Tailscale]</span>
+                        </div>
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">SECURITY</span>
+                            <span class="telemetry-val neon">TLS Pinned / Keystore</span>
+                        </div>
+
+                        <div style="margin-top: 8px; padding: 6px; background: rgba(53, 54, 156, 0.2); border: var(--border-indigo); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); text-align: center;">
+                            HOST AGENT AWAITS PHASE 3 DEPLOYMENT
+                        </div>
+                    </section>
+
+                    <!-- Widget 5: Quick Command Deck (Phase 1 Controls) -->
+                    <section class="cyber-card" id="card-controls">
+                        <div class="card-header">
+                            <span class="card-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="4 17 10 11 4 5"></polyline>
+                                    <line x1="12" y1="19" x2="20" y2="19"></line>
+                                </svg>
+                                PANEL HARDWARE CONTROLS
+                            </span>
+                            <span class="card-badge">DIRECT IPC</span>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="cyber-btn" onclick="DeskOS.setMode('idle')">DIM DISPLAY</button>
+                            <button class="cyber-btn" onclick="UIBridge.setKeepScreenOn(true)">WAKELOCK ON</button>
+                            <button class="cyber-btn" onclick="UIBridge.triggerHaptic('pulse')">HAPTIC TEST</button>
+                            <button class="cyber-btn" onclick="DeskOS.setMode('screensaver')">RUN RADAR</button>
+                        </div>
+                    </section>
+
+                    <!-- Widget 6: Personal Space Snapshot -->
+                    <section class="cyber-card col-span-2" id="card-notes">
+                        <div class="card-header">
+                            <span class="card-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                DESK SCRATCHPAD (OFFLINE INDEXEDDB)
+                            </span>
+                            <span class="card-badge">AUTO-SAVED</span>
+                        </div>
+
+                        <textarea id="quick-notes-textarea" rows="3" placeholder="Type quick notes, scratchpad items, or workstation reminders here..." style="width: 100%; background: var(--color-surface-card-subtle); border: var(--border-subtle); border-radius: var(--radius-sm); color: var(--color-text-primary); font-family: var(--font-mono); font-size: 12px; padding: 8px; resize: none; outline: none;"></textarea>
+                    </section>
+
+                </div>
+            </div>
+
+            <!-- =============================================================== -->
+            <!-- VIEW 2: PERSONAL SPACE (Phase 2 Suite)                          -->
+            <!-- =============================================================== -->
+            <div id="view-personal-space" style="display: none; flex-direction: column; height: 100%;">
+                
+                <!-- Subnavigation Tabs -->
+                <nav class="personal-subnav">
+                    <button class="subnav-btn active" id="subnav-notes" onclick="DeskOS.switchPersonalSubTab('notes')">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                        NOTES
+                    </button>
+                    <button class="subnav-btn" id="subnav-tasks" onclick="DeskOS.switchPersonalSubTab('tasks')">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                        TASKS
+                    </button>
+                    <button class="subnav-btn" id="subnav-timers" onclick="DeskOS.switchPersonalSubTab('timers')">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        TIMERS
+                    </button>
+                    <button class="subnav-btn" id="subnav-calendar" onclick="DeskOS.switchPersonalSubTab('calendar')">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        CALENDAR
+                    </button>
+                </nav>
+
+                <!-- 1. Notes Subpane -->
+                <div class="personal-view-pane active" id="pane-notes">
+                    <div class="notes-container">
+                        <aside class="notes-sidebar">
+                            <div class="notes-sidebar-header">
+                                <input type="text" id="notes-search-input" class="cyber-input" placeholder="SEARCH NOTES...">
+                                <button class="cyber-btn active" onclick="NotesModule.createNote()" style="width: 100%;">+ NEW NOTE</button>
+                            </div>
+                            <div id="notes-list-container" class="notes-list-scroll">
+                                <!-- Populated dynamically by NotesModule -->
+                            </div>
+                        </aside>
+
+                        <section class="note-editor-area">
+                            <div class="note-editor-header">
+                                <input type="text" id="note-title-input" class="cyber-input" placeholder="NOTE TITLE..." style="font-weight: 700; font-size: 14px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="card-badge" id="note-save-status">SYNCED</span>
+                                    <button class="cyber-btn" onclick="NotesModule.deleteActiveNote()" title="Delete Current Note" style="color: var(--color-alert-danger);">DELETE</button>
+                                </div>
+                            </div>
+                            <textarea id="note-body-textarea" class="note-body-text" placeholder="Enter workstation notes, ideas, code fragments, or task reminders here..."></textarea>
+                        </section>
+                    </div>
+                </div>
+
+                <!-- 2. Tasks Subpane -->
+                <div class="personal-view-pane" id="pane-tasks">
+                    <div class="tasks-container">
+                        <!-- Task Lists Selector Bar -->
+                        <div class="cyber-card" style="padding: 10px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+                                <div style="display: flex; align-items: center; gap: 6px; overflow-x: auto;">
+                                    <span class="telemetry-label" style="margin-right: 4px;">LISTS:</span>
+                                    <div id="task-lists-tabs" class="tasks-tabs-row">
+                                        <!-- Dynamically populated by TasksModule -->
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="cyber-btn" onclick="TasksModule.createList()">+ LIST</button>
+                                    <button class="cyber-btn" onclick="TasksModule.deleteActiveList()">DEL</button>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                                <span class="card-title" id="active-task-list-title">OPERATIONS</span>
+                                <span class="telemetry-val neon" id="tasks-progress-label">0 / 0 (0%)</span>
+                            </div>
+                            <div class="meter-container" style="margin-top: 4px; margin-bottom: 0;">
+                                <div class="meter-track">
+                                    <div class="meter-bar" id="tasks-progress-bar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add Task Input Row -->
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="new-task-input" class="cyber-input" placeholder="ADD TASK ITEM..." style="flex: 1;">
+                            <button class="cyber-btn active" id="add-task-btn">+ ADD</button>
+                            <button class="cyber-btn" onclick="TasksModule.clearCompleted()" title="Clear Completed Tasks">CLEAN</button>
+                        </div>
+
+                        <!-- Tasks Items List -->
+                        <div id="tasks-items-container" style="overflow-y: auto; max-height: calc(100vh - 280px);">
+                            <!-- Dynamically populated by TasksModule -->
                         </div>
                     </div>
+                </div>
 
-                    <div class="telemetry-row">
-                        <span class="telemetry-label">THERMAL CORE</span>
-                        <span class="telemetry-val neon" id="battery-temp-val">--.-°C</span>
-                    </div>
-                    <div class="telemetry-row">
-                        <span class="telemetry-label">VOLTAGE</span>
-                        <span class="telemetry-val cyan" id="battery-volt-val">---- mV</span>
-                    </div>
-                    <div class="telemetry-row">
-                        <span class="telemetry-label">DEVICE SOC</span>
-                        <span class="telemetry-val" id="device-model-val">Helio P22 / 3GB</span>
-                    </div>
-                    <div class="telemetry-row">
-                        <span class="telemetry-label">ENVIRONMENT</span>
-                        <span class="telemetry-val" id="device-os-val">Android 11</span>
-                    </div>
+                <!-- 3. Timers Subpane -->
+                <div class="personal-view-pane" id="pane-timers">
+                    <div class="timers-grid">
+                        
+                        <!-- Pomodoro Focus Card -->
+                        <div class="timer-card accent-border">
+                            <div class="card-header" style="width: 100%;">
+                                <span class="card-title">POMODORO FOCUS ENGINE</span>
+                                <span class="card-badge" id="pomo-state-label">WORK</span>
+                            </div>
 
-                    <div id="battery-alert-badge" style="display: none; font-family: var(--font-mono); font-size: 10px; margin-top: 8px; padding: 4px; border: 1px dashed #F59E0B; text-align: center;"></div>
-                </section>
+                            <div class="pomo-circle-wrap">
+                                <svg class="pomo-svg" viewBox="0 0 120 120">
+                                    <circle cx="60" cy="60" r="52" class="pomo-circle-bg"></circle>
+                                    <circle cx="60" cy="60" r="52" id="pomo-progress-ring" class="pomo-circle-bar" stroke-dasharray="326.72" stroke-dashoffset="0"></circle>
+                                </svg>
+                                <div class="pomo-center-content">
+                                    <div class="pomo-time-text" id="pomo-time-display">25:00</div>
+                                    <div class="pomo-state-text" id="pomo-sessions-label">COMPLETED: #0</div>
+                                </div>
+                            </div>
 
-                <!-- Widget 3: Dynamic Sensors Lab Preview -->
-                <section class="cyber-card" id="card-sensors">
-                    <div class="card-header">
-                        <span class="card-title">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="2"></circle>
-                                <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path>
-                            </svg>
-                            SENSORS DISCOVERY
-                        </span>
-                        <span class="card-badge" style="color: var(--color-accent-secondary); border-color: rgba(56, 189, 248, 0.4);">PROBED</span>
-                    </div>
-
-                    <div class="sensor-chips-grid" id="sensors-chips-container">
-                        <!-- Dynamically populated by SensorsLab -->
-                    </div>
-
-                    <div class="axis-grid">
-                        <div class="axis-box">
-                            <div class="axis-label">ACCEL X</div>
-                            <div class="axis-val" id="accel-x">0.00</div>
+                            <div class="btn-group" style="width: 100%;">
+                                <button class="cyber-btn" id="pomo-toggle-btn" onclick="TimersModule.startPomodoro()">START</button>
+                                <button class="cyber-btn" onclick="TimersModule.pausePomodoro()">PAUSE</button>
+                                <button class="cyber-btn" onclick="TimersModule.resetPomodoro()">RESET</button>
+                                <button class="cyber-btn" onclick="TimersModule.skipPomodoro()">SKIP</button>
+                            </div>
                         </div>
-                        <div class="axis-box">
-                            <div class="axis-label">ACCEL Y</div>
-                            <div class="axis-val" id="accel-y">0.00</div>
+
+                        <!-- Precision Stopwatch Card -->
+                        <div class="timer-card">
+                            <div class="card-header" style="width: 100%;">
+                                <span class="card-title">PRECISION STOPWATCH</span>
+                                <span class="card-badge" style="color: var(--color-accent-secondary); border-color: rgba(56, 189, 248, 0.4);">30 FPS</span>
+                            </div>
+
+                            <div class="stopwatch-big-digits" id="stopwatch-time-display">00:00.00</div>
+                            <div class="telemetry-label" style="margin-bottom: 8px;">ACCURACY: 10 MS CHRONOMETER</div>
+
+                            <div class="btn-group" style="width: 100%;">
+                                <button class="cyber-btn" id="stopwatch-toggle-btn" onclick="TimersModule.startStopwatch()">START</button>
+                                <button class="cyber-btn" onclick="TimersModule.recordLap()">LAP</button>
+                                <button class="cyber-btn col-span-2" onclick="TimersModule.resetStopwatch()">RESET</button>
+                            </div>
+
+                            <div id="stopwatch-laps-list" class="laps-scroll-box">
+                                <!-- Populated dynamically by TimersModule -->
+                            </div>
                         </div>
-                        <div class="axis-box">
-                            <div class="axis-label">ACCEL Z</div>
-                            <div class="axis-val" id="accel-z">9.81</div>
+
+                        <!-- Custom Countdown Card -->
+                        <div class="timer-card">
+                            <div class="card-header" style="width: 100%;">
+                                <span class="card-title">CUSTOM COUNTDOWN</span>
+                                <span class="card-badge">NOTIFICATIONS ARMED</span>
+                            </div>
+
+                            <div class="countdown-big-digits" id="countdown-time-display">05:00</div>
+                            <div class="meter-container" style="max-width: 260px; margin: 0 auto 10px;">
+                                <div class="meter-track">
+                                    <div class="meter-bar" id="countdown-progress-bar" style="width: 100%; background-color: var(--color-accent-secondary);"></div>
+                                </div>
+                            </div>
+
+                            <div class="presets-row">
+                                <button class="cyber-btn" onclick="TimersModule.setCountdownMinutes(1)" style="padding: 4px 8px; font-size: 10px;">1 MIN</button>
+                                <button class="cyber-btn" onclick="TimersModule.setCountdownMinutes(5)" style="padding: 4px 8px; font-size: 10px;">5 MIN</button>
+                                <button class="cyber-btn" onclick="TimersModule.setCountdownMinutes(15)" style="padding: 4px 8px; font-size: 10px;">15 MIN</button>
+                                <button class="cyber-btn" onclick="TimersModule.setCountdownMinutes(25)" style="padding: 4px 8px; font-size: 10px;">25 MIN</button>
+                                <button class="cyber-btn" onclick="TimersModule.addCountdownTime(60)" style="padding: 4px 8px; font-size: 10px;">+1 MIN</button>
+                            </div>
+
+                            <div class="btn-group" style="width: 100%;">
+                                <button class="cyber-btn" id="countdown-toggle-btn" onclick="TimersModule.startCountdown()">START</button>
+                                <button class="cyber-btn" onclick="TimersModule.pauseCountdown()">PAUSE</button>
+                                <button class="cyber-btn col-span-2" onclick="TimersModule.resetCountdown()">RESET</button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div style="margin-top: 10px; width: 100%; height: 50px; background: var(--color-surface-card-subtle); border-radius: var(--radius-sm); overflow: hidden; border: var(--border-subtle);">
-                        <canvas id="sensor-sparkline" style="width: 100%; height: 100%;"></canvas>
                     </div>
-                </section>
+                </div>
 
-                <!-- Widget 4: Workstation Link (PC Agent Status) -->
-                <section class="cyber-card" id="card-pc">
-                    <div class="card-header">
-                        <span class="card-title">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                                <line x1="8" y1="21" x2="16" y2="21"></line>
-                                <line x1="12" y1="17" x2="12" y2="21"></line>
-                            </svg>
-                            HOST WORKSTATION LINK
-                        </span>
-                        <span class="status-pill" style="color: #9CA3AF;">OFFLINE</span>
-                    </div>
+                <!-- 4. Calendar Subpane -->
+                <div class="personal-view-pane" id="pane-calendar">
+                    <div class="calendar-layout">
+                        
+                        <!-- Month Grid Card -->
+                        <div class="calendar-card">
+                            <div class="cal-header-bar">
+                                <span class="cal-month-title" id="cal-month-year">CALENDAR</span>
+                                <div style="display: flex; gap: 4px;">
+                                    <button class="cyber-btn" id="cal-prev-month" style="padding: 4px 8px;">◀</button>
+                                    <button class="cyber-btn" id="cal-today-btn" style="padding: 4px 8px;">TODAY</button>
+                                    <button class="cyber-btn" id="cal-next-month" style="padding: 4px 8px;">▶</button>
+                                </div>
+                            </div>
 
-                    <div class="telemetry-row">
-                        <span class="telemetry-label">TARGET HOST</span>
-                        <span class="telemetry-val">Lenovo LOQ (Win 11)</span>
-                    </div>
-                    <div class="telemetry-row">
-                        <span class="telemetry-label">GPU STATUS</span>
-                        <span class="telemetry-val cyan">RTX 3050 (Phase 4)</span>
-                    </div>
-                    <div class="telemetry-row">
-                        <span class="telemetry-label">CHANNELS</span>
-                        <span class="telemetry-val" style="font-size: 10px;">[Wi-Fi] [USB] [Tailscale]</span>
-                    </div>
-                    <div class="telemetry-row">
-                        <span class="telemetry-label">SECURITY</span>
-                        <span class="telemetry-val neon">TLS Pinned / Keystore</span>
-                    </div>
+                            <div class="cal-days-header-row">
+                                <span>SU</span><span>MO</span><span>TU</span><span>WE</span><span>TH</span><span>FR</span><span>SA</span>
+                            </div>
 
-                    <div style="margin-top: 8px; padding: 6px; background: rgba(53, 54, 156, 0.2); border: var(--border-indigo); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); text-align: center;">
-                        HOST AGENT AWAITS PHASE 3 DEPLOYMENT
-                    </div>
-                </section>
+                            <div id="cal-days-grid" class="cal-days-grid">
+                                <!-- Populated dynamically by CalendarModule -->
+                            </div>
+                        </div>
 
-                <!-- Widget 5: Quick Command Deck (Phase 1 Controls) -->
-                <section class="cyber-card" id="card-controls">
-                    <div class="card-header">
-                        <span class="card-title">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="4 17 10 11 4 5"></polyline>
-                                <line x1="12" y1="19" x2="20" y2="19"></line>
-                            </svg>
-                            PANEL HARDWARE CONTROLS
-                        </span>
-                        <span class="card-badge">DIRECT IPC</span>
-                    </div>
+                        <!-- Reminders Scheduler Panel -->
+                        <div class="reminders-panel">
+                            <div class="card-header" style="margin-bottom: 0;">
+                                <span class="card-title" id="active-date-reminders-label">REMINDERS</span>
+                                <span class="card-badge">10S SCANNER</span>
+                            </div>
 
-                    <div class="btn-group">
-                        <button class="cyber-btn" onclick="DeskOS.setMode('idle')">DIM DISPLAY</button>
-                        <button class="cyber-btn" onclick="UIBridge.setKeepScreenOn(true)">WAKELOCK ON</button>
-                        <button class="cyber-btn" onclick="UIBridge.triggerHaptic('pulse')">HAPTIC TEST</button>
-                        <button class="cyber-btn" onclick="DeskOS.setMode('screensaver')">RUN RADAR</button>
-                    </div>
-                </section>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <input type="text" id="new-rem-title" class="cyber-input" placeholder="REMINDER DESCRIPTION...">
+                                <div style="display: flex; gap: 8px;">
+                                    <input type="time" id="new-rem-time" class="cyber-input" value="12:00" style="flex: 1;">
+                                    <select id="new-rem-priority" class="cyber-input" style="width: 110px;">
+                                        <option value="NORMAL">NORMAL</option>
+                                        <option value="HIGH">HIGH</option>
+                                        <option value="URGENT">URGENT</option>
+                                    </select>
+                                </div>
+                                <button class="cyber-btn active" id="add-reminder-btn">+ SCHEDULE REMINDER</button>
+                            </div>
 
-                <!-- Widget 6: Personal Space Snapshot -->
-                <section class="cyber-card col-span-2" id="card-notes">
-                    <div class="card-header">
-                        <span class="card-title">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                            </svg>
-                            DESK SCRATCHPAD (OFFLINE INDEXEDDB)
-                        </span>
-                        <span class="card-badge">AUTO-SAVED</span>
-                    </div>
+                            <div id="reminders-list-container" style="overflow-y: auto; max-height: 240px;">
+                                <!-- Populated dynamically by CalendarModule -->
+                            </div>
+                        </div>
 
-                    <textarea id="quick-notes-textarea" rows="3" placeholder="Type quick notes, scratchpad items, or workstation reminders here..." style="width: 100%; background: var(--color-surface-card-subtle); border: var(--border-subtle); border-radius: var(--radius-sm); color: var(--color-text-primary); font-family: var(--font-mono); font-size: 12px; padding: 8px; resize: none; outline: none;"></textarea>
-                </section>
+                    </div>
+                </div>
 
             </div>
+
         </main>
 
         <!-- Mode 2: Dimmed Idle Mode Overlay -->
@@ -251,10 +495,14 @@
     <!-- Subsystem Scripts -->
     <script src="js/storage.js"></script>
     <script src="js/ui-bridge.js"></script>
+    <script src="js/audio-synth.js"></script>
     <script src="js/canvas-graphs.js"></script>
     <script src="js/sensors.js"></script>
     <script src="js/widgets.js"></script>
+    <script src="js/notes.js"></script>
+    <script src="js/tasks.js"></script>
+    <script src="js/timers.js"></script>
+    <script src="js/calendar.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
-

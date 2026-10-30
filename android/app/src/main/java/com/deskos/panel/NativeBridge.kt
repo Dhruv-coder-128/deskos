@@ -17,13 +17,14 @@ import org.json.JSONObject
 class NativeBridge(
     private val activity: Activity,
     private val powerHelper: PowerHelper,
-    private val sensorHelper: SensorHelper
+    private val sensorHelper: SensorHelper,
+    private val notificationHelper: NotificationHelper
 ) {
 
     @JavascriptInterface
     fun getDeviceInfo(): String {
         val json = JSONObject().apply {
-            put("appVersion", "1.0.0 (Phase 1)")
+            put("appVersion", "1.1.0 (Phase 2 Personal Space)")
             put("manufacturer", Build.MANUFACTURER)
             put("model", Build.MODEL)
             put("device", Build.DEVICE)
@@ -31,6 +32,7 @@ class NativeBridge(
             put("sdkInt", Build.VERSION.SDK_INT)
             put("battery", powerHelper.getStatusJson())
             put("sensorCapabilities", sensorHelper.getCapabilitiesJson())
+            put("hasNotificationPermission", notificationHelper.hasNotificationPermission())
         }
         return json.toString()
     }
@@ -93,6 +95,7 @@ class NativeBridge(
             "click" -> 20L
             "warning" -> 150L
             "pulse" -> 50L
+            "alarm" -> 300L
             else -> 20L
         }
 
@@ -103,5 +106,23 @@ class NativeBridge(
             vibrator.vibrate(durationMs)
         }
     }
-}
 
+    @JavascriptInterface
+    fun showNotification(title: String?, message: String?): Boolean {
+        val safeTitle = title?.take(100) ?: "DESK OS Reminder"
+        val safeMsg = message?.take(250) ?: "Scheduled alert"
+        return notificationHelper.sendNotification(safeTitle, safeMsg)
+    }
+
+    @JavascriptInterface
+    fun checkNotificationPermission(): Boolean {
+        return notificationHelper.hasNotificationPermission()
+    }
+
+    @JavascriptInterface
+    fun requestNotificationPermission() {
+        activity.runOnUiThread {
+            notificationHelper.requestNotificationPermission(activity)
+        }
+    }
+}

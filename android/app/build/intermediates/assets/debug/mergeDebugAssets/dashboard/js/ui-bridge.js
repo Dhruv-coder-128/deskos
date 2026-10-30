@@ -103,6 +103,33 @@ const UIBridge = (() => {
             if (isNative && window.DeskOSBridge.triggerHaptic) {
                 window.DeskOSBridge.triggerHaptic(type);
             }
+        },
+
+        showNotification(title, message) {
+            if (isNative && window.DeskOSBridge.showNotification) {
+                return window.DeskOSBridge.showNotification(title, message);
+            } else if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, { body: message });
+                return true;
+            }
+            return false;
+        },
+
+        checkNotificationPermission() {
+            if (isNative && window.DeskOSBridge.checkNotificationPermission) {
+                return window.DeskOSBridge.checkNotificationPermission();
+            } else if ('Notification' in window) {
+                return Notification.permission === 'granted';
+            }
+            return true;
+        },
+
+        requestNotificationPermission() {
+            if (isNative && window.DeskOSBridge.requestNotificationPermission) {
+                window.DeskOSBridge.requestNotificationPermission();
+            } else if ('Notification' in window && Notification.permission !== 'granted') {
+                Notification.requestPermission();
+            }
         }
     };
 })();

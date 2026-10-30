@@ -1,6 +1,6 @@
 /**
  * DESK OS — Core Application Orchestrator
- * Coordinates Clock, Mode Transitions, Power Governor, and Touch Lifecycle.
+ * Coordinates Clock, Mode Transitions, Power Governor, and Personal Space Suite.
  */
 
 const DeskOS = (() => {
@@ -13,6 +13,9 @@ const DeskOS = (() => {
     };
 
     let currentMode = MODES.ACTIVE;
+    let activeMainView = 'command-center'; // 'command-center' or 'personal-space'
+    let activePersonalSubTab = 'notes';   // 'notes', 'tasks', 'timers', 'calendar'
+
     let inactivityTimer = null;
     let screensaverTimer = null;
     let clockInterval = null;
@@ -23,7 +26,7 @@ const DeskOS = (() => {
 
     return {
         async init() {
-            console.log('[DESK OS] Booting Phase 1 Cyberpunk Dashboard...');
+            console.log('[DESK OS] Booting Phase 1 + Phase 2 Workstation Panel...');
 
             // Initialize Subsystems
             const deviceInfo = UIBridge.getDeviceInfo();
@@ -32,7 +35,13 @@ const DeskOS = (() => {
             SensorsLab.init(deviceInfo.sensorCapabilities || {});
             await WidgetManager.init();
 
-            // Load saved scratchpad note
+            // Initialize Phase 2 Personal Space Modules
+            await NotesModule.init();
+            await TasksModule.init();
+            await TimersModule.init();
+            await CalendarModule.init();
+
+            // Load saved scratchpad note (Phase 1 widget)
             this.initNotes();
 
             // Start Lifecycle Loops
@@ -104,8 +113,18 @@ const DeskOS = (() => {
                 statusEl.className = `status-pill ${b.isCharging ? 'active' : ''}`;
             }
 
-            if (voltEl) voltEl.textContent = `${b.voltageMv} mV`;
+            // Corrected, Normalized Battery Voltage
+            if (voltEl) {
+                const rawMv = b.voltageMv;
+                if (rawMv > 0) {
+                    const normalizedMv = rawMv > 100000 ? Math.round(rawMv / 1000) : rawMv;
+                    voltEl.textContent = `${(normalizedMv / 1000).toFixed(2)} V (${normalizedMv} mV)`;
+                } else {
+                    voltEl.textContent = '---- mV';
+                }
+            }
 
+            // Corrected Battery Temperature
             if (tempEl) {
                 tempEl.textContent = `${b.temperatureC}°C`;
                 // Thermal Color Governance
@@ -155,9 +174,49 @@ const DeskOS = (() => {
             });
         },
 
+        // =====================================================================
+        // VIEW SWITCHING (COMMAND CENTER vs PERSONAL SPACE)
+        // =====================================================================
+        switchView(viewName) {
+            activeMainView = viewName;
+            const ccView = document.getElementById('view-command-center');
+            const psView = document.getElementById('view-personal-space');
+            const tabCc = document.getElementById('tab-btn-cc');
+            const tabPs = document.getElementById('tab-btn-ps');
+
+            if (viewName === 'command-center') {
+                if (ccView) ccView.style.display = 'block';
+                if (psView) psView.style.display = 'none';
+                if (tabCc) tabCc.classList.add('active');
+                if (tabPs) tabPs.classList.remove('active');
+            } else {
+                if (ccView) ccView.style.display = 'none';
+                if (psView) psView.style.display = 'flex';
+                if (tabCc) tabCc.classList.remove('active');
+                if (tabPs) tabPs.classList.add('active');
+            }
+
+            AudioSynth.playChime('tick');
+            UIBridge.triggerHaptic('click');
+        },
+
+        switchPersonalSubTab(tabName) {
+            activePersonalSubTab = tabName;
+            const tabs = ['notes', 'tasks', 'timers', 'calendar'];
+
+            tabs.forEach(t => {
+                const pane = document.getElementById(`pane-${t}`);
+                const btn = document.getElementById(`subnav-${t}`);
+                if (pane) pane.classList.toggle('active', t === tabName);
+                if (btn) btn.classList.toggle('active', t === tabName);
+            });
+
+            AudioSynth.playChime('tick');
+            UIBridge.triggerHaptic('click');
+        },
+
         setMode(mode) {
             currentMode = mode;
-            console.log('[DESK OS] Mode switched to:', mode);
 
             const idleOverlay = document.getElementById('idle-overlay');
             const ssOverlay = document.getElementById('screensaver-overlay');
@@ -241,4 +300,3 @@ const DeskOS = (() => {
 document.addEventListener('DOMContentLoaded', () => {
     DeskOS.init();
 });
-
