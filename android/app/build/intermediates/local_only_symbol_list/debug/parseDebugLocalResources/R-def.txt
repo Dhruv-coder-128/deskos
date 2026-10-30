@@ -1,0 +1,12 @@
+R_DEF: Internal format may change without notice
+local
+color desk_accent_primary
+color desk_accent_secondary
+color desk_accent_tertiary
+color desk_bg
+color desk_surface
+color desk_text_primary
+drawable ic_launcher_foreground
+string app_name
+style Theme.DeskOS
+xml network_security_config

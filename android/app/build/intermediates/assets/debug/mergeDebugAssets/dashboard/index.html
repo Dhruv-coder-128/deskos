@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>DESK OS — Workstation Control Panel</title>
+    <!-- Palette 3 & Layout Stylesheets -->
+    <link rel="stylesheet" href="css/theme-palette3.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <div id="app-container">
+        
+        <!-- Top Navigation & System Status Bar -->
+        <header class="top-nav">
+            <div class="brand-section">
+                <div class="logo-badge">
+                    <span class="pulse-dot"></span>
+                    <span>DESK OS // M01s</span>
+                </div>
+                <span class="status-pill active" id="connection-mode-pill">STANDALONE (MODE A)</span>
+            </div>
+
+            <div class="nav-status-group">
+                <span class="status-pill" id="battery-status-tag">INITIALIZING</span>
+                <button class="cyber-btn" onclick="DeskOS.setMode('idle')" title="Enter Dimmed Idle Mode">IDLE</button>
+                <button class="cyber-btn" onclick="DeskOS.setMode('screensaver')" title="Start Screensaver">RADAR</button>
+                <button class="cyber-btn" onclick="DeskOS.setMode('customize')" title="Customize Dashboard">CONFIG</button>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Viewport -->
+        <main class="dashboard-viewport">
+            <div class="widget-grid" id="main-widget-grid">
+
+                <!-- Widget 1: System Clock & Telemetry Hero -->
+                <section class="cyber-card accent-border col-span-2" id="card-clock">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            CHRONOMETER & TIMELINE
+                        </span>
+                        <span class="card-badge">LIVE 1.0 Hz</span>
+                    </div>
+
+                    <div class="clock-display">
+                        <div class="clock-digits">
+                            <span id="clock-hours-mins">00:00</span><span class="clock-seconds" id="clock-seconds">:00</span>
+                        </div>
+                        <div class="clock-date" id="clock-date">LOADING DATE...</div>
+                        <div class="clock-meta">TIMEZONE: LOCAL NODE // STANDALONE TIMEBASE</div>
+                    </div>
+                </section>
+
+                <!-- Widget 2: Hardware Health (Samsung Galaxy M01s) -->
+                <section class="cyber-card" id="card-battery">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="1" y="6" width="18" height="12" rx="2" ry="2"></rect>
+                                <line x1="23" y1="13" x2="23" y2="11"></line>
+                            </svg>
+                            HARDWARE POWER & THERMAL
+                        </span>
+                        <span class="telemetry-val neon" id="battery-pct-val">--%</span>
+                    </div>
+
+                    <div class="meter-container">
+                        <div class="meter-track">
+                            <div class="meter-bar" id="battery-bar" style="width: 0%;"></div>
+                            <div class="meter-marker-80" title="80% Conservative Charging Target"></div>
+                        </div>
+                    </div>
+
+                    <div class="telemetry-row">
+                        <span class="telemetry-label">THERMAL CORE</span>
+                        <span class="telemetry-val neon" id="battery-temp-val">--.-°C</span>
+                    </div>
+                    <div class="telemetry-row">
+                        <span class="telemetry-label">VOLTAGE</span>
+                        <span class="telemetry-val cyan" id="battery-volt-val">---- mV</span>
+                    </div>
+                    <div class="telemetry-row">
+                        <span class="telemetry-label">DEVICE SOC</span>
+                        <span class="telemetry-val" id="device-model-val">Helio P22 / 3GB</span>
+                    </div>
+                    <div class="telemetry-row">
+                        <span class="telemetry-label">ENVIRONMENT</span>
+                        <span class="telemetry-val" id="device-os-val">Android 11</span>
+                    </div>
+
+                    <div id="battery-alert-badge" style="display: none; font-family: var(--font-mono); font-size: 10px; margin-top: 8px; padding: 4px; border: 1px dashed #F59E0B; text-align: center;"></div>
+                </section>
+
+                <!-- Widget 3: Dynamic Sensors Lab Preview -->
+                <section class="cyber-card" id="card-sensors">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="2"></circle>
+                                <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path>
+                            </svg>
+                            SENSORS DISCOVERY
+                        </span>
+                        <span class="card-badge" style="color: var(--color-accent-secondary); border-color: rgba(56, 189, 248, 0.4);">PROBED</span>
+                    </div>
+
+                    <div class="sensor-chips-grid" id="sensors-chips-container">
+                        <!-- Dynamically populated by SensorsLab -->
+                    </div>
+
+                    <div class="axis-grid">
+                        <div class="axis-box">
+                            <div class="axis-label">ACCEL X</div>
+                            <div class="axis-val" id="accel-x">0.00</div>
+                        </div>
+                        <div class="axis-box">
+                            <div class="axis-label">ACCEL Y</div>
+                            <div class="axis-val" id="accel-y">0.00</div>
+                        </div>
+                        <div class="axis-box">
+                            <div class="axis-label">ACCEL Z</div>
+                            <div class="axis-val" id="accel-z">9.81</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 10px; width: 100%; height: 50px; background: var(--color-surface-card-subtle); border-radius: var(--radius-sm); overflow: hidden; border: var(--border-subtle);">
+                        <canvas id="sensor-sparkline" style="width: 100%; height: 100%;"></canvas>
+                    </div>
+                </section>
+
+                <!-- Widget 4: Workstation Link (PC Agent Status) -->
+                <section class="cyber-card" id="card-pc">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                            HOST WORKSTATION LINK
+                        </span>
+                        <span class="status-pill" style="color: #9CA3AF;">OFFLINE</span>
+                    </div>
+
+                    <div class="telemetry-row">
+                        <span class="telemetry-label">TARGET HOST</span>
+                        <span class="telemetry-val">Lenovo LOQ (Win 11)</span>
+                    </div>
+                    <div class="telemetry-row">
+                        <span class="telemetry-label">GPU STATUS</span>
+                        <span class="telemetry-val cyan">RTX 3050 (Phase 4)</span>
+                    </div>
+                    <div class="telemetry-row">
+                        <span class="telemetry-label">CHANNELS</span>
+                        <span class="telemetry-val" style="font-size: 10px;">[Wi-Fi] [USB] [Tailscale]</span>
+                    </div>
+                    <div class="telemetry-row">
+                        <span class="telemetry-label">SECURITY</span>
+                        <span class="telemetry-val neon">TLS Pinned / Keystore</span>
+                    </div>
+
+                    <div style="margin-top: 8px; padding: 6px; background: rgba(53, 54, 156, 0.2); border: var(--border-indigo); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); text-align: center;">
+                        HOST AGENT AWAITS PHASE 3 DEPLOYMENT
+                    </div>
+                </section>
+
+                <!-- Widget 5: Quick Command Deck (Phase 1 Controls) -->
+                <section class="cyber-card" id="card-controls">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 17 10 11 4 5"></polyline>
+                                <line x1="12" y1="19" x2="20" y2="19"></line>
+                            </svg>
+                            PANEL HARDWARE CONTROLS
+                        </span>
+                        <span class="card-badge">DIRECT IPC</span>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="cyber-btn" onclick="DeskOS.setMode('idle')">DIM DISPLAY</button>
+                        <button class="cyber-btn" onclick="UIBridge.setKeepScreenOn(true)">WAKELOCK ON</button>
+                        <button class="cyber-btn" onclick="UIBridge.triggerHaptic('pulse')">HAPTIC TEST</button>
+                        <button class="cyber-btn" onclick="DeskOS.setMode('screensaver')">RUN RADAR</button>
+                    </div>
+                </section>
+
+                <!-- Widget 6: Personal Space Snapshot -->
+                <section class="cyber-card col-span-2" id="card-notes">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            DESK SCRATCHPAD (OFFLINE INDEXEDDB)
+                        </span>
+                        <span class="card-badge">AUTO-SAVED</span>
+                    </div>
+
+                    <textarea id="quick-notes-textarea" rows="3" placeholder="Type quick notes, scratchpad items, or workstation reminders here..." style="width: 100%; background: var(--color-surface-card-subtle); border: var(--border-subtle); border-radius: var(--radius-sm); color: var(--color-text-primary); font-family: var(--font-mono); font-size: 12px; padding: 8px; resize: none; outline: none;"></textarea>
+                </section>
+
+            </div>
+        </main>
+
+        <!-- Mode 2: Dimmed Idle Mode Overlay -->
+        <div id="idle-overlay" class="mode-view">
+            <div class="idle-clock" id="idle-clock-display">00:00:00</div>
+            <div style="font-family: var(--font-mono); font-size: 13px; color: var(--color-accent-secondary); margin-top: 10px;">IDLE MODE // LOW BACKLIGHT POWER</div>
+            <div class="idle-hint">[ TAP SCREEN TO RESUME WORKSTATION ]</div>
+        </div>
+
+        <!-- Mode 3: Futuristic Screensaver Overlay (5 FPS Radar Trace) -->
+        <div id="screensaver-overlay" class="mode-view">
+            <canvas id="screensaver-canvas"></canvas>
+            <div class="screensaver-hud">
+                <div>DESK OS // SCREENSAVER</div>
+                <div id="screensaver-time" style="font-size: 18px; font-weight: 700; color: #E5E7EB; margin-top: 4px;">00:00:00</div>
+                <div style="font-size: 10px; color: var(--color-text-dim); margin-top: 6px;">[ TAP ANYWHERE TO WAKE ]</div>
+            </div>
+        </div>
+
+        <!-- Mode 4: Customization Modal -->
+        <div id="customize-modal" class="modal-overlay">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <span class="modal-title">DASHBOARD WIDGET CONFIG</span>
+                    <button class="cyber-btn" onclick="DeskOS.setMode('active')" style="padding: 4px 8px;">✕</button>
+                </div>
+                <div style="margin: 10px 0; font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted);">
+                    Toggle card visibility or reorder tiles on the grid:
+                </div>
+                <div id="widget-customizer-list" style="overflow-y: auto; max-height: 50vh;">
+                    <!-- Populated by WidgetManager -->
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 16px;">
+                    <button class="cyber-btn" onclick="WidgetManager.resetDefaults()">RESET DEFAULTS</button>
+                    <button class="cyber-btn active" onclick="DeskOS.setMode('active')">SAVE & CLOSE</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Subsystem Scripts -->
+    <script src="js/storage.js"></script>
+    <script src="js/ui-bridge.js"></script>
+    <script src="js/canvas-graphs.js"></script>
+    <script src="js/sensors.js"></script>
+    <script src="js/widgets.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
+

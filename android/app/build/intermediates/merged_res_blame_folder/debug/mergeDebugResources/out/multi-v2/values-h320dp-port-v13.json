@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.deskos.panel.app-mergeDebugResources-32:/values-h320dp-port-v13/values-h320dp-port-v13.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\dusha\\.gradle\\caches\\9.7.1\\transforms\\88e5ac48bcaae1274ea47960b37b6762\\transformed\\material-1.12.0\\res\\values-h320dp-port-v13\\values-h320dp-port-v13.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "63",
+                        "endOffsets": "114"
+                    }
+                }
+            ]
+        }
+    ]
+}

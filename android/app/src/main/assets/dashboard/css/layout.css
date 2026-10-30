@@ -1,0 +1,176 @@
+/* ==========================================================================
+   DESK OS — RESPONSIVE WORKSTATION LAYOUT
+   Optimized for Samsung Galaxy M01s (720 x 1520 PLS TFT LCD)
+   Supports Portrait & Landscape Orientations
+   ========================================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    font-size: 14px;
+}
+
+#app-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-bg);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Header & Status Bar */
+.top-nav {
+    height: calc(48px + env(safe-area-inset-top, 0px));
+    min-height: calc(48px + env(safe-area-inset-top, 0px));
+    padding-top: env(safe-area-inset-top, 0px);
+    background-color: var(--color-surface-card-subtle);
+    border-bottom: var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: max(14px, env(safe-area-inset-left, 0px));
+    padding-right: max(14px, env(safe-area-inset-right, 0px));
+    z-index: 20;
+}
+
+.brand-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-badge {
+    font-family: var(--font-mono);
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    color: var(--color-accent-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--color-accent-primary);
+    box-shadow: 0 0 6px var(--color-accent-primary);
+    animation: neon-pulse 2s infinite ease-in-out;
+}
+
+@keyframes neon-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.85); }
+}
+
+.nav-status-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.status-pill {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface-card);
+    border: var(--border-subtle);
+    color: var(--color-text-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-pill.active {
+    border-color: rgba(0, 255, 71, 0.4);
+    color: var(--color-accent-primary);
+}
+
+.status-pill.cyan {
+    border-color: rgba(56, 189, 248, 0.4);
+    color: var(--color-accent-secondary);
+}
+
+/* Dashboard Viewport */
+.dashboard-viewport {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 12px;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Custom Scrollbar */
+.dashboard-viewport::-webkit-scrollbar {
+    width: 4px;
+}
+.dashboard-viewport::-webkit-scrollbar-thumb {
+    background: var(--color-surface-card);
+    border-radius: 2px;
+}
+
+/* Grid System: Default Portrait (2 Columns) */
+.widget-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 100%;
+}
+
+/* Landscape Mode Dock Layout (3 Columns) */
+@media (orientation: landscape) {
+    .widget-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .top-nav {
+        height: 42px;
+        min-height: 42px;
+        padding: 0 16px;
+    }
+}
+
+/* Full Width Card Utility */
+.col-span-2 {
+    grid-column: span 2;
+}
+
+@media (orientation: landscape) {
+    .col-span-3 {
+        grid-column: span 3;
+    }
+}
+
+/* Modes Views Management */
+.mode-view {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    background-color: var(--color-bg);
+}
+
+.mode-view.active {
+    display: flex;
+}
+

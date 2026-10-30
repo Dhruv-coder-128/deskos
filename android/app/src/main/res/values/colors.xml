@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Palette 3 Colors -->
+    <color name="desk_bg">#000000</color>
+    <color name="desk_accent_primary">#00FF47</color>
+    <color name="desk_surface">#1F2937</color>
+    <color name="desk_text_primary">#E5E7EB</color>
+    <color name="desk_accent_secondary">#38BDF8</color>
+    <color name="desk_accent_tertiary">#35369C</color>
+</resources>
+

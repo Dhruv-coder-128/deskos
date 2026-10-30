@@ -1,0 +1,37 @@
+com.deskos.panel.app-coordinatorlayout-1.1.0-0 C:\Users\dusha\.gradle\caches\9.7.1\transforms\09416bdaae462744a24f7404d0c33020\transformed\coordinatorlayout-1.1.0\res
+com.deskos.panel.app-cardview-1.0.0-1 C:\Users\dusha\.gradle\caches\9.7.1\transforms\1a894f79c967ded189f8515fe5d34fe1\transformed\cardview-1.0.0\res
+com.deskos.panel.app-savedstate-1.2.1-2 C:\Users\dusha\.gradle\caches\9.7.1\transforms\2324ce83e7729fcfe174de1e6b424edc\transformed\savedstate-1.2.1\res
+com.deskos.panel.app-drawerlayout-1.1.1-3 C:\Users\dusha\.gradle\caches\9.7.1\transforms\28818f38a6b949c16f828f971ac16c8b\transformed\drawerlayout-1.1.1\res
+com.deskos.panel.app-transition-1.5.0-4 C:\Users\dusha\.gradle\caches\9.7.1\transforms\2e67e0c62e18afe7942bb47246c2d764\transformed\transition-1.5.0\res
+com.deskos.panel.app-fragment-1.5.4-5 C:\Users\dusha\.gradle\caches\9.7.1\transforms\40f9f54e71efa7845e8d6743683ad77c\transformed\fragment-1.5.4\res
+com.deskos.panel.app-startup-runtime-1.1.1-6 C:\Users\dusha\.gradle\caches\9.7.1\transforms\52d7291a382c210bde29e16b2847ec40\transformed\startup-runtime-1.1.1\res
+com.deskos.panel.app-activity-1.8.0-7 C:\Users\dusha\.gradle\caches\9.7.1\transforms\56ebac301480bb36fa359a621598945a\transformed\activity-1.8.0\res
+com.deskos.panel.app-viewpager2-1.0.0-8 C:\Users\dusha\.gradle\caches\9.7.1\transforms\69c48a7ff1e91b83f9f2dbe339edf0c8\transformed\viewpager2-1.0.0\res
+com.deskos.panel.app-lifecycle-livedata-core-2.6.2-9 C:\Users\dusha\.gradle\caches\9.7.1\transforms\6bf0738c0971382f961c77c5a23655bd\transformed\lifecycle-livedata-core-2.6.2\res
+com.deskos.panel.app-core-1.15.0-10 C:\Users\dusha\.gradle\caches\9.7.1\transforms\72f5d6431f2b839591241e5bb3d9a25c\transformed\core-1.15.0\res
+com.deskos.panel.app-lifecycle-runtime-2.6.2-11 C:\Users\dusha\.gradle\caches\9.7.1\transforms\7485afc88f398036c12d1f2c59e774ed\transformed\lifecycle-runtime-2.6.2\res
+com.deskos.panel.app-material-1.12.0-12 C:\Users\dusha\.gradle\caches\9.7.1\transforms\88e5ac48bcaae1274ea47960b37b6762\transformed\material-1.12.0\res
+com.deskos.panel.app-constraintlayout-2.0.1-13 C:\Users\dusha\.gradle\caches\9.7.1\transforms\8b42b221eb48a68ebaa4e8ff69fa72f1\transformed\constraintlayout-2.0.1\res
+com.deskos.panel.app-emoji2-views-helper-1.3.0-14 C:\Users\dusha\.gradle\caches\9.7.1\transforms\9d092804cae705b2abe87b755917dd32\transformed\emoji2-views-helper-1.3.0\res
+com.deskos.panel.app-emoji2-1.3.0-15 C:\Users\dusha\.gradle\caches\9.7.1\transforms\9fd846b4221cf51a9e72080029c35e8b\transformed\emoji2-1.3.0\res
+com.deskos.panel.app-recyclerview-1.1.0-16 C:\Users\dusha\.gradle\caches\9.7.1\transforms\b20f9af950a3422cc3241144750f98b6\transformed\recyclerview-1.1.0\res
+com.deskos.panel.app-webkit-1.12.1-17 C:\Users\dusha\.gradle\caches\9.7.1\transforms\b26bdc9dbbf67fa7ddaca97322775296\transformed\webkit-1.12.1\res
+com.deskos.panel.app-lifecycle-viewmodel-2.6.2-18 C:\Users\dusha\.gradle\caches\9.7.1\transforms\bb8c28b14a4c9eb3ee09117d3f4e385c\transformed\lifecycle-viewmodel-2.6.2\res
+com.deskos.panel.app-lifecycle-viewmodel-savedstate-2.6.2-19 C:\Users\dusha\.gradle\caches\9.7.1\transforms\bd79db85075d6cd9370ead678b5200fa\transformed\lifecycle-viewmodel-savedstate-2.6.2\res
+com.deskos.panel.app-profileinstaller-1.3.1-20 C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\res
+com.deskos.panel.app-core-runtime-2.2.0-21 C:\Users\dusha\.gradle\caches\9.7.1\transforms\d0007eb2ad8c2920dd5785c5fec2c3aa\transformed\core-runtime-2.2.0\res
+com.deskos.panel.app-annotation-experimental-1.4.1-22 C:\Users\dusha\.gradle\caches\9.7.1\transforms\d998edb01126c68715095aa9b78686d3\transformed\annotation-experimental-1.4.1\res
+com.deskos.panel.app-appcompat-1.7.0-23 C:\Users\dusha\.gradle\caches\9.7.1\transforms\dd80e5266174c6cc021ac65e085b8edf\transformed\appcompat-1.7.0\res
+com.deskos.panel.app-core-ktx-1.15.0-24 C:\Users\dusha\.gradle\caches\9.7.1\transforms\e4b46089e4906fc549d365f05dd0e96d\transformed\core-ktx-1.15.0\res
+com.deskos.panel.app-tracing-1.2.0-25 C:\Users\dusha\.gradle\caches\9.7.1\transforms\e9e6f4af7cdf4851630f1189aa0bcc2e\transformed\tracing-1.2.0\res
+com.deskos.panel.app-security-crypto-1.1.0-alpha06-26 C:\Users\dusha\.gradle\caches\9.7.1\transforms\ed9043802ef72456e2ad0bbd9192f807\transformed\security-crypto-1.1.0-alpha06\res
+com.deskos.panel.app-appcompat-resources-1.7.0-27 C:\Users\dusha\.gradle\caches\9.7.1\transforms\eef0d1eee970ee3abe9fc916423f6a0f\transformed\appcompat-resources-1.7.0\res
+com.deskos.panel.app-lifecycle-livedata-2.6.2-28 C:\Users\dusha\.gradle\caches\9.7.1\transforms\f59ec2389c692b01e6ea3374d5277276\transformed\lifecycle-livedata-2.6.2\res
+com.deskos.panel.app-lifecycle-process-2.6.2-29 C:\Users\dusha\.gradle\caches\9.7.1\transforms\fc7ce391aa426a98deb56e29978fef5f\transformed\lifecycle-process-2.6.2\res
+com.deskos.panel.app-pngs-30 X:\ALL PROJECTS\deskOS\android\app\build\generated\res\pngs\debug
+com.deskos.panel.app-resValues-31 X:\ALL PROJECTS\deskOS\android\app\build\generated\res\resValues\debug
+com.deskos.panel.app-packageDebugResources-32 X:\ALL PROJECTS\deskOS\android\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.deskos.panel.app-packageDebugResources-33 X:\ALL PROJECTS\deskOS\android\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.deskos.panel.app-debug-34 X:\ALL PROJECTS\deskOS\android\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.deskos.panel.app-debug-35 X:\ALL PROJECTS\deskOS\android\app\src\debug\res
+com.deskos.panel.app-main-36 X:\ALL PROJECTS\deskOS\android\app\src\main\res

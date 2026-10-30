@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="desk_accent_primary">#00FF47</color>
+    <color name="desk_accent_secondary">#38BDF8</color>
+    <color name="desk_accent_tertiary">#35369C</color>
+    <color name="desk_bg">#000000</color>
+    <color name="desk_surface">#1F2937</color>
+    <color name="desk_text_primary">#E5E7EB</color>
+    <string name="app_name">DESK OS</string>
+    <style name="Theme.DeskOS" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/desk_bg</item>
+        <item name="android:statusBarColor">@color/desk_bg</item>
+        <item name="android:navigationBarColor">@color/desk_bg</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+</resources>
