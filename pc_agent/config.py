@@ -9,10 +9,16 @@ import secrets
 from pathlib import Path
 from typing import Dict, Any, Optional
 
-from pc_agent.crypto_utils import (
-    generate_pairing_pin,
-    hash_token
-)
+try:
+    from pc_agent.crypto_utils import (
+        generate_pairing_pin,
+        hash_token
+    )
+except ImportError:
+    from crypto_utils import (
+        generate_pairing_pin,
+        hash_token
+    )
 
 AGENT_VERSION = "1.0.0"
 DEFAULT_PORT = 8765
@@ -100,7 +106,7 @@ class PairingManager:
     def __init__(self):
         self.active_pin: str = generate_pairing_pin()
         self.pin_created_at: float = time.time()
-        self.pin_validity_seconds: int = 15 * 60  # 15 minutes validity
+        self.pin_validity_seconds: int = 5 * 60  # 5 minutes validity (Phase 6 OTP-only spec)
         self.failed_attempts: Dict[str, list] = {}  # ip -> list of timestamps
 
     def refresh_pin(self) -> str:

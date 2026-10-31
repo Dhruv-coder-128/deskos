@@ -54,16 +54,49 @@ class NativeBridge(
         return sensorHelper.getLiveReadingsJson().toString()
     }
 
+    private var previousBrightness: Float = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+
     @JavascriptInterface
     fun setScreenDimmed(dimmed: Boolean) {
+        // Sensible subtle dimming level (0.35f = 35% backlight). Interface remains clearly visible.
+        setBrightnessLevel(if (dimmed) 0.35f else -1.0f)
+    }
+
+    @JavascriptInterface
+    fun setBrightnessLevel(fraction: Float) {
         activity.runOnUiThread {
-            val layoutParams = activity.window.attributes
-            layoutParams.screenBrightness = if (dimmed) {
-                0.05f // Low-power 5% brightness for Idle and Screensaver modes
-            } else {
-                WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE // Restore user preference
+            val win = activity.window
+            val layoutParams = win.attributes
+            val currentBrightness = layoutParams.screenBrightness
+
+            val targetBrightness = when {
+                fraction < 0f -> {
+                    val restore = if (previousBrightness >= 0f) previousBrightness else WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+                    previousBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+                    restore
+                }
+                else -> {
+                    if (previousBrightness < 0f && currentBrightness >= 0f) {
+                        previousBrightness = currentBrightness
+                    }
+                    fraction.coerceIn(0.25f, 1.0f) // Sensible minimum prevents excessive blacking out
+                }
             }
-            activity.window.attributes = layoutParams
+
+            // Smooth transition
+            if (targetBrightness >= 0f && currentBrightness >= 0f && Math.abs(targetBrightness - currentBrightness) > 0.05f) {
+                val anim = android.animation.ValueAnimator.ofFloat(currentBrightness, targetBrightness).apply {
+                    duration = 250L
+                    addUpdateListener { va ->
+                        layoutParams.screenBrightness = va.animatedValue as Float
+                        win.attributes = layoutParams
+                    }
+                }
+                anim.start()
+            } else {
+                layoutParams.screenBrightness = targetBrightness
+                win.attributes = layoutParams
+            }
         }
     }
 
@@ -134,16 +167,29 @@ class NativeBridge(
     }
 
     @JavascriptInterface
-    fun pairAgent(hostIp: String?, port: Int, pairingCode: String?, fingerprint: String?): String {
+    fun getLatestTelemetry(): String {
+        return pcAgentManager.getLatestTelemetryJson()
+    }
+
+    @JavascriptInterface
+    @JvmOverloads
+    fun pairAgent(
+        hostIp: String?,
+        port: Int,
+        pairingCode: String?,
+        remoteAddress: String? = null,
+        connectionMode: String? = "AUTO"
+    ): String {
         val safeIp = hostIp?.trim()?.take(64) ?: ""
         val safePort = if (port in 1..65535) port else 8765
         val safePin = pairingCode?.trim()?.take(16) ?: ""
-        val safeFp = fingerprint?.trim()?.take(128) ?: ""
+        val cleanRemote = if (!remoteAddress.isNullOrBlank() && !remoteAddress.contains(":")) remoteAddress.trim() else null
+        val cleanMode = (connectionMode ?: "AUTO").trim().uppercase()
 
-        if (safeIp.isBlank() || safePin.isBlank() || safeFp.isBlank()) {
+        if (safeIp.isBlank() || safePin.isBlank()) {
             return JSONObject().apply {
                 put("success", false)
-                put("message", "IP, PIN, and TLS Fingerprint are required.")
+                put("message", "Workstation address and 6-digit OTP are required.")
             }.toString()
         }
 
@@ -151,7 +197,7 @@ class NativeBridge(
         var pairSuccess = false
         var pairMessage = ""
 
-        pcAgentManager.pairDevice(safeIp, safePort, safePin, safeFp) { success, msg ->
+        pcAgentManager.pairDevice(safeIp, safePort, safePin, cleanRemote, cleanMode) { success, msg ->
             pairSuccess = success
             pairMessage = msg
             lock.countDown()
@@ -167,7 +213,23 @@ class NativeBridge(
             put("success", pairSuccess)
             put("message", pairMessage)
             put("state", pcAgentManager.connectionState)
+            put("activeRoute", pcAgentManager.activeRoute)
         }.toString()
+    }
+
+    @JavascriptInterface
+    fun setConnectionMode(mode: String?): Boolean {
+        return pcAgentManager.setConnectionMode(mode ?: "AUTO")
+    }
+
+    @JavascriptInterface
+    fun getConnectionMode(): String {
+        return pcAgentManager.getConnectionMode()
+    }
+
+    @JavascriptInterface
+    fun unpairAgent(): Boolean {
+        return pcAgentManager.forgetDevice()
     }
 
     @JavascriptInterface
@@ -185,5 +247,46 @@ class NativeBridge(
     @JavascriptInterface
     fun forgetAgentDevice(): Boolean {
         return pcAgentManager.forgetDevice()
+    }
+
+    @JavascriptInterface
+    fun sendControlAction(action: String?, payloadJson: String?): String {
+        val safeAction = action?.trim()?.take(32) ?: ""
+        if (safeAction.isBlank()) {
+            return JSONObject().apply {
+                put("success", false)
+                put("error", "Action cannot be empty")
+            }.toString()
+        }
+
+        val payload = try {
+            if (!payloadJson.isNullOrBlank()) JSONObject(payloadJson) else null
+        } catch (_: Exception) {
+            null
+        }
+
+        val sent = pcAgentManager.sendControlAction(safeAction, payload)
+        return JSONObject().apply {
+            put("success", sent)
+            if (!sent) put("error", "Workstation offline or transmission failed")
+        }.toString()
+    }
+
+    @JavascriptInterface
+    fun requestAppsList(): Boolean {
+        val msg = JSONObject().apply { put("type", "get_apps") }
+        return pcAgentManager.sendWsMessage(msg.toString())
+    }
+
+    @JavascriptInterface
+    fun requestVolumeState(): Boolean {
+        val msg = JSONObject().apply { put("type", "get_volume") }
+        return pcAgentManager.sendWsMessage(msg.toString())
+    }
+
+    @JavascriptInterface
+    fun sendWsJson(jsonStr: String?): Boolean {
+        if (jsonStr.isNullOrBlank()) return false
+        return pcAgentManager.sendWsMessage(jsonStr)
     }
 }

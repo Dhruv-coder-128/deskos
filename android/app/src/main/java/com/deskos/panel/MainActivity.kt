@@ -56,8 +56,9 @@ class MainActivity : AppCompatActivity() {
                 displayZoomControls = false
                 useWideViewPort = true
                 loadWithOverviewMode = true
-                cacheMode = WebSettings.LOAD_DEFAULT
+                cacheMode = WebSettings.LOAD_NO_CACHE
             }
+            clearCache(true)
 
             // Bind sanitized native bridge to the local dashboard
             addJavascriptInterface(
@@ -109,11 +110,27 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(webView)
 
+        // Wire real-time telemetry dispatch to WebView safely quoted against unescaped emojis/newlines
+        pcAgentManager.telemetryListener = { jsonStr ->
+            runOnUiThread {
+                val quoted = org.json.JSONObject.quote(jsonStr)
+                webView.evaluateJavascript("window.onDeskOSTelemetry && window.onDeskOSTelemetry(JSON.parse($quoted));", null)
+            }
+        }
+
+        // Wire all incoming control, volume, apps, and screenshot frames safely quoted
+        pcAgentManager.rawMessageListener = { jsonStr ->
+            runOnUiThread {
+                val quoted = org.json.JSONObject.quote(jsonStr)
+                webView.evaluateJavascript("window.onDeskOSMessage && window.onDeskOSMessage(JSON.parse($quoted));", null)
+            }
+        }
+
         // Setup kiosk window insets AFTER decorView is attached to the view hierarchy
         setupKioskWindow()
 
-        // Load the locally bundled DESK OS dashboard
-        webView.loadUrl("https://appassets.androidplatform.net/assets/dashboard/index.html")
+        // Load the locally bundled DESK OS dashboard (with version parameter to guarantee cache refresh)
+        webView.loadUrl("https://appassets.androidplatform.net/assets/dashboard/index.html?v=1.1.0")
     }
 
     private fun setupKioskWindow() {
@@ -140,16 +157,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        setupKioskWindow()
+    }
+
     override fun onPause() {
         super.onPause()
         sensorHelper.stopListening()
         powerHelper.stopListening()
         webView.onPause()
+        restoreDefaultBrightness()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        restoreDefaultBrightness()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        restoreDefaultBrightness()
         pcAgentManager.disconnect()
         webView.destroy()
+    }
+
+    fun restoreDefaultBrightness() {
+        try {
+            val lp = window.attributes
+            lp.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+            window.attributes = lp
+        } catch (_: Exception) {}
     }
 }

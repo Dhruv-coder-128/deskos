@@ -7,10 +7,14 @@ const WidgetManager = (() => {
     const DEFAULT_CONFIG = [
         { id: 'card-clock', title: 'System Clock & Date', visible: true, order: 1 },
         { id: 'card-battery', title: 'Hardware Health (M01s)', visible: true, order: 2 },
-        { id: 'card-sensors', title: 'Dynamic Sensors Lab', visible: true, order: 3 },
-        { id: 'card-pc', title: 'Workstation Link (PC)', visible: true, order: 4 },
-        { id: 'card-controls', title: 'Quick Command Deck', visible: true, order: 5 },
-        { id: 'card-notes', title: 'Personal Space Scratchpad', visible: true, order: 6 }
+        { id: 'card-pc', title: 'Host Workstation Link (PC)', visible: true, order: 3 },
+        { id: 'card-pc-controls', title: 'PC Workstation Controls', visible: true, order: 4 },
+        { id: 'card-pc-cpu', title: 'PC CPU Live Telemetry', visible: true, order: 5 },
+        { id: 'card-pc-gpu', title: 'PC GPU (RTX 3050)', visible: true, order: 6 },
+        { id: 'card-pc-sys', title: 'PC RAM, Storage & Net', visible: true, order: 7 },
+        { id: 'card-sensors', title: 'Dynamic Sensors Lab (M01s)', visible: true, order: 8 },
+        { id: 'card-controls', title: 'Panel Hardware Controls', visible: true, order: 9 },
+        { id: 'card-notes', title: 'Personal Space Scratchpad', visible: true, order: 10 }
     ];
 
     let widgetConfig = [...DEFAULT_CONFIG];
@@ -19,7 +23,9 @@ const WidgetManager = (() => {
         async init() {
             const saved = await DeskStorage.get('widget_config', null);
             if (saved && Array.isArray(saved)) {
-                widgetConfig = saved;
+                const savedIds = new Set(saved.map(s => s.id));
+                const missing = DEFAULT_CONFIG.filter(d => !savedIds.has(d.id));
+                widgetConfig = [...saved, ...missing];
             }
             this.applyConfig();
             this.renderCustomizationModal();

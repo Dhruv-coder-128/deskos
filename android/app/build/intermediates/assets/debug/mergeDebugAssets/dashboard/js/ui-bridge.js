@@ -150,16 +150,50 @@ const UIBridge = (() => {
             };
         },
 
-        pairAgent(hostIp, port, pairingCode, fingerprint) {
+        getLatestTelemetry() {
+            if (isNative && window.DeskOSBridge.getLatestTelemetry) {
+                try {
+                    const raw = window.DeskOSBridge.getLatestTelemetry();
+                    if (!raw || raw.trim() === '') return null;
+                    return JSON.parse(raw);
+                } catch (e) {
+                    console.error('[UIBridge] parse latest telemetry error:', e);
+                }
+            }
+            return null;
+        },
+
+        pairAgent(hostIp, port, pairingOtp, remoteIp = null, connectionMode = 'AUTO') {
             if (isNative && window.DeskOSBridge.pairAgent) {
                 try {
-                    const res = window.DeskOSBridge.pairAgent(hostIp, Number(port), pairingCode, fingerprint);
+                    const res = window.DeskOSBridge.pairAgent(hostIp, Number(port), pairingOtp, remoteIp, connectionMode);
                     return JSON.parse(res);
                 } catch (e) {
                     return { success: false, message: e.message || 'Bridge invocation failed' };
                 }
             }
             return { success: false, message: 'Native bridge unavailable in standalone browser' };
+        },
+
+        setConnectionMode(mode = 'AUTO') {
+            if (isNative && window.DeskOSBridge.setConnectionMode) {
+                return window.DeskOSBridge.setConnectionMode(mode);
+            }
+            return false;
+        },
+
+        getConnectionMode() {
+            if (isNative && window.DeskOSBridge.getConnectionMode) {
+                return window.DeskOSBridge.getConnectionMode();
+            }
+            return 'AUTO';
+        },
+
+        unpairAgent() {
+            if (isNative && window.DeskOSBridge.unpairAgent) {
+                return window.DeskOSBridge.unpairAgent();
+            }
+            return this.forgetAgentDevice();
         },
 
         connectAgent() {
@@ -181,6 +215,73 @@ const UIBridge = (() => {
                 return window.DeskOSBridge.forgetAgentDevice();
             }
             return false;
+        },
+
+        sendControlAction(action, payload = null) {
+            if (isNative && window.DeskOSBridge.sendControlAction) {
+                try {
+                    const res = window.DeskOSBridge.sendControlAction(action, payload ? JSON.stringify(payload) : null);
+                    return JSON.parse(res);
+                } catch (e) {
+                    return { success: false, error: e.message };
+                }
+            }
+            return { success: false, error: 'Bridge unavailable in browser' };
+        },
+
+        requestAppsList() {
+            if (isNative && window.DeskOSBridge.requestAppsList) {
+                return window.DeskOSBridge.requestAppsList();
+            }
+            return false;
+        },
+
+        requestVolumeState() {
+            if (isNative && window.DeskOSBridge.requestVolumeState) {
+                return window.DeskOSBridge.requestVolumeState();
+            }
+            return false;
+        },
+
+        setBrightnessLevel(fraction) {
+            if (isNative && window.DeskOSBridge.setBrightnessLevel) {
+                window.DeskOSBridge.setBrightnessLevel(fraction);
+            }
+        },
+
+        sendWsJson(obj) {
+            if (isNative && window.DeskOSBridge.sendWsJson) {
+                try {
+                    return window.DeskOSBridge.sendWsJson(JSON.stringify(obj));
+                } catch (e) {
+                    return false;
+                }
+            }
+            return false;
+        },
+
+        requestDiscoveredApps(refresh = false) {
+            return this.sendWsJson({ type: 'get_discovered_apps', refresh: Boolean(refresh) });
+        },
+
+        requestMediaState() {
+            return this.sendWsJson({ type: 'get_media_state' });
+        },
+
+        requestRunningWindows() {
+            return this.sendWsJson({ type: 'get_running_windows' });
+        },
+
+        launchDiscoveredApp(appId) {
+            return this.sendControlAction('launch_discovered_app', { app_id: appId });
+        },
+
+        switchWindow(targetHwnd) {
+            return this.sendControlAction('switch_window', { target_hwnd: targetHwnd });
+        },
+
+        sendMediaAction(action) {
+            return this.sendControlAction('media_action', { media_action: action });
         }
     };
 })();

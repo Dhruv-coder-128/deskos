@@ -41,10 +41,11 @@ html, body {
     border-bottom: var(--border-subtle);
     display: flex;
     flex-direction: column;
-    padding: max(8px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) 8px max(12px, env(safe-area-inset-left, 0px));
+    padding: max(6px, env(safe-area-inset-top, 0px)) max(10px, env(safe-area-inset-right, 0px)) 6px max(10px, env(safe-area-inset-left, 0px));
     z-index: 20;
     flex-shrink: 0;
     width: 100%;
+    box-sizing: border-box;
 }
 
 .top-nav-main {
@@ -52,25 +53,27 @@ html, body {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    gap: 8px;
+    gap: 6px;
+    min-width: 0;
 }
 
 .brand-section {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     min-width: 0;
+    flex-shrink: 1;
 }
 
 .logo-badge {
     font-family: var(--font-mono);
     font-weight: 800;
-    font-size: 12px;
-    letter-spacing: 1px;
+    font-size: 11px;
+    letter-spacing: 0.5px;
     color: var(--color-accent-primary);
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     white-space: nowrap;
 }
 
@@ -92,13 +95,20 @@ html, body {
 .nav-status-group {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     flex-shrink: 0;
+}
+
+.nav-status-group .cyber-btn {
+    padding: 4px 6px;
+    min-height: 28px;
+    font-size: 10px;
 }
 
 .status-pill {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 9px;
+    font-weight: 700;
     padding: 3px 6px;
     border-radius: var(--radius-sm);
     background-color: var(--color-surface-card);
@@ -108,6 +118,7 @@ html, body {
     align-items: center;
     gap: 4px;
     white-space: nowrap;
+    line-height: 1;
 }
 
 .status-pill.active {
@@ -141,8 +152,9 @@ html, body {
     flex: 1 1 0;
     min-width: 0;
     text-align: center;
-    padding: 8px 4px;
+    padding: 7px 4px;
     font-size: 11px;
+    min-height: 32px;
 }
 
 /* Landscape / Wide Display Adaptations */
@@ -151,14 +163,17 @@ html, body {
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        padding: max(4px, env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) 4px max(14px, env(safe-area-inset-left, 0px));
+        padding: max(4px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) 4px max(12px, env(safe-area-inset-left, 0px));
         height: calc(44px + env(safe-area-inset-top, 0px));
         min-height: 44px;
     }
 
     .top-nav-main {
         width: 100%;
+        display: flex;
+        align-items: center;
         justify-content: space-between;
+        gap: 10px;
     }
 
     .desktop-only {

@@ -14,12 +14,13 @@ from starlette.testclient import TestClient
 # Ensure pc_agent is in sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-from pc_agent.agent import app, device_store, pairing_manager
+from pc_agent.agent import app, device_store, pairing_manager, telemetry_collector
 from pc_agent.crypto_utils import (
     generate_self_signed_cert,
     get_certificate_fingerprint
 )
 from pc_agent.config import CERT_PATH, KEY_PATH
+from pc_agent.telemetry import TelemetryCollector
 
 
 class TestPCAgent(unittest.TestCase):
@@ -191,6 +192,107 @@ class TestPCAgent(unittest.TestCase):
             err_resp = ws.receive_json()
             self.assertEqual(err_resp["type"], "error")
             self.assertIn("Unsupported or disallowed", err_resp["message"])
+
+    def test_telemetry_collector_structure(self):
+        collector = TelemetryCollector()
+        payload = collector.collect()
+
+        # CPU validation
+        self.assertGreaterEqual(payload.cpu.overall_percent, 0.0)
+        self.assertLessEqual(payload.cpu.overall_percent, 100.0)
+        self.assertGreater(len(payload.cpu.per_core_percent), 0)
+        self.assertGreaterEqual(payload.cpu.core_count_logical, 1)
+
+        # GPU validation (RTX 3050 verified)
+        self.assertTrue(payload.gpu.available)
+        self.assertIn("RTX 3050", payload.gpu.name or "")
+        self.assertGreater(payload.gpu.temperature_c or 0, 0)
+        self.assertGreater(payload.gpu.vram_total_bytes or 0, 1024 * 1024)
+
+        # RAM validation
+        self.assertGreater(payload.ram.total_bytes, 1024 * 1024 * 1024)
+        self.assertGreaterEqual(payload.ram.percent, 0.0)
+        self.assertLessEqual(payload.ram.percent, 100.0)
+
+        # Storage validation
+        self.assertGreater(len(payload.storage), 0)
+        self.assertTrue(any("C:" in d.drive for d in payload.storage))
+
+        # Network validation
+        self.assertGreaterEqual(payload.network.download_speed_bps, 0.0)
+        self.assertGreaterEqual(payload.network.upload_speed_bps, 0.0)
+        self.assertGreater(payload.network.total_bytes_recv, 0)
+
+        # System validation
+        self.assertGreater(payload.system.uptime_seconds, 0.0)
+        self.assertEqual(payload.system.status, "active")
+
+    def test_authenticated_telemetry_rest_endpoint(self):
+        client = TestClient(app)
+        # Unauthenticated request must fail
+        unauth = client.get("/api/v1/telemetry")
+        self.assertEqual(unauth.status_code, 401)
+
+        # Pair device
+        active_pin = pairing_manager.active_pin
+        pair_resp = client.post("/api/v1/pair", json={
+            "pairing_code": active_pin,
+            "client_id": "telemetry_rest_client",
+            "client_name": "Telemetry REST Client"
+        })
+        token = pair_resp.json()["auth_token"]
+
+        # Authenticated request
+        headers = {"Authorization": f"Bearer {token}"}
+        resp = client.get("/api/v1/telemetry", headers=headers)
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertIn("cpu", data)
+        self.assertIn("gpu", data)
+        self.assertIn("ram", data)
+        self.assertIn("storage", data)
+        self.assertIn("network", data)
+        self.assertIn("system", data)
+
+    def test_websocket_telemetry_query_command(self):
+        client = TestClient(app)
+        active_pin = pairing_manager.active_pin
+        pair_resp = client.post("/api/v1/pair", json={
+            "pairing_code": active_pin,
+            "client_id": "ws_telemetry_client",
+            "client_name": "WS Telemetry Client"
+        })
+        token = pair_resp.json()["auth_token"]
+
+        with client.websocket_connect("/ws/control") as ws:
+            ws.send_json({"type": "auth", "token": token, "client_id": "ws_telemetry_client"})
+            self.assertEqual(ws.receive_json()["type"], "auth_success")
+
+            # Query telemetry
+            ws.send_json({"type": "telemetry_query"})
+            telem_msg = ws.receive_json()
+            self.assertEqual(telem_msg["type"], "telemetry")
+            self.assertIn("cpu", telem_msg["data"])
+            self.assertIn("gpu", telem_msg["data"])
+            self.assertIn("ram", telem_msg["data"])
+            self.assertIn("storage", telem_msg["data"])
+            self.assertIn("network", telem_msg["data"])
+            self.assertIn("system", telem_msg["data"])
+
+    def test_network_rate_calculation(self):
+        collector = TelemetryCollector()
+        n1 = collector._collect_network()
+        time.sleep(0.05)
+        n2 = collector._collect_network()
+        self.assertGreaterEqual(n2.download_speed_bps, 0.0)
+        self.assertGreaterEqual(n2.upload_speed_bps, 0.0)
+        self.assertGreaterEqual(n2.total_bytes_recv, n1.total_bytes_recv)
+
+    def test_cpu_temperature_unsupported_handling(self):
+        collector = TelemetryCollector()
+        # Verify call completes without exception and returns float or None
+        temp = collector._get_cpu_temperature()
+        self.assertTrue(temp is None or isinstance(temp, (int, float)))
 
 
 if __name__ == "__main__":

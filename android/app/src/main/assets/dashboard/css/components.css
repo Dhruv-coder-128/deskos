@@ -176,6 +176,45 @@
     margin-bottom: 8px;
 }
 
+/* Multi-core CPU meter grid (16 cores) */
+.multi-meter-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 3px;
+    margin-top: 6px;
+    margin-bottom: 4px;
+}
+
+.core-meter-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.core-bar-track {
+    width: 100%;
+    height: 22px;
+    background: var(--color-surface-card-subtle);
+    border-radius: 2px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.core-bar-fill {
+    width: 100%;
+    background: var(--color-accent-primary);
+    transition: height 0.3s ease;
+}
+
+.core-num-label {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: var(--color-text-dim);
+}
+
 .meter-track {
     width: 100%;
     height: 7px;
@@ -889,13 +928,36 @@
     background-color: var(--color-surface-card);
     border: var(--border-accent);
     border-radius: var(--radius-md);
-    padding: 16px;
+    padding: 14px 16px;
     width: 100%;
-    max-width: 450px;
-    max-height: 85vh;
+    max-width: 480px;
+    max-height: calc(100vh - 20px);
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     box-shadow: 0 10px 30px rgba(0, 255, 71, 0.2);
+    box-sizing: border-box;
+}
+
+.modal-card::-webkit-scrollbar { width: 3px; }
+.modal-card::-webkit-scrollbar-thumb { background: rgba(0, 255, 71, 0.4); border-radius: 2px; }
+
+/* Responsive Landscape Modal Optimization */
+@media (orientation: landscape) and (max-height: 520px) {
+    .modal-overlay {
+        padding: 6px;
+    }
+    .modal-card {
+        max-width: 580px;
+        max-height: 96vh;
+        padding: 10px 14px;
+    }
+    .pairing-grid-landscape {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 12px;
+        row-gap: 6px;
+    }
 }
 
 .modal-header {
@@ -939,3 +1001,356 @@
     color: var(--color-accent-primary);
     pointer-events: none;
 }
+
+/* ==========================================================================
+   WORKSTATION CONTROL DECK STYLES (Phase 5)
+   ========================================================================== */
+.app-launcher-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+    gap: 6px;
+    width: 100%;
+}
+
+.app-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 4px;
+    background: var(--color-surface-card);
+    border: var(--border-subtle);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: center;
+    min-height: 52px;
+}
+
+.app-tile:active {
+    background: rgba(0, 255, 71, 0.12);
+    border-color: var(--color-accent-primary);
+    transform: scale(0.97);
+}
+
+.app-tile.disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+    border-color: rgba(255, 255, 255, 0.04);
+}
+
+.app-tile-icon {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.app-tile-name {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 95%;
+}
+
+.app-tile-status {
+    font-size: 8px;
+    color: var(--color-text-dim);
+    font-family: var(--font-mono);
+}
+
+.control-subdeck {
+    background: var(--color-surface-card-subtle);
+    border: var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+}
+
+.cyber-range {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    height: 6px;
+    background: var(--color-surface-card);
+    border-radius: 3px;
+    outline: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cyber-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--color-accent-primary);
+    cursor: pointer;
+    box-shadow: 0 0 6px var(--color-accent-primary);
+}
+
+.cyber-btn.danger {
+    border-color: rgba(239, 68, 68, 0.4);
+    color: var(--color-alert-danger);
+}
+
+.cyber-btn.danger:active {
+    background: rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   CONTROL DECK 2.0 COMPONENTS (DISCOVERY, GSMTC MEDIA, TASK SWITCHER)
+   ========================================================================== */
+
+/* Category Chips */
+.category-chips {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+    scrollbar-width: none;
+}
+.category-chips::-webkit-scrollbar { display: none; }
+.cat-chip {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-card-subtle);
+    border: var(--border-subtle);
+    color: var(--color-text-dim);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition-fast);
+}
+.cat-chip.active, .cat-chip:hover {
+    border-color: var(--color-accent-primary);
+    color: var(--color-accent-primary);
+    background: rgba(0, 255, 71, 0.1);
+}
+
+/* Discovered Apps Grid */
+.discovered-apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+    gap: 6px;
+    max-height: 180px;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+.discovered-apps-grid::-webkit-scrollbar { width: 3px; }
+.discovered-apps-grid::-webkit-scrollbar-thumb { background: rgba(0, 255, 71, 0.3); border-radius: 2px; }
+.discovered-app-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 6px 4px;
+    background: var(--color-surface-card-subtle);
+    border: var(--border-subtle);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    text-align: center;
+    min-height: 56px;
+    transition: all var(--transition-fast);
+    min-width: 0;
+}
+.discovered-app-tile:active {
+    background: rgba(0, 255, 71, 0.15);
+    border-color: var(--color-accent-primary);
+    transform: scale(0.96);
+}
+.discovered-app-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+.discovered-app-name {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 95%;
+}
+.discovered-app-badge {
+    font-size: 7px;
+    font-family: var(--font-mono);
+    color: var(--color-text-dim);
+    text-transform: uppercase;
+}
+
+/* Advanced Media Player Deck */
+.media-deck-container {
+    display: flex;
+    gap: 10px;
+    background: var(--color-surface-card-subtle);
+    border: var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    align-items: center;
+    min-width: 0;
+}
+.media-art-box {
+    width: 54px;
+    height: 54px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(0, 255, 71, 0.2);
+    background: #000;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+.media-art-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.media-info-col {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    gap: 2px;
+}
+.media-track-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.media-artist-name {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--color-accent-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.media-album-name {
+    font-size: 9px;
+    color: var(--color-text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.media-progress-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+}
+.media-time-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--color-text-dim);
+    min-width: 28px;
+}
+.media-progress-track {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.media-progress-fill {
+    height: 100%;
+    background: var(--color-accent-primary);
+    width: 0%;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 4px var(--color-accent-primary);
+}
+
+/* Task Switcher Deck (Icon-Only Responsive Grid) */
+.tasks-deck-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-height: 140px;
+    overflow-y: auto;
+    padding: 4px 2px;
+}
+.tasks-deck-grid::-webkit-scrollbar { width: 3px; }
+.tasks-deck-grid::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.3); border-radius: 2px; }
+
+.task-window-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    min-height: 46px;
+    padding: 6px;
+    background: var(--color-surface-card-subtle);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+    box-sizing: border-box;
+}
+.task-window-card:active {
+    transform: scale(0.92);
+}
+.task-window-card.foreground {
+    border: 1.5px solid var(--color-accent-primary);
+    background: rgba(0, 255, 71, 0.14);
+    box-shadow: 0 0 12px rgba(0, 255, 71, 0.4);
+}
+.task-window-card.minimized {
+    opacity: 0.55;
+    border-style: dashed;
+}
+.task-window-icon-img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+/* Dim Mode Overlay (Subtle Translucent Veil, Interface Remains Visible) */
+#dim-overlay {
+    background-color: rgba(0, 0, 0, 0.45);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 50;
+    user-select: none;
+    backdrop-filter: blur(2px);
+}
+#dim-overlay.active {
+    display: flex;
+}
+
+

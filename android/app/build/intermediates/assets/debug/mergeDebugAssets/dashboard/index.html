@@ -31,9 +31,10 @@
 
                 <div class="nav-status-group">
                     <span class="status-pill" id="battery-status-tag">INITIALIZING</span>
-                    <button class="cyber-btn" onclick="DeskOS.setMode('idle')" title="Enter Dimmed Idle Mode">IDLE</button>
-                    <button class="cyber-btn" onclick="DeskOS.setMode('screensaver')" title="Start Screensaver">RADAR</button>
-                    <button class="cyber-btn" onclick="DeskOS.setMode('customize')" title="Customize Dashboard">CONFIG</button>
+                    <button class="cyber-btn" id="btn-mode-dim" onclick="DeskOS.setMode('dim', event)" title="Low-Power Dim Mode">DIM</button>
+                    <button class="cyber-btn" id="btn-mode-idle" onclick="DeskOS.setMode('idle', event)" title="Enter Dimmed Idle Mode">IDLE</button>
+                    <button class="cyber-btn" id="btn-mode-radar" onclick="DeskOS.setMode('screensaver', event)" title="Start Screensaver">RADAR</button>
+                    <button class="cyber-btn" id="btn-mode-config" onclick="DeskOS.setMode('customize', event)" title="Customize Dashboard">CONFIG</button>
                 </div>
             </div>
 
@@ -175,19 +176,304 @@
                             <span class="telemetry-val cyan" id="pc-host-addr-val">N/A</span>
                         </div>
                         <div class="telemetry-row">
-                            <span class="telemetry-label">CHANNELS</span>
-                            <span class="telemetry-val cyan" style="font-size: 10px;">Wi-Fi // USB // Tailscale</span>
+                            <span class="telemetry-label">CONNECTION ROUTE</span>
+                            <span class="telemetry-val neon" id="pc-route-val">AUTO (NONE)</span>
+                        </div>
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">PC UPTIME</span>
+                            <span class="telemetry-val neon" id="pc-uptime-val">--</span>
+                        </div>
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">TELEMETRY STREAM</span>
+                            <span class="telemetry-val cyan" id="pc-telemetry-rate-val">DISCONNECTED</span>
                         </div>
                         <div class="telemetry-row">
                             <span class="telemetry-label">SECURITY</span>
                             <span class="telemetry-val neon">TLS Pinned / Keystore</span>
                         </div>
 
-                        <!-- Action Controls (Pair / Reconnect / Forget) -->
+                        <div id="pc-stale-alert" style="display: none; font-family: var(--font-mono); font-size: 10px; margin-top: 6px; padding: 4px; border: 1px dashed #F59E0B; color: #F59E0B; text-align: center;">
+                            TELEMETRY LINK STALE (&gt;3.5s)
+                        </div>
+
+                        <!-- Action Controls (Pair / Reconnect / Mode / Unpair) -->
                         <div class="btn-group" style="margin-top: 8px;">
                             <button class="cyber-btn active col-span-2" id="btn-pc-pair" onclick="DeskOS.openPairingModal()">PAIR PC AGENT</button>
                             <button class="cyber-btn" id="btn-pc-reconnect" onclick="DeskOS.reconnectAgent()" style="display: none;">RECONNECT</button>
-                            <button class="cyber-btn" id="btn-pc-forget" onclick="DeskOS.forgetAgent()" style="display: none; color: var(--color-alert-danger);">FORGET</button>
+                            <button class="cyber-btn" id="btn-pc-mode-toggle" onclick="DeskOS.cycleConnectionMode()" style="display: none;">MODE: AUTO</button>
+                            <button class="cyber-btn" id="btn-pc-forget" onclick="DeskOS.unpairDevice()" style="display: none; color: var(--color-alert-danger);">UNPAIR / REVOKE</button>
+                        </div>
+                    </section>
+
+                    <!-- Widget 4A: Workstation Control Deck 2.0 -->
+                    <section class="cyber-card col-span-2 col-span-3" id="card-pc-controls">
+                        <div class="card-header">
+                            <span class="card-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                    <polyline points="2 17 12 22 22 17"></polyline>
+                                    <polyline points="2 12 12 17 22 12"></polyline>
+                                </svg>
+                                WORKSTATION CONTROL DECK 2.0
+                            </span>
+                            <span class="card-badge" id="pc-controls-status-badge">SECURE IPC // ACTIVE</span>
+                        </div>
+
+                        <!-- Offline Overlay Warning when PC is not connected -->
+                        <div id="pc-controls-offline-banner" style="display: none; font-family: var(--font-mono); font-size: 11px; padding: 8px; border: 1px dashed #F59E0B; color: #F59E0B; background: rgba(245, 158, 11, 0.08); border-radius: var(--radius-sm); margin-bottom: 8px; text-align: center;">
+                            WORKSTATION UNLINKED // CONNECT HOST TO ENABLE CONTROLS
+                        </div>
+
+                        <div id="pc-controls-body">
+                            <!-- DECK 1: ADVANCED GSMTC MEDIA PLAYER -->
+                            <div style="margin-bottom: 12px;">
+                                <div class="telemetry-label" style="margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                    <span>GLOBAL MEDIA SESSION (GSMTC)</span>
+                                    <span class="status-pill" id="pc-media-status-pill" style="font-size: 8px; padding: 2px 5px;">STOPPED</span>
+                                </div>
+                                
+                                <div class="media-deck-container">
+                                    <div class="media-art-box" id="pc-media-artwork-box">
+                                        <img id="pc-media-art-img" class="media-art-img" src="" alt="Album Artwork" style="display: none;">
+                                        <div id="pc-media-art-placeholder" style="font-size: 22px;">🎵</div>
+                                    </div>
+                                    
+                                    <div class="media-info-col">
+                                        <div class="media-track-title" id="pc-media-title">NO ACTIVE MEDIA SESSION</div>
+                                        <div class="media-artist-name" id="pc-media-artist">Desktop Audio Standby</div>
+                                        <div class="media-album-name" id="pc-media-album">Windows Media System</div>
+                                        
+                                        <!-- Playback Progress Bar -->
+                                        <div class="media-progress-bar-wrap">
+                                            <span class="media-time-label" id="pc-media-time-cur">0:00</span>
+                                            <div class="media-progress-track">
+                                                <div class="media-progress-fill" id="pc-media-progress-bar"></div>
+                                            </div>
+                                            <span class="media-time-label" id="pc-media-time-total" style="text-align: right;">0:00</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Playback Controls & Master Volume Sub-grid -->
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; margin-top: 8px;">
+                                    <!-- Transport Controls -->
+                                    <div class="control-subdeck" style="display: flex; gap: 6px; align-items: center;">
+                                        <button class="cyber-btn flex-1" onclick="DeskOS.sendMediaAction('previous')" title="Previous Track">⏮ PREV</button>
+                                        <button class="cyber-btn flex-1 active" id="btn-media-play" onclick="DeskOS.togglePlayPause()" title="Play / Pause">▶ PLAY</button>
+                                        <button class="cyber-btn flex-1" onclick="DeskOS.sendMediaAction('next')" title="Next Track">⏭ NEXT</button>
+                                    </div>
+                                    
+                                    <!-- Master Volume -->
+                                    <div class="control-subdeck" style="display: flex; align-items: center; gap: 8px;">
+                                        <button class="cyber-btn" id="btn-pc-mute" onclick="DeskOS.togglePcMute()" style="min-width: 60px; padding: 5px 8px; font-size: 10px;">
+                                            MUTE
+                                        </button>
+                                        <input type="range" id="pc-volume-slider" min="0" max="100" value="50" class="cyber-range" oninput="DeskOS.onVolumeSliderInput(this.value)" onchange="DeskOS.onVolumeSliderChange(this.value)">
+                                        <span class="telemetry-val neon" id="pc-volume-label" style="min-width: 36px; text-align: right;">50%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- DECK 2: WINDOWS LIVE TASK SWITCHER -->
+                            <div style="margin-bottom: 12px;">
+                                <div class="telemetry-label" style="margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                    <span>RUNNING APPLICATIONS (<span id="pc-tasks-count-val">0 OPEN</span>)</span>
+                                    <div style="display: flex; gap: 6px;">
+                                        <button class="cyber-btn" onclick="DeskOS.refreshRunningWindows()" style="padding: 2px 6px; font-size: 9px; min-height: 22px;">
+                                            REFRESH
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="tasks-deck-grid" id="pc-tasks-grid">
+                                    <!-- Populated dynamically via running_windows -->
+                                </div>
+                            </div>
+
+                            <!-- DECK 3: AUTOMATIC WINDOWS APPLICATION LAUNCHER -->
+                            <div style="margin-bottom: 12px;">
+                                <div class="telemetry-label" style="margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                    <span>INSTALLED APPLICATIONS (<span id="pc-apps-count-val">0 APPS</span>)</span>
+                                    <button class="cyber-btn" onclick="DeskOS.refreshDiscoveredApps()" style="padding: 2px 6px; font-size: 9px; min-height: 22px;">
+                                        RESCAN HOST
+                                    </button>
+                                </div>
+
+                                <!-- Search & Category Filters -->
+                                <div style="display: flex; gap: 6px; margin-bottom: 6px;">
+                                    <input type="text" id="pc-app-search-input" class="cyber-input" placeholder="SEARCH APPS..." oninput="DeskOS.filterDiscoveredApps(this.value)" style="min-height: 30px; font-size: 11px; padding: 4px 8px;">
+                                </div>
+                                <div class="category-chips" id="pc-app-category-chips">
+                                    <span class="cat-chip active" onclick="DeskOS.selectAppCategory('all', this)">ALL</span>
+                                    <span class="cat-chip" onclick="DeskOS.selectAppCategory('browser', this)">BROWSERS</span>
+                                    <span class="cat-chip" onclick="DeskOS.selectAppCategory('developer', this)">DEV TOOLS</span>
+                                    <span class="cat-chip" onclick="DeskOS.selectAppCategory('media', this)">MEDIA</span>
+                                    <span class="cat-chip" onclick="DeskOS.selectAppCategory('utility', this)">UTILITIES</span>
+                                    <span class="cat-chip" onclick="DeskOS.selectAppCategory('system', this)">SYSTEM</span>
+                                </div>
+
+                                <div class="discovered-apps-grid" id="pc-discovered-apps-grid">
+                                    <!-- Populated dynamically via discovered_apps -->
+                                </div>
+                            </div>
+
+                            <!-- DECK 4: WORKSTATION SECURITY & DIAGNOSTICS -->
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; border-top: 1px dashed rgba(255, 255, 255, 0.08); padding-top: 8px;">
+                                <button class="cyber-btn" id="btn-pc-screenshot" onclick="DeskOS.requestScreenshot()" style="display: inline-flex; align-items: center; gap: 6px; border-color: rgba(56, 189, 248, 0.4); color: var(--color-accent-secondary);">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                    <span>CAPTURE SCREENSHOT</span>
+                                </button>
+                                <button class="cyber-btn danger" id="btn-pc-lock" onclick="DeskOS.promptLockWorkstation()" style="display: inline-flex; align-items: center; gap: 6px;">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                    <span>LOCK WORKSTATION</span>
+                                </button>
+                            </div>
+
+                        </div>
+                    </section>
+
+                    <!-- Widget 4B: Workstation CPU Telemetry -->
+                    <section class="cyber-card" id="card-pc-cpu">
+                        <div class="card-header">
+                            <span class="card-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                                    <rect x="9" y="9" width="6" height="6"></rect>
+                                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                                    <line x1="9" y1="20" x2="9" y2="23"></line>
+                                    <line x1="15" y1="20" x2="15" y2="23"></line>
+                                    <line x1="20" y1="9" x2="23" y2="9"></line>
+                                    <line x1="20" y1="14" x2="23" y2="14"></line>
+                                    <line x1="1" y1="9" x2="4" y2="9"></line>
+                                    <line x1="1" y1="14" x2="4" y2="14"></line>
+                                </svg>
+                                WORKSTATION CPU
+                            </span>
+                            <span class="telemetry-val neon" id="pc-cpu-pct-val">--%</span>
+                        </div>
+
+                        <div class="meter-container">
+                            <div class="meter-track">
+                                <div class="meter-bar" id="pc-cpu-bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Live Rolling CPU Sparkline Canvas -->
+                        <div style="width: 100%; height: 44px; background: var(--color-surface-card-subtle); border-radius: var(--radius-sm); overflow: hidden; border: var(--border-subtle); margin-bottom: 6px;">
+                            <canvas id="pc-cpu-sparkline" style="width: 100%; height: 100%; display: block;"></canvas>
+                        </div>
+
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">TOPOLOGY</span>
+                            <span class="telemetry-val" id="pc-cpu-cores-val">--</span>
+                        </div>
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">FREQUENCY</span>
+                            <span class="telemetry-val cyan" id="pc-cpu-freq-val">---- MHz</span>
+                        </div>
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">TEMPERATURE</span>
+                            <span class="telemetry-val" id="pc-cpu-temp-val">--</span>
+                        </div>
+
+                        <!-- 16-Core Activity Grid -->
+                        <div class="multi-meter-grid" id="pc-cpu-cores-grid">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </section>
+
+                    <!-- Widget 4C: Workstation GPU Telemetry (NVIDIA RTX 3050) -->
+                    <section class="cyber-card" id="card-pc-gpu">
+                        <div class="card-header">
+                            <span class="card-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                                    <line x1="7" y1="2" x2="7" y2="22"></line>
+                                    <line x1="17" y1="2" x2="17" y2="22"></line>
+                                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                                    <line x1="2" y1="7" x2="7" y2="7"></line>
+                                    <line x1="2" y1="17" x2="7" y2="17"></line>
+                                    <line x1="17" y1="17" x2="22" y2="17"></line>
+                                    <line x1="17" y1="7" x2="22" y2="7"></line>
+                                </svg>
+                                WORKSTATION GPU
+                            </span>
+                            <span class="card-badge" id="pc-gpu-badge">RTX 3050</span>
+                        </div>
+
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">GPU LOAD</span>
+                            <span class="telemetry-val neon" id="pc-gpu-util-val">--%</span>
+                        </div>
+                        <div class="meter-container">
+                            <div class="meter-track">
+                                <div class="meter-bar" id="pc-gpu-bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">GPU TEMP</span>
+                            <span class="telemetry-val neon" id="pc-gpu-temp-val">--°C</span>
+                        </div>
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">VRAM ALLOCATION</span>
+                            <span class="telemetry-val cyan" id="pc-gpu-vram-val">-.-- / -.-- GB</span>
+                        </div>
+                        <div class="meter-container">
+                            <div class="meter-track">
+                                <div class="meter-bar cyan" id="pc-vram-bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">BOARD POWER</span>
+                            <span class="telemetry-val" id="pc-gpu-power-val">-.-- W</span>
+                        </div>
+                    </section>
+
+                    <!-- Widget 4D: Workstation RAM, Storage & Network Telemetry -->
+                    <section class="cyber-card" id="card-pc-sys">
+                        <div class="card-header">
+                            <span class="card-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                                </svg>
+                                PC RAM, STORAGE &amp; NET
+                            </span>
+                            <span class="card-badge">LIVE METRICS</span>
+                        </div>
+
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">SYSTEM MEMORY</span>
+                            <span class="telemetry-val neon" id="pc-ram-val">-.-- / -.-- GB (--%)</span>
+                        </div>
+                        <div class="meter-container">
+                            <div class="meter-track">
+                                <div class="meter-bar" id="pc-ram-bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Storage Drives Dynamic Section -->
+                        <div style="margin-top: 4px; margin-bottom: 6px;">
+                            <div class="telemetry-label" style="margin-bottom: 4px;">STORAGE VOLUMES</div>
+                            <div id="pc-storage-drives-container">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">DOWNLOAD SPEED</span>
+                            <span class="telemetry-val cyan" id="pc-net-down-val">↓ 0.0 KB/s</span>
+                        </div>
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">UPLOAD SPEED</span>
+                            <span class="telemetry-val neon" id="pc-net-up-val">↑ 0.0 KB/s</span>
+                        </div>
+                        <div class="telemetry-row">
+                            <span class="telemetry-label">TOTAL TRANSFERS</span>
+                            <span class="telemetry-val" id="pc-net-totals-val" style="font-size: 10px;">RX: - GB // TX: - GB</span>
                         </div>
                     </section>
 
@@ -464,20 +750,31 @@
 
         </main>
 
-        <!-- Mode 2: Dimmed Idle Mode Overlay -->
-        <div id="idle-overlay" class="mode-view">
+        <!-- Mode 2A: Subtle Power Dim Mode Indicator Overlay -->
+        <div id="dim-overlay" class="mode-view" style="background: rgba(0, 0, 0, 0.4); cursor: pointer;" onclick="DeskOS.setMode('active')">
+            <div style="background: var(--color-surface-card); border: 1px solid var(--color-accent-primary); border-radius: var(--radius-md); padding: 16px 24px; text-align: center; box-shadow: 0 0 20px rgba(0, 255, 71, 0.2);">
+                <div style="font-family: var(--font-mono); font-size: 32px; font-weight: 800; color: var(--color-accent-primary); letter-spacing: 2px;" id="dim-clock-display">00:00</div>
+                <div style="font-family: var(--font-mono); font-size: 11px; color: var(--color-text-primary); margin-top: 6px;">DIM MODE // SUBTLE BACKLIGHT PRESERVATION</div>
+                <div class="idle-hint" style="margin-top: 12px;">[ TAP ANYWHERE TO RESTORE FULL BRIGHTNESS ]</div>
+            </div>
+        </div>
+
+        <!-- Mode 2B: Dimmed Idle Mode Overlay -->
+        <div id="idle-overlay" class="mode-view" style="cursor: pointer;" onclick="DeskOS.setMode('active')">
             <div class="idle-clock" id="idle-clock-display">00:00:00</div>
-            <div style="font-family: var(--font-mono); font-size: 12px; color: var(--color-accent-secondary); margin-top: 10px;">IDLE MODE // LOW BACKLIGHT POWER</div>
+            <div style="font-family: var(--font-mono); font-size: 12px; color: var(--color-text-primary); margin-top: 4px;" id="idle-date-display">-- --- ----</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--color-accent-primary); margin-top: 6px;" id="idle-battery-display">BATTERY: --% // -- mV</div>
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--color-accent-secondary); margin-top: 10px;">IDLE STANDBY // SUBTLE BACKLIGHT</div>
             <div class="idle-hint">[ TAP SCREEN TO RESUME WORKSTATION ]</div>
         </div>
 
-        <!-- Mode 3: Futuristic Screensaver Overlay (5 FPS Radar Trace) -->
-        <div id="screensaver-overlay" class="mode-view">
+        <!-- Mode 3: Futuristic Cybersecurity Radar Overlay -->
+        <div id="screensaver-overlay" class="mode-view" style="cursor: pointer;" onclick="DeskOS.setMode('active')">
             <canvas id="screensaver-canvas"></canvas>
             <div class="screensaver-hud">
-                <div>DESK OS // SCREENSAVER</div>
+                <div style="color: var(--color-accent-primary); font-weight: 800; letter-spacing: 1px;">CYBER RADAR // SURVEILLANCE BEACON</div>
                 <div id="screensaver-time" style="font-size: 16px; font-weight: 700; color: #E5E7EB; margin-top: 4px;">00:00:00</div>
-                <div style="font-size: 10px; color: var(--color-text-dim); margin-top: 4px;">[ TAP ANYWHERE TO WAKE ]</div>
+                <div style="font-size: 10px; color: var(--color-text-dim); margin-top: 4px;">[ TAP ANYWHERE TO EXIT RADAR ]</div>
             </div>
         </div>
 
@@ -501,41 +798,115 @@
             </div>
         </div>
 
-        <!-- Mode 5: Workstation Pairing Modal -->
+        <!-- Mode 5: Workstation Pairing Modal (OTP-only, Landscape Optimized) -->
         <div id="pairing-modal" class="modal-overlay">
             <div class="modal-card">
                 <div class="modal-header">
                     <span class="modal-title">SECURE PC AGENT PAIRING</span>
-                    <button class="cyber-btn" onclick="DeskOS.closePairingModal()" style="padding: 4px 8px; min-height: 28px;">✕</button>
+                    <button class="cyber-btn" onclick="DeskOS.closePairingModal()" style="padding: 4px 8px; min-height: 26px;">✕</button>
                 </div>
-                <div style="margin: 8px 0; font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted);">
-                    Enter connection credentials displayed in your Windows PC Agent terminal:
+                <div style="margin: 6px 0; font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); display: flex; justify-content: space-between; align-items: center;">
+                    <span>Enter 6-Digit OTP displayed on PC:</span>
+                    <button class="cyber-btn" onclick="DeskOS.openTailscaleGuide()" style="padding: 2px 6px; font-size: 9px; min-height: 20px; color: var(--color-accent-secondary);">[?] TAILSCALE GUIDE</button>
                 </div>
 
-                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+                <div class="pairing-grid-landscape" style="display: flex; flex-direction: column; gap: 6px;">
                     <div>
-                        <div class="telemetry-label" style="margin-bottom: 4px;">HOST LAN IP / ADDRESS</div>
-                        <input type="text" id="pair-input-ip" class="cyber-input" placeholder="e.g. 192.168.1.45 or 127.0.0.1" value="192.168.1.">
+                        <div class="telemetry-label" style="margin-bottom: 3px;">CONNECTION MODE</div>
+                        <div style="display: flex; gap: 4px;">
+                            <button type="button" class="cyber-btn flex-1 active" id="pair-mode-auto" onclick="DeskOS.selectPairMode('AUTO')">AUTO</button>
+                            <button type="button" class="cyber-btn flex-1" id="pair-mode-local" onclick="DeskOS.selectPairMode('LOCAL')">LOCAL (LAN)</button>
+                            <button type="button" class="cyber-btn flex-1" id="pair-mode-remote" onclick="DeskOS.selectPairMode('REMOTE')">REMOTE (TS)</button>
+                        </div>
                     </div>
                     <div>
-                        <div class="telemetry-label" style="margin-bottom: 4px;">PORT (DEFAULT: 8765)</div>
-                        <input type="number" id="pair-input-port" class="cyber-input" value="8765">
+                        <div class="telemetry-label" style="margin-bottom: 3px;">LOCAL LAN IP / HOSTNAME</div>
+                        <input type="text" id="pair-input-ip" class="cyber-input" placeholder="e.g. 192.168.1.45 or 127.0.0.1" value="192.168.31.196">
                     </div>
                     <div>
-                        <div class="telemetry-label" style="margin-bottom: 4px;">6-DIGIT PAIRING PIN</div>
-                        <input type="text" id="pair-input-pin" class="cyber-input" placeholder="e.g. 839201" maxlength="12" style="font-size: 16px; letter-spacing: 2px;">
+                        <div class="telemetry-label" style="margin-bottom: 3px;">REMOTE TAILSCALE IP / MAGICDNS (OPTIONAL)</div>
+                        <input type="text" id="pair-input-remote" class="cyber-input" placeholder="e.g. 100.x.y.z or pc.tailnet.ts.net">
                     </div>
-                    <div>
-                        <div class="telemetry-label" style="margin-bottom: 4px;">SHA-256 TLS FINGERPRINT</div>
-                        <textarea id="pair-input-fp" rows="2" class="cyber-input" placeholder="e.g. 26:05:03:84:1E:92:..." style="resize: none; font-size: 10px;"></textarea>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                        <div>
+                            <div class="telemetry-label" style="margin-bottom: 3px;">PORT</div>
+                            <input type="number" id="pair-input-port" class="cyber-input" value="8765">
+                        </div>
+                        <div>
+                            <div class="telemetry-label" style="margin-bottom: 3px;">6-DIGIT OTP</div>
+                            <input type="text" id="pair-input-pin" class="cyber-input" placeholder="839201" maxlength="6" style="font-size: 15px; font-weight: 800; letter-spacing: 2px; text-align: center; color: var(--color-accent-primary);">
+                        </div>
                     </div>
+                </div>
 
-                    <div id="pairing-status-feedback" style="display: none; padding: 6px; font-family: var(--font-mono); font-size: 10px; border-radius: var(--radius-sm); text-align: center;"></div>
+                <div id="pairing-status-feedback" style="display: none; margin-top: 6px; padding: 6px; font-family: var(--font-mono); font-size: 10px; border-radius: var(--radius-sm); text-align: center;"></div>
 
-                    <div style="display: flex; justify-content: space-between; margin-top: 8px; gap: 8px;">
-                        <button class="cyber-btn" onclick="DeskOS.closePairingModal()">CANCEL</button>
-                        <button class="cyber-btn active" id="btn-submit-pair" onclick="DeskOS.submitPairing()">CONFIRM & PAIR</button>
+                <div style="display: flex; justify-content: space-between; margin-top: 8px; gap: 8px;">
+                    <button class="cyber-btn" onclick="DeskOS.closePairingModal()">CANCEL</button>
+                    <button class="cyber-btn active" id="btn-submit-pair" onclick="DeskOS.submitPairing()">CONFIRM & PAIR</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mode 5B: Tailscale Remote Access Setup Guide Modal -->
+        <div id="tailscale-guide-modal" class="modal-overlay">
+            <div class="modal-card" style="max-width: 520px;">
+                <div class="modal-header">
+                    <span class="modal-title">PHASE 6: TAILSCALE REMOTE SETUP</span>
+                    <button class="cyber-btn" onclick="DeskOS.closeTailscaleGuide()" style="padding: 4px 8px; min-height: 26px;">✕</button>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; margin: 10px 0; font-family: var(--font-mono); font-size: 11px; line-height: 1.4; color: var(--color-text-primary);">
+                    <div style="color: var(--color-accent-primary); font-weight: 700;">CONNECT SECURELY FROM ANY NETWORK (WI-FI OR MOBILE DATA):</div>
+                    <div><b>1. Install on Windows:</b> Download Tailscale from <code>tailscale.com</code> and log in.</div>
+                    <div><b>2. Install on Android:</b> Install Tailscale from Google Play Store and log in with the <u>SAME account</u>.</div>
+                    <div><b>3. Copy Tailscale IP:</b> On Windows, click Tailscale in system tray -&gt; copy the 100.x.y.z IP (or MagicDNS machine name).</div>
+                    <div><b>4. Enter Remote Address:</b> Paste into the "REMOTE TAILSCALE IP" field in DESK OS pairing.</div>
+                    <div><b>5. Select AUTO Mode:</b> DESK OS uses fast local Wi-Fi when home, and seamlessly switches to Tailscale when remote!</div>
+                    <div style="color: var(--color-accent-secondary); font-size: 10px;">• Zero router port forwarding needed.<br>• TLS certificate pinning & Keystore authentication preserved.</div>
+                </div>
+                <button class="cyber-btn active" onclick="DeskOS.closeTailscaleGuide()" style="margin-top: 6px;">GOT IT // CLOSE GUIDE</button>
+            </div>
+        </div>
+
+        <!-- Mode 6: Screenshot Preview Modal -->
+        <div id="screenshot-modal" class="modal-overlay">
+            <div class="modal-card" style="max-width: 90vw; width: 680px;">
+                <div class="modal-header">
+                    <span class="modal-title">WORKSTATION SCREENSHOT</span>
+                    <button class="cyber-btn" onclick="DeskOS.closeScreenshotModal()" style="padding: 4px 8px; min-height: 28px;">✕</button>
+                </div>
+                <div id="screenshot-loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; gap: 12px; font-family: var(--font-mono); font-size: 11px; color: var(--color-accent-secondary);">
+                    <div style="border: 2px solid var(--color-surface-card-subtle); border-top: 2px solid var(--color-accent-secondary); border-radius: 50%; width: 28px; height: 28px; animation: spin 1s linear infinite;"></div>
+                    <span>CAPTURING WORKSTATION DISPLAY...</span>
+                </div>
+                <div id="screenshot-container" style="display: none; margin-top: 8px;">
+                    <img id="screenshot-preview-img" src="" alt="Workstation Desktop Preview" style="width: 100%; height: auto; max-height: 60vh; object-fit: contain; border-radius: var(--radius-sm); border: var(--border-subtle); background: #000;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-family: var(--font-mono); font-size: 10px; color: var(--color-text-dim);">
+                        <span id="screenshot-meta-info">1280x720 // JPEG Q70</span>
+                        <span id="screenshot-timestamp">--:--:--</span>
                     </div>
+                </div>
+                <div id="screenshot-error" style="display: none; font-family: var(--font-mono); font-size: 11px; padding: 10px; border: 1px dashed var(--color-alert-danger); color: var(--color-alert-danger); background: rgba(239, 68, 68, 0.08); border-radius: var(--radius-sm); margin: 8px 0; text-align: center;"></div>
+                <div style="display: flex; justify-content: flex-end; margin-top: 12px; gap: 8px;">
+                    <button class="cyber-btn" onclick="DeskOS.requestScreenshot()">REFRESH</button>
+                    <button class="cyber-btn active" onclick="DeskOS.closeScreenshotModal()">CLOSE</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mode 7: Workstation Lock Confirmation Modal -->
+        <div id="lock-confirm-modal" class="modal-overlay">
+            <div class="modal-card" style="max-width: 400px;">
+                <div class="modal-header">
+                    <span class="modal-title" style="color: var(--color-alert-danger);">LOCK WORKSTATION?</span>
+                    <button class="cyber-btn" onclick="DeskOS.closeLockModal()" style="padding: 4px 8px; min-height: 28px;">✕</button>
+                </div>
+                <div style="margin: 12px 0; font-family: var(--font-mono); font-size: 12px; color: var(--color-text-secondary); line-height: 1.5;">
+                    This will invoke Windows <code>LockWorkStation</code> via authenticated IPC, locking your desktop display session immediately.
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 14px; gap: 10px;">
+                    <button class="cyber-btn" onclick="DeskOS.closeLockModal()">CANCEL</button>
+                    <button class="cyber-btn danger" onclick="DeskOS.confirmLockWorkstation()">YES, LOCK PC</button>
                 </div>
             </div>
         </div>

@@ -11,7 +11,7 @@ import hashlib
 import ipaddress
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 from cryptography import x509
 from cryptography.x509.oid import NameOID
@@ -20,8 +20,44 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 
 
+def get_tailscale_ip() -> Optional[str]:
+    """Discover active Tailscale IPv4 address if Tailscale is running."""
+    # 1. Try socket adapter check for 100.64.0.0/10 CGNAT range
+    try:
+        hostname = socket.gethostname()
+        for ip in socket.gethostbyname_ex(hostname)[2]:
+            if is_tailscale_ip(ip):
+                return ip
+    except Exception:
+        pass
+
+    # 2. Try powershell / Get-NetIPAddress for Tailscale adapter
+    try:
+        import subprocess
+        cmd = ["powershell", "-NoProfile", "-NonInteractive", "-Command",
+               "(Get-NetIPAddress -InterfaceAlias '*Tailscale*' -AddressFamily IPv4 -ErrorAction SilentlyContinue).IPAddress"]
+        p = subprocess.run(cmd, capture_output=True, text=True, timeout=2)
+        out = p.stdout.strip()
+        if out and is_tailscale_ip(out):
+            return out
+    except Exception:
+        pass
+
+    return None
+
+
+def is_tailscale_ip(ip_str: str) -> bool:
+    """Check if an IPv4 address belongs to the Tailscale CGNAT block (100.64.0.0/10)."""
+    try:
+        ip = ipaddress.ip_address(ip_str)
+        tailscale_net = ipaddress.ip_network("100.64.0.0/10")
+        return ip in tailscale_net
+    except Exception:
+        return False
+
+
 def get_local_ip_addresses() -> List[str]:
-    """Discover all local network IPv4 addresses for SAN inclusion."""
+    """Discover all local network IPv4 addresses and Tailscale IPs for SAN inclusion."""
     ips = {"127.0.0.1"}
     try:
         hostname = socket.gethostname()
@@ -38,6 +74,11 @@ def get_local_ip_addresses() -> List[str]:
             ips.add(s.getsockname()[0])
     except Exception:
         pass
+
+    # Tailscale IP
+    ts_ip = get_tailscale_ip()
+    if ts_ip:
+        ips.add(ts_ip)
 
     return sorted(list(ips))
 

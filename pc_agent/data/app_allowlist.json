@@ -1,0 +1,50 @@
+{
+  "chrome": {
+    "name": "Google Chrome",
+    "executable": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "icon": "chrome",
+    "args": []
+  },
+  "edge": {
+    "name": "Microsoft Edge",
+    "executable": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+    "icon": "edge",
+    "args": []
+  },
+  "vscode": {
+    "name": "VS Code",
+    "executable": "C:\\Users\\dusha\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
+    "icon": "code",
+    "args": []
+  },
+  "android_studio": {
+    "name": "Android Studio",
+    "executable": "C:\\Program Files\\Android\\Android Studio\\bin\\studio64.exe",
+    "icon": "android",
+    "args": []
+  },
+  "brave": {
+    "name": "Brave Browser",
+    "executable": "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
+    "icon": "globe",
+    "args": []
+  },
+  "terminal": {
+    "name": "Windows Terminal",
+    "executable": "C:\\Users\\dusha\\AppData\\Local\\Microsoft\\WindowsApps\\wt.exe",
+    "icon": "terminal",
+    "args": []
+  },
+  "calculator": {
+    "name": "Calculator",
+    "executable": "C:\\Windows\\System32\\calc.exe",
+    "icon": "calculator",
+    "args": []
+  },
+  "notepad": {
+    "name": "Notepad",
+    "executable": "C:\\Windows\\System32\\notepad.exe",
+    "icon": "file-text",
+    "args": []
+  }
+}
