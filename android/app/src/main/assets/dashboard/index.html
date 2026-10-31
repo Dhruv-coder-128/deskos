@@ -514,6 +514,146 @@
                         <textarea id="quick-notes-textarea" rows="3" placeholder="Type quick notes, scratchpad items, or workstation reminders here..." style="width: 100%; background: var(--color-surface-card-subtle); border: var(--border-subtle); border-radius: var(--radius-sm); color: var(--color-text-primary); font-family: var(--font-mono); font-size: 12px; padding: 8px; resize: none; outline: none; box-sizing: border-box;"></textarea>
                     </section>
 
+                    <!-- Widget 7: Device Sensor Dashboard & Hardware Health (Phase 7) -->
+                    <section class="cyber-card col-span-2 col-span-3" id="card-device-sensors">
+                        <div class="card-header">
+                            <span class="card-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                                    <path d="M2 12h20"></path>
+                                </svg>
+                                DEVICE SENSORS &amp; HARDWARE HEALTH
+                            </span>
+                            <span class="card-badge" id="sensor-health-badge">LIVE SAMPLING // 10Hz</span>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
+                            <!-- Accelerometer -->
+                            <div style="background: var(--color-surface-card-subtle); padding: 8px 10px; border-radius: var(--radius-sm); border: var(--border-subtle);">
+                                <div class="telemetry-label" style="display: flex; justify-content: space-between;">
+                                    <span>ACCELEROMETER</span>
+                                    <span class="status-pill active" id="badge-sensor-accel" style="font-size: 8px; padding: 1px 4px;">ACTIVE</span>
+                                </div>
+                                <div class="telemetry-val neon" id="sensor-accel-val" style="margin-top: 4px; font-size: 12px; font-family: var(--font-mono);">X: 0.00 Y: 0.00 Z: 9.81</div>
+                                <div style="font-size: 10px; color: var(--color-text-dim); margin-top: 2px;">Vibration: <span id="sensor-vib-val">0.00</span> m/s²</div>
+                            </div>
+
+                            <!-- Gyroscope -->
+                            <div style="background: var(--color-surface-card-subtle); padding: 8px 10px; border-radius: var(--radius-sm); border: var(--border-subtle);">
+                                <div class="telemetry-label" style="display: flex; justify-content: space-between;">
+                                    <span>GYROSCOPE</span>
+                                    <span class="status-pill" id="badge-sensor-gyro" style="font-size: 8px; padding: 1px 4px;">CHECKING</span>
+                                </div>
+                                <div class="telemetry-val" id="sensor-gyro-val" style="margin-top: 4px; font-size: 12px; font-family: var(--font-mono);">X: 0.00 Y: 0.00 Z: 0.00</div>
+                                <div style="font-size: 10px; color: var(--color-text-dim); margin-top: 2px;">Angular Rate (rad/s)</div>
+                            </div>
+
+                            <!-- Magnetometer & Compass Azimuth -->
+                            <div style="background: var(--color-surface-card-subtle); padding: 8px 10px; border-radius: var(--radius-sm); border: var(--border-subtle);">
+                                <div class="telemetry-label" style="display: flex; justify-content: space-between;">
+                                    <span>MAGNETOMETER / COMPASS</span>
+                                    <span class="status-pill" id="badge-sensor-mag" style="font-size: 8px; padding: 1px 4px;">CHECKING</span>
+                                </div>
+                                <div class="telemetry-val neon" id="sensor-mag-val" style="margin-top: 4px; font-size: 12px; font-family: var(--font-mono);">HEADING: ---° (--)</div>
+                                <div style="font-size: 10px; color: var(--color-text-dim); margin-top: 2px;">Azimuth Field Vectors</div>
+                            </div>
+
+                            <!-- Light & Proximity -->
+                            <div style="background: var(--color-surface-card-subtle); padding: 8px 10px; border-radius: var(--radius-sm); border: var(--border-subtle);">
+                                <div class="telemetry-label" style="display: flex; justify-content: space-between;">
+                                    <span>LIGHT &amp; PROXIMITY</span>
+                                    <span class="status-pill active" id="badge-sensor-optics" style="font-size: 8px; padding: 1px 4px;">ACTIVE</span>
+                                </div>
+                                <div class="telemetry-val" id="sensor-optics-val" style="margin-top: 4px; font-size: 12px; font-family: var(--font-mono);">LUX: -- // PROX: --</div>
+                                <div style="font-size: 10px; color: var(--color-text-dim); margin-top: 2px;">Ambient Photometrics</div>
+                            </div>
+
+                            <!-- Battery Health -->
+                            <div style="background: var(--color-surface-card-subtle); padding: 8px 10px; border-radius: var(--radius-sm); border: var(--border-subtle);">
+                                <div class="telemetry-label" style="display: flex; justify-content: space-between;">
+                                    <span>BATTERY THERMAL &amp; HEALTH</span>
+                                    <span class="status-pill active" id="badge-sensor-battery" style="font-size: 8px; padding: 1px 4px;">GOOD</span>
+                                </div>
+                                <div class="telemetry-val neon" id="sensor-battery-detail-val" style="margin-top: 4px; font-size: 12px; font-family: var(--font-mono);">--% // -- mV // -- °C</div>
+                                <div style="font-size: 10px; color: var(--color-text-dim); margin-top: 2px;">Power Subsystem Status</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Widget 8: Security Camera Mode (Phase 7) -->
+                    <section class="cyber-card col-span-2 col-span-3" id="card-security-camera">
+                        <div class="card-header">
+                            <span class="card-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                    <circle cx="12" cy="13" r="4"></circle>
+                                </svg>
+                                SECURITY CAMERA &amp; REMOTE STREAMING (PHASE 7)
+                            </span>
+                            <span class="card-badge" id="camera-stream-badge">STANDALONE / READY</span>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; align-items: start;">
+                            <!-- Video Viewport -->
+                            <div style="position: relative; background: #000; border-radius: var(--radius-sm); border: var(--border-subtle); overflow: hidden; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                                <video id="camera-preview" autoplay playsinline muted style="width: 100%; height: 100%; max-height: 260px; object-fit: cover; display: none;"></video>
+                                <canvas id="camera-motion-canvas" width="160" height="120" style="display: none;"></canvas>
+                                
+                                <div id="camera-standby-placeholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; gap: 8px;">
+                                    <div style="font-size: 32px;">📷</div>
+                                    <div style="font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: #94A3B8;">CAMERA FEED OFFLINE</div>
+                                    <div style="font-family: var(--font-mono); font-size: 10px; color: #64748B;">Tap 'START CAMERA' to activate local camera lens &amp; frame stream</div>
+                                </div>
+
+                                <div id="camera-live-hud" style="display: none; position: absolute; top: 8px; left: 8px; right: 8px; justify-content: space-between; align-items: center; pointer-events: none;">
+                                    <span class="status-pill active" style="font-size: 9px; background: rgba(0,0,0,0.7);">● REC // LOCAL STREAM</span>
+                                    <span id="camera-fps-hud" style="font-family: var(--font-mono); font-size: 9px; color: #00FF47; background: rgba(0,0,0,0.7); padding: 2px 6px; border-radius: 3px;">10 FPS</span>
+                                </div>
+
+                                <div id="camera-motion-alert" style="display: none; position: absolute; bottom: 8px; left: 8px; background: rgba(239, 68, 68, 0.85); color: #fff; font-family: var(--font-mono); font-weight: 800; font-size: 10px; padding: 3px 8px; border-radius: 3px; animation: pulse 1s infinite;">
+                                    ⚠ MOTION DETECTED
+                                </div>
+                            </div>
+
+                            <!-- Controls & PC Link Info -->
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <div class="telemetry-label" style="display: flex; justify-content: space-between;">
+                                    <span>SURVEILLANCE CONTROLS</span>
+                                    <span class="telemetry-val" id="camera-motion-status" style="font-size: 10px;">MOTION: OFF</span>
+                                </div>
+
+                                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                                    <button class="cyber-btn active" id="btn-camera-toggle" onclick="DeskOS.toggleSecurityCamera()" style="flex: 1; min-width: 120px;">
+                                        START CAMERA
+                                    </button>
+                                    <button class="cyber-btn" id="btn-camera-snapshot" onclick="DeskOS.takeCameraSnapshot()" style="flex: 1; min-width: 120px;">
+                                        TAKE SNAPSHOT
+                                    </button>
+                                    <button class="cyber-btn" id="btn-camera-motion" onclick="DeskOS.toggleMotionDetection()" style="flex: 1; min-width: 120px;">
+                                        MOTION DETECT
+                                    </button>
+                                </div>
+
+                                <div style="background: var(--color-surface-card-subtle); padding: 8px; border-radius: var(--radius-sm); border: var(--border-subtle); font-family: var(--font-mono); font-size: 10px; line-height: 1.5; color: var(--color-text-secondary); margin-top: 4px;">
+                                    <div style="color: var(--color-accent-primary); font-weight: 700; margin-bottom: 2px;">DESKTOP BROWSER VIEWER:</div>
+                                    <div>View phone camera live on PC:</div>
+                                    <div style="color: #38BDF8; word-break: break-all;"><code>https://127.0.0.1:8765/camera</code></div>
+                                    <div style="color: #94A3B8; font-size: 9px; margin-top: 4px;">Frames stream securely over authenticated TLS WebSocket directly to PC Agent (zero third-party cloud).</div>
+                                </div>
+
+                                <!-- Last Snapshot Preview Container -->
+                                <div id="camera-snapshot-box" style="display: none; background: var(--color-surface-card-subtle); padding: 8px; border-radius: var(--radius-sm); border: var(--border-subtle);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                        <span class="telemetry-label">LAST SNAPSHOT</span>
+                                        <span id="camera-snapshot-time" style="font-size: 9px; font-family: var(--font-mono); color: #94A3B8;">--:--:--</span>
+                                    </div>
+                                    <img id="camera-snapshot-img" src="" alt="Snapshot" style="width: 100%; max-height: 120px; object-fit: contain; border-radius: 3px; background: #000;">
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
                 </div>
             </div>
 
@@ -768,14 +908,54 @@
             <div class="idle-hint">[ TAP SCREEN TO RESUME WORKSTATION ]</div>
         </div>
 
-        <!-- Mode 3: Futuristic Cybersecurity Radar Overlay -->
-        <div id="screensaver-overlay" class="mode-view" style="cursor: pointer;" onclick="DeskOS.setMode('active')">
-            <canvas id="screensaver-canvas"></canvas>
-            <div class="screensaver-hud">
-                <div style="color: var(--color-accent-primary); font-weight: 800; letter-spacing: 1px;">CYBER RADAR // SURVEILLANCE BEACON</div>
-                <div id="screensaver-time" style="font-size: 16px; font-weight: 700; color: #E5E7EB; margin-top: 4px;">00:00:00</div>
-                <div style="font-size: 10px; color: var(--color-text-dim); margin-top: 4px;">[ TAP ANYWHERE TO EXIT RADAR ]</div>
+        <!-- Mode 3: Futuristic Cybersecurity Radar Overlay 2.0 -->
+        <div id="screensaver-overlay" class="mode-view">
+            <!-- Radar HUD Top Control Bar -->
+            <div class="radar-top-hud">
+                <div class="radar-hud-left">
+                    <button class="cyber-btn active" id="radar-filter-all" onclick="DeskOS.setRadarFilter('ALL')">ALL</button>
+                    <button class="cyber-btn" id="radar-filter-aircraft" onclick="DeskOS.setRadarFilter('AIRCRAFT')">AIRCRAFT (<span id="radar-count-aircraft">0</span>)</button>
+                    <button class="cyber-btn" id="radar-filter-ble" onclick="DeskOS.setRadarFilter('BLUETOOTH')">BLE (<span id="radar-count-ble">0</span>)</button>
+                    <button class="cyber-btn" id="radar-filter-lan" onclick="DeskOS.setRadarFilter('LAN')">LAN (<span id="radar-count-lan">0</span>)</button>
+                    <button class="cyber-btn" id="radar-filter-ts" onclick="DeskOS.setRadarFilter('TAILSCALE')">TS (<span id="radar-count-ts">0</span>)</button>
+                </div>
+
+                <div class="radar-hud-right">
+                    <!-- Range Toggles -->
+                    <div style="display: flex; gap: 3px;">
+                        <button class="cyber-btn" id="radar-range-50" onclick="DeskOS.setRadarRange(50)" style="padding: 2px 6px; font-size: 9px; min-height: 22px;">50k</button>
+                        <button class="cyber-btn active" id="radar-range-100" onclick="DeskOS.setRadarRange(100)" style="padding: 2px 6px; font-size: 9px; min-height: 22px;">100k</button>
+                        <button class="cyber-btn" id="radar-range-250" onclick="DeskOS.setRadarRange(250)" style="padding: 2px 6px; font-size: 9px; min-height: 22px;">250k</button>
+                    </div>
+
+                    <!-- Location Selector / GPS -->
+                    <button class="cyber-btn" id="btn-radar-location" onclick="DeskOS.openRadarLocationModal()" style="padding: 2px 8px; font-size: 9px; min-height: 22px;">
+                        📍 <span id="radar-hud-location">Mumbai Hub</span>
+                    </button>
+
+                    <!-- BLE Scan Toggle -->
+                    <button class="cyber-btn" id="btn-radar-ble" onclick="DeskOS.toggleRadarBleScan()" style="padding: 2px 8px; font-size: 9px; min-height: 22px;">
+                        BLE SCAN
+                    </button>
+
+                    <!-- Exit Radar -->
+                    <button class="cyber-btn danger" onclick="DeskOS.setMode('active')" style="padding: 2px 8px; font-size: 10px; min-height: 22px;">
+                        ✕ EXIT
+                    </button>
+                </div>
             </div>
+
+            <!-- Status Subheader -->
+            <div class="radar-sub-hud">
+                <span id="radar-hud-status" style="font-family: var(--font-mono); font-size: 10px; color: #00FF47;">SCANNING OPENSKY REST FEED...</span>
+                <span id="screensaver-time" style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: #E5E7EB;">00:00:00</span>
+            </div>
+
+            <!-- Tactical Canvas with Touch / Click Handler -->
+            <canvas id="screensaver-canvas" onclick="DeskOS.onRadarCanvasClick(event)"></canvas>
+
+            <!-- Target Detail Floating Drawer / Modal -->
+            <div id="radar-target-detail-card" class="radar-target-card" style="display: none;"></div>
         </div>
 
         <!-- Mode 4: Customization Modal -->
@@ -911,12 +1091,32 @@
             </div>
         </div>
 
+        <!-- Mode 8: Radar Location Modal (Phase 7 / Radar 2.0) -->
+        <div id="radar-location-modal" class="modal-overlay">
+            <div class="modal-card" style="max-width: 380px;">
+                <div class="modal-header">
+                    <span class="modal-title">OBSERVER RADAR LOCATION</span>
+                    <button class="cyber-btn" onclick="DeskOS.closeRadarLocationModal()" style="padding: 4px 8px; min-height: 26px;">✕</button>
+                </div>
+                <div style="margin: 8px 0; font-family: var(--font-mono); font-size: 11px; color: var(--color-text-secondary);">
+                    Select observation post for real-time aircraft trajectory calculations:
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;" id="radar-city-list">
+                    <!-- Populated dynamically from RadarEngine.CITY_PRESETS -->
+                </div>
+                <button class="cyber-btn active" onclick="DeskOS.triggerGpsLocation()" style="margin-top: 10px; width: 100%;">
+                    🎯 USE PHONE GPS SENSOR
+                </button>
+            </div>
+        </div>
+
     </div>
 
     <!-- Subsystem Scripts -->
     <script src="js/storage.js"></script>
     <script src="js/ui-bridge.js"></script>
     <script src="js/audio-synth.js"></script>
+    <script src="js/radar-engine.js"></script>
     <script src="js/canvas-graphs.js"></script>
     <script src="js/sensors.js"></script>
     <script src="js/widgets.js"></script>

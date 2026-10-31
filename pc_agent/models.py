@@ -238,6 +238,8 @@ class RunningWindow(BaseModel):
     hwnd: int
     title: str
     process_name: Optional[str] = None
+    app_name: Optional[str] = None
+    initials: Optional[str] = None
     is_foreground: bool = False
     is_minimized: bool = False
     icon_b64: Optional[str] = None
@@ -252,6 +254,30 @@ class RunningWindowsResponse(BaseModel):
     foreground_hwnd: Optional[int] = None
     diagnostic: Optional[str] = None
     timestamp: float
+
+
+# -----------------------------------------------------------------------------
+# Network Radar Models (Cyber Radar 2.0)
+# -----------------------------------------------------------------------------
+class NetworkDevice(BaseModel):
+    id: str
+    ip: str
+    hostname: Optional[str] = None
+    mac: Optional[str] = None
+    device_type: str = "lan_device"  # "host", "lan_device", "tailscale_peer", "router"
+    is_current_host: bool = False
+    is_tailscale: bool = False
+    status: str = "ONLINE"
+    os: Optional[str] = None
+    last_seen: float = 0.0
+
+
+class NetworkDevicesResponse(BaseModel):
+    type: Literal["network_devices"] = "network_devices"
+    devices: List[NetworkDevice]
+    total_count: int
+    timestamp: float
+
 
 
 

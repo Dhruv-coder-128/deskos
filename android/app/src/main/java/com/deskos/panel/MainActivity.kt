@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
 import android.webkit.ConsoleMessage
+import android.webkit.GeolocationPermissions
+import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -27,7 +29,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var notificationHelper: NotificationHelper
     private lateinit var securityHelper: SecurityHelper
     private lateinit var pcAgentManager: PcAgentManager
+    private lateinit var bluetoothRadarHelper: BluetoothRadarHelper
     private lateinit var assetLoader: WebViewAssetLoader
+    private var pendingCameraPermissionRequest: PermissionRequest? = null
+    private var pendingGeoCallback: GeolocationPermissions.Callback? = null
+    private var pendingGeoOrigin: String? = null
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         notificationHelper = NotificationHelper(this)
         securityHelper = SecurityHelper(this)
         pcAgentManager = PcAgentManager(this, securityHelper)
+        bluetoothRadarHelper = BluetoothRadarHelper(this)
 
         // Configure hardened WebViewAssetLoader (serves local assets under virtual HTTPS origin)
         assetLoader = WebViewAssetLoader.Builder()
@@ -57,22 +64,76 @@ class MainActivity : AppCompatActivity() {
                 useWideViewPort = true
                 loadWithOverviewMode = true
                 cacheMode = WebSettings.LOAD_NO_CACHE
+                setGeolocationEnabled(true)
+                mediaPlaybackRequiresUserGesture = false
             }
             clearCache(true)
 
             // Bind sanitized native bridge to the local dashboard
             addJavascriptInterface(
-                NativeBridge(this@MainActivity, powerHelper, sensorHelper, notificationHelper, pcAgentManager),
+                NativeBridge(
+                    this@MainActivity,
+                    powerHelper,
+                    sensorHelper,
+                    notificationHelper,
+                    pcAgentManager,
+                    bluetoothRadarHelper
+                ),
                 "DeskOSBridge"
             )
 
-            // WebChromeClient enables console logging for diagnostics in Logcat
+            // WebChromeClient enables console logging, camera permissions & geolocation
             webChromeClient = object : WebChromeClient() {
                 override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
                     consoleMessage?.let {
                         Log.d("DESK_OS_WEB", "${it.sourceId()}:${it.lineNumber()} [${it.messageLevel()}]: ${it.message()}")
                     }
                     return true
+                }
+
+                override fun onPermissionRequest(request: PermissionRequest?) {
+                    request?.let { req ->
+                        val resources = req.resources
+                        if (resources.contains(PermissionRequest.RESOURCE_VIDEO_CAPTURE)) {
+                            if (androidx.core.content.ContextCompat.checkSelfPermission(
+                                    this@MainActivity,
+                                    android.Manifest.permission.CAMERA
+                                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                            ) {
+                                req.grant(arrayOf(PermissionRequest.RESOURCE_VIDEO_CAPTURE))
+                            } else {
+                                pendingCameraPermissionRequest = req
+                                androidx.core.app.ActivityCompat.requestPermissions(
+                                    this@MainActivity,
+                                    arrayOf(android.Manifest.permission.CAMERA),
+                                    102
+                                )
+                            }
+                        } else {
+                            req.grant(resources)
+                        }
+                    }
+                }
+
+                override fun onGeolocationPermissionsShowPrompt(
+                    origin: String?,
+                    callback: GeolocationPermissions.Callback?
+                ) {
+                    if (androidx.core.content.ContextCompat.checkSelfPermission(
+                            this@MainActivity,
+                            android.Manifest.permission.ACCESS_FINE_LOCATION
+                        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                    ) {
+                        callback?.invoke(origin, true, false)
+                    } else {
+                        pendingGeoCallback = callback
+                        pendingGeoOrigin = origin
+                        androidx.core.app.ActivityCompat.requestPermissions(
+                            this@MainActivity,
+                            arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION),
+                            101
+                        )
+                    }
                 }
             }
 
@@ -130,7 +191,7 @@ class MainActivity : AppCompatActivity() {
         setupKioskWindow()
 
         // Load the locally bundled DESK OS dashboard (with version parameter to guarantee cache refresh)
-        webView.loadUrl("https://appassets.androidplatform.net/assets/dashboard/index.html?v=1.1.0")
+        webView.loadUrl("https://appassets.androidplatform.net/assets/dashboard/index.html?v=1.2.0")
     }
 
     private fun setupKioskWindow() {
@@ -164,6 +225,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        bluetoothRadarHelper.stopScan()
         sensorHelper.stopListening()
         powerHelper.stopListening()
         webView.onPause()
@@ -172,14 +234,41 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        bluetoothRadarHelper.stopScan()
         restoreDefaultBrightness()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        bluetoothRadarHelper.stopScan()
         restoreDefaultBrightness()
         pcAgentManager.disconnect()
         webView.destroy()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            101 -> {
+                val granted = grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED
+                pendingGeoCallback?.invoke(pendingGeoOrigin, granted, false)
+                pendingGeoCallback = null
+                pendingGeoOrigin = null
+            }
+            102 -> {
+                val granted = grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED
+                if (granted) {
+                    pendingCameraPermissionRequest?.grant(arrayOf(PermissionRequest.RESOURCE_VIDEO_CAPTURE))
+                } else {
+                    pendingCameraPermissionRequest?.deny()
+                }
+                pendingCameraPermissionRequest = null
+            }
+        }
     }
 
     fun restoreDefaultBrightness() {

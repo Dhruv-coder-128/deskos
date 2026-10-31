@@ -282,6 +282,128 @@ const UIBridge = (() => {
 
         sendMediaAction(action) {
             return this.sendControlAction('media_action', { media_action: action });
+        },
+
+        // Cyber Radar 2.0: Bluetooth LE Discovery
+        startBleScan() {
+            if (isNative && window.DeskOSBridge.startBleScan) {
+                return window.DeskOSBridge.startBleScan();
+            }
+            return false;
+        },
+
+        stopBleScan() {
+            if (isNative && window.DeskOSBridge.stopBleScan) {
+                return window.DeskOSBridge.stopBleScan();
+            }
+            return false;
+        },
+
+        isBleScanning() {
+            if (isNative && window.DeskOSBridge.isBleScanning) {
+                return window.DeskOSBridge.isBleScanning();
+            }
+            return false;
+        },
+
+        getDiscoveredBleDevices() {
+            if (isNative && window.DeskOSBridge.getDiscoveredBleDevices) {
+                try {
+                    return JSON.parse(window.DeskOSBridge.getDiscoveredBleDevices());
+                } catch (e) {
+                    return [];
+                }
+            }
+            return [];
+        },
+
+        checkBluetoothPermission() {
+            if (isNative && window.DeskOSBridge.checkBluetoothPermission) {
+                return window.DeskOSBridge.checkBluetoothPermission();
+            }
+            return true;
+        },
+
+        requestBluetoothPermission() {
+            if (isNative && window.DeskOSBridge.requestBluetoothPermission) {
+                window.DeskOSBridge.requestBluetoothPermission();
+            }
+        },
+
+        // Location Permissions (Aircraft Radar GPS)
+        checkLocationPermission() {
+            if (isNative && window.DeskOSBridge.checkLocationPermission) {
+                return window.DeskOSBridge.checkLocationPermission();
+            }
+            return false;
+        },
+
+        requestLocationPermission() {
+            if (isNative && window.DeskOSBridge.requestLocationPermission) {
+                window.DeskOSBridge.requestLocationPermission();
+            }
+        },
+
+        // Phase 7: Security Camera
+        checkCameraPermission() {
+            if (isNative && window.DeskOSBridge.checkCameraPermission) {
+                return window.DeskOSBridge.checkCameraPermission();
+            }
+            return false;
+        },
+
+        requestCameraPermission() {
+            if (isNative && window.DeskOSBridge.requestCameraPermission) {
+                window.DeskOSBridge.requestCameraPermission();
+            }
+        },
+
+        streamCameraFrame(frameBase64) {
+            if (isNative && window.DeskOSBridge.streamCameraFrame) {
+                return window.DeskOSBridge.streamCameraFrame(frameBase64);
+            }
+            return this.sendWsJson({ type: 'camera_frame', data: frameBase64 });
+        },
+
+        // Phase 7: Real Sensor Dashboard
+        getRealSensorReadings() {
+            if (isNative && window.DeskOSBridge.getRealSensorReadings) {
+                try {
+                    return JSON.parse(window.DeskOSBridge.getRealSensorReadings());
+                } catch (e) {
+                    return null;
+                }
+            }
+            return null;
+        },
+
+        requestNetworkDevices() {
+            if (isNative && window.DeskOSBridge.requestNetworkDevices) {
+                return window.DeskOSBridge.requestNetworkDevices();
+            }
+            return this.sendWsJson({ type: 'get_network_devices' });
+        },
+
+        fetchOpenSky(lamin, lomin, lamax, lomax) {
+            if (isNative && window.DeskOSBridge.fetchOpenSky) {
+                try {
+                    return window.DeskOSBridge.fetchOpenSky(String(lamin), String(lomin), String(lamax), String(lomax));
+                } catch (e) {
+                    console.error('[Bridge] Native fetchOpenSky error:', e);
+                }
+            }
+            return null;
+        },
+
+        requestAircraftData(lamin, lomin, lamax, lomax) {
+            return this.sendWsJson({
+                type: 'control',
+                action: 'get_aircraft',
+                lamin: Number(lamin),
+                lomin: Number(lomin),
+                lamax: Number(lamax),
+                lomax: Number(lomax)
+            });
         }
     };
 })();

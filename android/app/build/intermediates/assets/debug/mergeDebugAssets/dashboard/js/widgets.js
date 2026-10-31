@@ -14,7 +14,9 @@ const WidgetManager = (() => {
         { id: 'card-pc-sys', title: 'PC RAM, Storage & Net', visible: true, order: 7 },
         { id: 'card-sensors', title: 'Dynamic Sensors Lab (M01s)', visible: true, order: 8 },
         { id: 'card-controls', title: 'Panel Hardware Controls', visible: true, order: 9 },
-        { id: 'card-notes', title: 'Personal Space Scratchpad', visible: true, order: 10 }
+        { id: 'card-notes', title: 'Personal Space Scratchpad', visible: true, order: 10 },
+        { id: 'card-device-sensors', title: 'Device Sensors & Health (Phase 7)', visible: true, order: 11 },
+        { id: 'card-security-camera', title: 'Security Camera Mode (Phase 7)', visible: true, order: 12 }
     ];
 
     let widgetConfig = [...DEFAULT_CONFIG];

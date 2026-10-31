@@ -23,6 +23,7 @@ if str(_AGENT_DIR) not in sys.path:
     sys.path.insert(0, str(_AGENT_DIR))
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Request, status
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
 
@@ -65,7 +66,9 @@ try:
         DiscoveredAppsResponse,
         MediaState,
         RunningWindow,
-        RunningWindowsResponse
+        RunningWindowsResponse,
+        NetworkDevice,
+        NetworkDevicesResponse
     )
     from pc_agent.telemetry import TelemetryCollector
     from pc_agent.controls import (
@@ -76,7 +79,8 @@ try:
         WorkstationController,
         AppDiscoveryEngine,
         MediaSessionController,
-        TaskSwitcherController
+        TaskSwitcherController,
+        NetworkDiscoveryEngine
     )
 except ImportError:
     from config import (
@@ -117,7 +121,9 @@ except ImportError:
         DiscoveredAppsResponse,
         MediaState,
         RunningWindow,
-        RunningWindowsResponse
+        RunningWindowsResponse,
+        NetworkDevice,
+        NetworkDevicesResponse
     )
     from telemetry import TelemetryCollector
     from controls import (
@@ -128,7 +134,8 @@ except ImportError:
         WorkstationController,
         AppDiscoveryEngine,
         MediaSessionController,
-        TaskSwitcherController
+        TaskSwitcherController,
+        NetworkDiscoveryEngine
     )
 
 # Setup Logging
@@ -151,6 +158,10 @@ workstation_controller = WorkstationController()
 app_discovery = AppDiscoveryEngine()
 media_session = MediaSessionController()
 task_switcher = TaskSwitcherController()
+network_discovery = NetworkDiscoveryEngine()
+
+latest_camera_frame: Optional[str] = None
+last_camera_frame_timestamp: float = 0.0
 
 device_store = DeviceStore()
 pairing_manager = PairingManager()
@@ -215,6 +226,24 @@ async def telemetry_broadcaster_loop():
                                 dead.add(ws)
                     except Exception as we:
                         logger.debug(f"Windows broadcast exception: {we}")
+
+                # 4. Interleave network radar broadcast every 6.0s
+                if loop_tick % 6 == 0:
+                    try:
+                        devs = await asyncio.to_thread(network_discovery.get_network_devices)
+                        net_msg = {
+                            "type": "network_devices",
+                            "devices": [d.model_dump() for d in devs],
+                            "total_count": len(devs),
+                            "timestamp": time.time()
+                        }
+                        for ws in list(authenticated_websockets):
+                            try:
+                                await ws.send_json(net_msg)
+                            except Exception:
+                                dead.add(ws)
+                    except Exception as ne:
+                        logger.debug(f"Network discovery broadcast exception: {ne}")
 
                 for ws in dead:
                     authenticated_websockets.discard(ws)
@@ -504,12 +533,93 @@ async def get_running_windows(request: Request):
     return RunningWindowsResponse(windows=wins, window_count=count, foreground_hwnd=fg, timestamp=time.time())
 
 
+@app.get("/api/v1/network/devices", response_model=NetworkDevicesResponse, tags=["Radar"])
+async def get_network_devices_endpoint(request: Request):
+    """Authenticated endpoint returning local network (LAN) and Tailscale mesh devices."""
+    _verify_auth_token(request)
+    devs = await asyncio.to_thread(network_discovery.get_network_devices)
+    return NetworkDevicesResponse(devices=devs, total_count=len(devs), timestamp=time.time())
+
+
+@app.get("/camera", response_class=HTMLResponse, tags=["Camera"])
+async def camera_viewer_page():
+    """Web viewer to monitor the paired phone's live security camera stream."""
+    html = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESK OS // Remote Security Camera</title>
+    <style>
+        body { background: #0A0E17; color: #00FF47; font-family: 'Consolas', monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 16px; box-sizing: border-box; }
+        .box { border: 2px solid #00FF47; box-shadow: 0 0 25px rgba(0,255,71,0.25); padding: 18px; border-radius: 8px; text-align: center; max-width: 680px; width: 100%; background: #0F172A; }
+        img { width: 100%; max-height: 480px; border-radius: 4px; border: 1px solid #334155; background: #000; object-fit: contain; }
+        .status { margin-top: 12px; font-size: 13px; color: #38BDF8; letter-spacing: 1px; }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; background: rgba(239, 68, 68, 0.2); color: #EF4444; border: 1px solid #EF4444; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <span style="font-weight:800; font-size:16px; letter-spacing: 1.5px;">DESK OS // SECURITY CAM FEED</span>
+            <span class="badge" id="live-badge">CONNECTING</span>
+        </div>
+        <img id="cam-img" alt="Waiting for Camera Feed from Phone...">
+        <div class="status" id="cam-status">Listening for live camera broadcast...</div>
+    </div>
+    <script>
+        const img = document.getElementById('cam-img');
+        const status = document.getElementById('cam-status');
+        const badge = document.getElementById('live-badge');
+        setInterval(async () => {
+            try {
+                const r = await fetch('/api/v1/camera/latest');
+                const d = await r.json();
+                if (d.has_frame && d.frame) {
+                    img.src = d.frame;
+                    badge.textContent = '● LIVE FEED';
+                    badge.style.color = '#00FF47';
+                    badge.style.borderColor = '#00FF47';
+                    badge.style.background = 'rgba(0,255,71,0.2)';
+                    const age = Math.round((Date.now()/1000 - d.timestamp)*10)/10;
+                    status.textContent = `Streaming from mobile panel. Latency: ${age}s`;
+                } else {
+                    badge.textContent = 'CAMERA IDLE';
+                    badge.style.color = '#F59E0B';
+                    badge.style.borderColor = '#F59E0B';
+                    badge.style.background = 'rgba(245,158,11,0.2)';
+                    status.textContent = 'Camera is idle. Tap [START CAMERA] on your phone panel to stream.';
+                }
+            } catch(e) {
+                status.textContent = 'Connecting to agent...';
+            }
+        }, 400);
+    </script>
+</body>
+</html>"""
+    return HTMLResponse(content=html)
+
+
+@app.get("/api/v1/camera/latest", tags=["Camera"])
+async def get_latest_camera():
+    """Returns the most recent security camera frame streamed from the phone."""
+    global latest_camera_frame, last_camera_frame_timestamp
+    is_fresh = (latest_camera_frame is not None and (time.time() - last_camera_frame_timestamp) < 15.0)
+    return {
+        "has_frame": is_fresh,
+        "timestamp": last_camera_frame_timestamp,
+        "frame": latest_camera_frame if is_fresh else None
+    }
+
+
 
 # -----------------------------------------------------------------------------
 # WebSocket Control Endpoint
 # -----------------------------------------------------------------------------
 @app.websocket("/ws/control")
 async def websocket_control(websocket: WebSocket):
+    global latest_camera_frame, last_camera_frame_timestamp
     await websocket.accept()
     active_websockets.add(websocket)
     client_ip = websocket.client.host if websocket.client else "unknown"
@@ -638,6 +748,19 @@ async def websocket_control(websocket: WebSocket):
                     elif msg_type == "get_volume":
                         v_st = volume_controller.get_state()
                         await websocket.send_json({"type": "volume_state", **v_st})
+                    elif msg_type == "get_network_devices":
+                        devs = await asyncio.to_thread(network_discovery.get_network_devices)
+                        await websocket.send_json({
+                            "type": "network_devices",
+                            "devices": [d.model_dump() for d in devs],
+                            "total_count": len(devs),
+                            "timestamp": time.time()
+                        })
+                    elif msg_type == "camera_frame":
+                        frame_val = data.get("frame") or data.get("data")
+                        if frame_val and isinstance(frame_val, str) and len(frame_val) < 2000000:
+                            latest_camera_frame = frame_val
+                            last_camera_frame_timestamp = time.time()
                     elif msg_type == "control_action":
                         action = data.get("action", "")
                         if action == "launch_app":
@@ -736,6 +859,38 @@ async def websocket_control(websocket: WebSocket):
                                 "timestamp": time.time(),
                                 "error": err
                             })
+                        elif action == "get_network_devices":
+                            devs = await asyncio.to_thread(network_discovery.get_network_devices)
+                            await websocket.send_json({
+                                "type": "network_devices",
+                                "devices": [d.model_dump() for d in devs],
+                                "total_count": len(devs),
+                                "timestamp": time.time()
+                            })
+                        elif action == "get_aircraft":
+                            lamin = float(data.get("lamin", 0))
+                            lomin = float(data.get("lomin", 0))
+                            lamax = float(data.get("lamax", 0))
+                            lomax = float(data.get("lomax", 0))
+                            url = f"https://opensky-network.org/api/states/all?lamin={lamin}&lomin={lomin}&lamax={lamax}&lomax={lomax}"
+                            def _fetch_ac():
+                                req = urllib.request.Request(url, headers={"User-Agent": "DESK-OS-Radar/2.0"})
+                                with urllib.request.urlopen(req, timeout=8) as r:
+                                    return json.loads(r.read().decode())
+                            try:
+                                res = await asyncio.to_thread(_fetch_ac)
+                                await websocket.send_json({
+                                    "type": "aircraft_data",
+                                    "states": res.get("states") or [],
+                                    "timestamp": time.time()
+                                })
+                            except Exception as ac_err:
+                                await websocket.send_json({
+                                    "type": "aircraft_data",
+                                    "states": [],
+                                    "error": str(ac_err),
+                                    "timestamp": time.time()
+                                })
                         elif action == "lock_workstation":
                             confirm = bool(data.get("confirm", False))
                             if not confirm:

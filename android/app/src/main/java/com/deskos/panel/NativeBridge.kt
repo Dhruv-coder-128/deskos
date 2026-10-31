@@ -19,13 +19,14 @@ class NativeBridge(
     private val powerHelper: PowerHelper,
     private val sensorHelper: SensorHelper,
     private val notificationHelper: NotificationHelper,
-    private val pcAgentManager: PcAgentManager
+    private val pcAgentManager: PcAgentManager,
+    private val bluetoothRadarHelper: BluetoothRadarHelper
 ) {
 
     @JavascriptInterface
     fun getDeviceInfo(): String {
         val json = JSONObject().apply {
-            put("appVersion", "1.2.0 (Phase 3 Workstation Linked)")
+            put("appVersion", "1.3.0 (Cyber Radar 2.0 & Phase 7 Active)")
             put("manufacturer", Build.MANUFACTURER)
             put("model", Build.MODEL)
             put("device", Build.DEVICE)
@@ -288,5 +289,157 @@ class NativeBridge(
     fun sendWsJson(jsonStr: String?): Boolean {
         if (jsonStr.isNullOrBlank()) return false
         return pcAgentManager.sendWsMessage(jsonStr)
+    }
+
+    // -------------------------------------------------------------------------
+    // Cyber Radar 2.0: Bluetooth LE Radar
+    // -------------------------------------------------------------------------
+    @JavascriptInterface
+    fun startBleScan(): Boolean {
+        return bluetoothRadarHelper.startScan()
+    }
+
+    @JavascriptInterface
+    fun stopBleScan(): Boolean {
+        bluetoothRadarHelper.stopScan()
+        return true
+    }
+
+    @JavascriptInterface
+    fun isBleScanning(): Boolean {
+        return bluetoothRadarHelper.isScanning
+    }
+
+    @JavascriptInterface
+    fun getDiscoveredBleDevices(): String {
+        return bluetoothRadarHelper.getDiscoveredDevicesJson().toString()
+    }
+
+    @JavascriptInterface
+    fun checkBluetoothPermission(): Boolean {
+        return bluetoothRadarHelper.hasScanPermission()
+    }
+
+    @JavascriptInterface
+    fun requestBluetoothPermission() {
+        activity.runOnUiThread {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                activity.requestPermissions(
+                    arrayOf(
+                        android.Manifest.permission.BLUETOOTH_SCAN,
+                        android.Manifest.permission.BLUETOOTH_CONNECT
+                    ),
+                    2001
+                )
+            } else {
+                activity.requestPermissions(
+                    arrayOf(
+                        android.Manifest.permission.ACCESS_FINE_LOCATION,
+                        android.Manifest.permission.BLUETOOTH,
+                        android.Manifest.permission.BLUETOOTH_ADMIN
+                    ),
+                    2001
+                )
+            }
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Location Permissions (Aircraft Radar GPS)
+    // -------------------------------------------------------------------------
+    @JavascriptInterface
+    fun checkLocationPermission(): Boolean {
+        return androidx.core.content.ContextCompat.checkSelfPermission(
+            activity,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+    }
+
+    @JavascriptInterface
+    fun requestLocationPermission() {
+        activity.runOnUiThread {
+            activity.requestPermissions(
+                arrayOf(
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                2002
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Phase 7: Security Camera Permissions & Streaming
+    // -------------------------------------------------------------------------
+    @JavascriptInterface
+    fun checkCameraPermission(): Boolean {
+        return androidx.core.content.ContextCompat.checkSelfPermission(
+            activity,
+            android.Manifest.permission.CAMERA
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+    }
+
+    @JavascriptInterface
+    fun requestCameraPermission() {
+        activity.runOnUiThread {
+            activity.requestPermissions(
+                arrayOf(android.Manifest.permission.CAMERA),
+                2003
+            )
+        }
+    }
+
+    @JavascriptInterface
+    fun streamCameraFrame(frameBase64: String?): Boolean {
+        if (frameBase64.isNullOrBlank() || frameBase64.length > 2000000) return false
+        val msg = JSONObject().apply {
+            put("type", "camera_frame")
+            put("data", frameBase64)
+        }
+        return pcAgentManager.sendWsMessage(msg.toString())
+    }
+
+    // -------------------------------------------------------------------------
+    // Phase 7: Real Sensor Dashboard
+    // -------------------------------------------------------------------------
+    @JavascriptInterface
+    fun getRealSensorReadings(): String {
+        return sensorHelper.getLiveReadingsJson().toString()
+    }
+
+    @JavascriptInterface
+    fun requestNetworkDevices(): Boolean {
+        val msg = JSONObject().apply { put("type", "get_network_devices") }
+        return pcAgentManager.sendWsMessage(msg.toString())
+    }
+
+    // -------------------------------------------------------------------------
+    // Cyber Radar 2.0: Native OpenSky API Fetcher (Bypasses WebView CORS)
+    // -------------------------------------------------------------------------
+    @JavascriptInterface
+    fun fetchOpenSky(lamin: String, lomin: String, lamax: String, lomax: String): String {
+        return try {
+            val urlStr = "https://opensky-network.org/api/states/all?lamin=$lamin&lomin=$lomin&lamax=$lamax&lomax=$lomax"
+            val url = java.net.URL(urlStr)
+            val conn = url.openConnection() as java.net.HttpURLConnection
+            conn.requestMethod = "GET"
+            conn.connectTimeout = 8000
+            conn.readTimeout = 8000
+            conn.setRequestProperty("User-Agent", "DESK-OS-Radar/2.0")
+            val code = conn.responseCode
+            if (code == 200) {
+                conn.inputStream.bufferedReader().use { it.readText() }
+            } else {
+                JSONObject().apply {
+                    put("error", "HTTP $code")
+                    put("states", org.json.JSONArray())
+                }.toString()
+            }
+        } catch (e: Exception) {
+            JSONObject().apply {
+                put("error", e.message ?: "Network error")
+                put("states", org.json.JSONArray())
+            }.toString()
+        }
     }
 }

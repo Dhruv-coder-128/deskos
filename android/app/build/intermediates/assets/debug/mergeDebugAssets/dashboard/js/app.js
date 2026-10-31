@@ -121,10 +121,11 @@ const DeskOS = (() => {
         },
 
         startTelemetryLoop() {
-            // Poll battery, thermal & PC agent link telemetry every 1.0 second
+            // Poll battery, thermal, PC agent link & hardware sensors
             telemetryInterval = setInterval(() => {
                 this.updateBatteryTelemetry();
                 this.updateAgentTelemetry();
+                this.updateSensorsDashboard();
             }, 1000);
         },
 
@@ -766,12 +767,29 @@ const DeskOS = (() => {
                 case 'screenshot_result':
                     this.renderScreenshotResult(msg);
                     break;
+                case 'network_devices':
+                    if (typeof RadarEngine !== 'undefined' && Array.isArray(msg.devices)) {
+                        RadarEngine.setNetworkDevices(msg.devices);
+                    }
+                    break;
+                case 'aircraft_data':
+                    if (typeof RadarEngine !== 'undefined') {
+                        if (msg.error) {
+                            RadarEngine.setAircraftError(msg.error);
+                        } else if (Array.isArray(msg.states)) {
+                            RadarEngine.parseAndStoreRawStates(msg.states);
+                        }
+                    }
+                    break;
                 case 'auth_success':
                     UIBridge.requestAppsList();
                     UIBridge.requestVolumeState();
                     UIBridge.requestDiscoveredApps();
                     UIBridge.requestMediaState();
                     UIBridge.requestRunningWindows();
+                    if (UIBridge.requestNetworkDevices) {
+                        UIBridge.requestNetworkDevices();
+                    }
                     break;
             }
         },
@@ -1117,23 +1135,27 @@ const DeskOS = (() => {
                 const isFg = Boolean(w.is_foreground || (fgHwnd && w.hwnd === fgHwnd));
                 const isMin = Boolean(w.is_minimized);
 
-                // Phase 6 Requirement: Icon-only responsive cards with tooltip & active border
+                const displayName = w.app_name || (w.process_name ? w.process_name.replace(/\.exe$/i, '') : 'App');
                 card.className = `task-window-card ${isFg ? 'foreground' : ''} ${isMin ? 'minimized' : ''}`;
-                card.title = `${w.title || 'Window'} (${w.process_name || 'App'}) [HWND ${w.hwnd}]`;
-                card.setAttribute('aria-label', `${w.title || 'Window'}`);
+                card.title = `${displayName}: "${w.title || 'Window'}" (PID: ${w.pid || 'N/A'}, HWND: ${w.hwnd})`;
+                card.setAttribute('aria-label', `${displayName} - ${w.title || 'Window'}`);
                 card.onclick = () => this.switchWindow(w.hwnd);
 
                 let iconHtml = '';
                 const b64 = w.icon_base64 || w.icon_b64;
                 if (b64) {
                     const src = b64.startsWith('data:') ? b64 : `data:image/png;base64,${b64}`;
-                    iconHtml = `<img src="${src}" class="task-window-icon-img" alt="" loading="lazy">`;
+                    iconHtml = `<img src="${src}" class="task-window-icon-img" alt="${this.escapeHtml(displayName)}" loading="lazy">`;
                 } else {
-                    iconHtml = `<span style="font-size: 20px;">🪟</span>`;
+                    const initials = w.initials || displayName.substring(0, 2).toUpperCase() || 'AP';
+                    iconHtml = `<div class="task-badge-initials">${this.escapeHtml(initials)}</div>`;
                 }
 
-                // NO title, process name, or HWND text inside the card - ONLY the icon!
-                card.innerHTML = iconHtml;
+                // Render clean icon/badge and short readable application name underneath
+                card.innerHTML = `
+                    ${iconHtml}
+                    <div class="task-window-name">${this.escapeHtml(displayName)}</div>
+                `;
                 grid.appendChild(card);
             });
         },
@@ -1296,10 +1318,403 @@ const DeskOS = (() => {
             }
         },
 
+        // =====================================================================
+        // PART A: CYBER RADAR 2.0 UI CONTROLS & EVENT HANDLERS
+        // =====================================================================
+        setRadarFilter(filter) {
+            if (typeof RadarEngine !== 'undefined') {
+                RadarEngine.setFilter(filter);
+            }
+            const fLower = (filter || 'ALL').toLowerCase();
+            ['all', 'aircraft', 'ble', 'lan', 'ts'].forEach(f => {
+                const btn = document.getElementById(`radar-filter-${f}`);
+                if (btn) btn.classList.toggle('active', f === fLower);
+            });
+            AudioSynth.playChime('tick');
+            UIBridge.triggerHaptic('click');
+        },
+
+        setRadarRange(km) {
+            if (typeof RadarEngine !== 'undefined') {
+                RadarEngine.setRange(km);
+            }
+            [50, 100, 250].forEach(r => {
+                const btn = document.getElementById(`radar-range-${r}`);
+                if (btn) btn.classList.toggle('active', r === Number(km));
+            });
+            AudioSynth.playChime('tick');
+            UIBridge.triggerHaptic('click');
+        },
+
+        openRadarLocationModal() {
+            const modal = document.getElementById('radar-location-modal');
+            const list = document.getElementById('radar-city-list');
+            if (list && typeof RadarEngine !== 'undefined') {
+                list.innerHTML = '';
+                RadarEngine.CITY_PRESETS.forEach(p => {
+                    const btn = document.createElement('button');
+                    btn.className = 'cyber-btn';
+                    btn.style.textAlign = 'left';
+                    btn.textContent = p.name;
+                    btn.onclick = () => {
+                        RadarEngine.setObserver(p.lat, p.lon, p.name);
+                        this.closeRadarLocationModal();
+                    };
+                    list.appendChild(btn);
+                });
+            }
+            if (modal) modal.classList.add('active');
+            AudioSynth.playChime('click');
+            UIBridge.triggerHaptic('click');
+        },
+
+        closeRadarLocationModal() {
+            const modal = document.getElementById('radar-location-modal');
+            if (modal) modal.classList.remove('active');
+            AudioSynth.playChime('click');
+            UIBridge.triggerHaptic('click');
+        },
+
+        triggerGpsLocation() {
+            if (typeof RadarEngine !== 'undefined') {
+                RadarEngine.tryDetectGpsLocation(false);
+            }
+            this.closeRadarLocationModal();
+            AudioSynth.playChime('success');
+            UIBridge.triggerHaptic('pulse');
+        },
+
+        toggleRadarBleScan() {
+            const btn = document.getElementById('btn-radar-ble');
+            if (!UIBridge.isBleScanning) return;
+            const isScanning = UIBridge.isBleScanning();
+            if (isScanning) {
+                UIBridge.stopBleScan();
+                if (btn) {
+                    btn.textContent = 'BLE SCAN';
+                    btn.classList.remove('active');
+                }
+            } else {
+                UIBridge.startBleScan();
+                if (btn) {
+                    btn.textContent = 'STOP SCAN';
+                    btn.classList.add('active');
+                }
+            }
+            AudioSynth.playChime('click');
+            UIBridge.triggerHaptic('click');
+        },
+
+        onRadarCanvasClick(event) {
+            if (typeof CanvasGraphs !== 'undefined' && CanvasGraphs.handleRadarClick) {
+                const hit = CanvasGraphs.handleRadarClick(event.clientX, event.clientY);
+                if (hit) {
+                    AudioSynth.playChime('tick');
+                    UIBridge.triggerHaptic('click');
+                }
+            }
+        },
+
+        // =====================================================================
+        // PART D: DEVICE SENSOR DASHBOARD (PHASE 7)
+        // =====================================================================
+        updateSensorsDashboard() {
+            if (!UIBridge.getRealSensorReadings) return;
+            const s = UIBridge.getRealSensorReadings();
+            if (!s) return;
+
+            // 1. Accelerometer
+            const accelEl = document.getElementById('sensor-accel-val');
+            const vibEl = document.getElementById('sensor-vib-val');
+            const accelBadge = document.getElementById('badge-sensor-accel');
+            if (s.accelerometer && s.accelerometer.available) {
+                if (accelEl) accelEl.textContent = `X: ${s.accelerometer.x.toFixed(2)} Y: ${s.accelerometer.y.toFixed(2)} Z: ${s.accelerometer.z.toFixed(2)}`;
+                if (vibEl) vibEl.textContent = `${(s.accelerometer.vibration || 0).toFixed(2)}`;
+                if (accelBadge) { accelBadge.textContent = 'ACTIVE'; accelBadge.className = 'status-pill active'; }
+            } else {
+                if (accelEl) accelEl.textContent = 'N/A';
+                if (accelBadge) { accelBadge.textContent = 'ABSENT'; accelBadge.className = 'status-pill'; }
+            }
+
+            // 2. Gyroscope (Honest handling: M01s has no gyroscope hardware)
+            const gyroEl = document.getElementById('sensor-gyro-val');
+            const gyroBadge = document.getElementById('badge-sensor-gyro');
+            if (s.gyroscope && s.gyroscope.available) {
+                if (gyroEl) gyroEl.textContent = `X: ${s.gyroscope.x.toFixed(2)} Y: ${s.gyroscope.y.toFixed(2)} Z: ${s.gyroscope.z.toFixed(2)}`;
+                if (gyroBadge) { gyroBadge.textContent = 'ACTIVE'; gyroBadge.className = 'status-pill active'; }
+            } else {
+                if (gyroEl) gyroEl.textContent = 'N/A (UNSUPPORTED)';
+                if (gyroBadge) {
+                    gyroBadge.textContent = 'ABSENT';
+                    gyroBadge.className = 'status-pill';
+                    gyroBadge.style.borderColor = '#64748B';
+                    gyroBadge.style.color = '#64748B';
+                }
+            }
+
+            // 3. Magnetometer & Compass (Honest handling: M01s has no magnetometer)
+            const magEl = document.getElementById('sensor-mag-val');
+            const magBadge = document.getElementById('badge-sensor-mag');
+            if (s.magnetometer && s.magnetometer.available) {
+                const az = s.magnetometer.azimuthDeg != null ? Math.round(s.magnetometer.azimuthDeg) : '---';
+                if (magEl) magEl.textContent = `HEADING: ${az}°`;
+                if (magBadge) { magBadge.textContent = 'ACTIVE'; magBadge.className = 'status-pill active'; }
+            } else {
+                if (magEl) magEl.textContent = 'N/A (UNSUPPORTED)';
+                if (magBadge) {
+                    magBadge.textContent = 'ABSENT';
+                    magBadge.className = 'status-pill';
+                    magBadge.style.borderColor = '#64748B';
+                    magBadge.style.color = '#64748B';
+                }
+            }
+
+            // 4. Light & Proximity
+            const opticsEl = document.getElementById('sensor-optics-val');
+            const luxStr = (s.light && s.light.available) ? `${Math.round(s.light.lux)} lx` : 'N/A';
+            const proxStr = (s.proximity && s.proximity.available) ? (s.proximity.isNear ? 'NEAR (<5cm)' : 'FAR') : 'N/A';
+            if (opticsEl) opticsEl.textContent = `LUX: ${luxStr} // PROX: ${proxStr}`;
+
+            // 5. Battery details
+            const b = UIBridge.getBatteryStatus();
+            const battDetailEl = document.getElementById('sensor-battery-detail-val');
+            if (battDetailEl && b) {
+                const v = b.voltageMv ? `${b.voltageMv} mV` : 'N/A';
+                const t = (b.temperatureC && b.temperatureC !== 'N/A') ? `${b.temperatureC}°C` : 'N/A';
+                battDetailEl.textContent = `${b.percent || '--'}% // ${v} // ${t}`;
+            }
+        },
+
+        // =====================================================================
+        // PART D: SECURITY CAMERA & REMOTE STREAMING (PHASE 7)
+        // =====================================================================
+        async toggleSecurityCamera() {
+            if (this._cameraActive) {
+                this.stopSecurityCamera();
+            } else {
+                await this.startSecurityCamera();
+            }
+        },
+
+        async startSecurityCamera() {
+            const video = document.getElementById('camera-preview');
+            const placeholder = document.getElementById('camera-standby-placeholder');
+            const liveHud = document.getElementById('camera-live-hud');
+            const toggleBtn = document.getElementById('btn-camera-toggle');
+            const streamBadge = document.getElementById('camera-stream-badge');
+
+            try {
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: 'environment',
+                            width: { ideal: 640 },
+                            height: { ideal: 480 }
+                        },
+                        audio: false
+                    });
+
+                    this._cameraStream = stream;
+                    if (video) {
+                        video.srcObject = stream;
+                        video.style.display = 'block';
+                        try {
+                            await video.play();
+                        } catch (playErr) {
+                            console.warn('[Camera] video.play error:', playErr);
+                        }
+                    }
+                    if (placeholder) placeholder.style.display = 'none';
+                    if (liveHud) liveHud.style.display = 'flex';
+                    if (toggleBtn) {
+                        toggleBtn.textContent = 'STOP CAMERA';
+                        toggleBtn.classList.remove('active');
+                        toggleBtn.style.color = 'var(--color-alert-danger)';
+                        toggleBtn.style.borderColor = 'var(--color-alert-danger)';
+                    }
+                    if (streamBadge) {
+                        streamBadge.textContent = 'CAMERA ACTIVE // STREAMING';
+                        streamBadge.style.color = '#00FF47';
+                    }
+
+                    this._cameraActive = true;
+                    this.startCameraFrameStreaming();
+                    AudioSynth.playChime('success');
+                    UIBridge.triggerHaptic('click');
+                } else {
+                    alert('Camera media API unavailable in current WebView context.');
+                }
+            } catch (err) {
+                console.error('[Camera] Access error:', err);
+                alert(`Camera Access Failed: ${err.message || 'Permission denied'}`);
+                if (toggleBtn) {
+                    toggleBtn.textContent = 'START CAMERA';
+                    toggleBtn.classList.add('active');
+                    toggleBtn.removeAttribute('style');
+                }
+            }
+        },
+
+        stopSecurityCamera() {
+            if (this._cameraStream) {
+                this._cameraStream.getTracks().forEach(track => track.stop());
+                this._cameraStream = null;
+            }
+            if (this._cameraStreamTimer) {
+                clearInterval(this._cameraStreamTimer);
+                this._cameraStreamTimer = null;
+            }
+
+            const video = document.getElementById('camera-preview');
+            const placeholder = document.getElementById('camera-standby-placeholder');
+            const liveHud = document.getElementById('camera-live-hud');
+            const toggleBtn = document.getElementById('btn-camera-toggle');
+            const streamBadge = document.getElementById('camera-stream-badge');
+            const motionAlert = document.getElementById('camera-motion-alert');
+
+            if (video) {
+                video.style.display = 'none';
+                video.srcObject = null;
+            }
+            if (placeholder) placeholder.style.display = 'flex';
+            if (liveHud) liveHud.style.display = 'none';
+            if (motionAlert) motionAlert.style.display = 'none';
+
+            if (toggleBtn) {
+                toggleBtn.textContent = 'START CAMERA';
+                toggleBtn.classList.add('active');
+                toggleBtn.removeAttribute('style');
+            }
+            if (streamBadge) {
+                streamBadge.textContent = 'STANDALONE / READY';
+                streamBadge.style.color = '';
+            }
+
+            this._cameraActive = false;
+            AudioSynth.playChime('tick');
+            UIBridge.triggerHaptic('click');
+        },
+
+        startCameraFrameStreaming() {
+            if (this._cameraStreamTimer) clearInterval(this._cameraStreamTimer);
+
+            const video = document.getElementById('camera-preview');
+            const canvas = document.getElementById('camera-motion-canvas');
+            if (!video || !canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            let lastPixelData = null;
+
+            // Stream at 10 FPS (every 100ms) - lightweight, zero thermal burden
+            this._cameraStreamTimer = setInterval(() => {
+                if (!this._cameraActive || video.videoWidth === 0 || video.videoHeight === 0) return;
+
+                canvas.width = 160;
+                canvas.height = 120;
+                ctx.drawImage(video, 0, 0, 160, 120);
+
+                // Local Motion Detection Differencing
+                if (this._motionDetectionEnabled) {
+                    try {
+                        const imgData = ctx.getImageData(0, 0, 160, 120);
+                        const pixels = imgData.data;
+                        if (lastPixelData) {
+                            let diffScore = 0;
+                            const step = 8; // Sample every 8th pixel for instant computation
+                            for (let i = 0; i < pixels.length; i += step * 4) {
+                                const dR = Math.abs(pixels[i] - lastPixelData[i]);
+                                const dG = Math.abs(pixels[i + 1] - lastPixelData[i + 1]);
+                                const dB = Math.abs(pixels[i + 2] - lastPixelData[i + 2]);
+                                if ((dR + dG + dB) > 60) {
+                                    diffScore++;
+                                }
+                            }
+                            const motionAlert = document.getElementById('camera-motion-alert');
+                            const motionVal = document.getElementById('camera-motion-status');
+                            if (diffScore > 40) {
+                                if (motionAlert) motionAlert.style.display = 'block';
+                                if (motionVal) motionVal.textContent = 'MOTION DETECTED!';
+                            } else {
+                                if (motionAlert) motionAlert.style.display = 'none';
+                                if (motionVal) motionVal.textContent = 'MOTION ARMED // CLEAR';
+                            }
+                        }
+                        lastPixelData = new Uint8ClampedArray(pixels);
+                    } catch (_) {}
+                }
+
+                // Compress frame to mobile-optimized JPEG (0.55 quality)
+                const jpegBase64 = canvas.toDataURL('image/jpeg', 0.55);
+
+                // Stream frame to PC Agent via NativeBridge -> WebSocket
+                if (UIBridge.streamCameraFrame) {
+                    UIBridge.streamCameraFrame(jpegBase64);
+                }
+            }, 100);
+        },
+
+        takeCameraSnapshot() {
+            if (!this._cameraActive) {
+                alert('Please start camera first.');
+                return;
+            }
+
+            const video = document.getElementById('camera-preview');
+            const snapBox = document.getElementById('camera-snapshot-box');
+            const snapImg = document.getElementById('camera-snapshot-img');
+            const snapTime = document.getElementById('camera-snapshot-time');
+
+            if (!video || video.videoWidth === 0) return;
+
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = video.videoWidth;
+            tempCanvas.height = video.videoHeight;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.drawImage(video, 0, 0);
+
+            const dataUrl = tempCanvas.toDataURL('image/jpeg', 0.85);
+
+            if (snapImg) snapImg.src = dataUrl;
+            if (snapTime) {
+                const now = new Date();
+                snapTime.textContent = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+            }
+            if (snapBox) snapBox.style.display = 'block';
+
+            AudioSynth.playChime('success');
+            UIBridge.triggerHaptic('pulse');
+        },
+
+        toggleMotionDetection() {
+            this._motionDetectionEnabled = !this._motionDetectionEnabled;
+            const btn = document.getElementById('btn-camera-motion');
+            const statusEl = document.getElementById('camera-motion-status');
+            const alertEl = document.getElementById('camera-motion-alert');
+
+            if (this._motionDetectionEnabled) {
+                if (btn) btn.classList.add('active');
+                if (statusEl) statusEl.textContent = 'MOTION ARMED // SENSITIVE';
+            } else {
+                if (btn) btn.classList.remove('active');
+                if (statusEl) statusEl.textContent = 'MOTION: OFF';
+                if (alertEl) alertEl.style.display = 'none';
+            }
+            AudioSynth.playChime('click');
+            UIBridge.triggerHaptic('click');
+        },
+
         setMode(mode, e = null) {
             if (e && e.stopPropagation) {
                 e.stopPropagation();
             }
+
+            // Clean up radar loop if leaving screensaver
+            if (currentMode === MODES.SCREENSAVER && mode !== MODES.SCREENSAVER) {
+                if (typeof RadarEngine !== 'undefined') {
+                    RadarEngine.stopRadarLoop();
+                }
+            }
+
             currentMode = mode;
 
             const idleOverlay = document.getElementById('idle-overlay');
@@ -1362,6 +1777,9 @@ const DeskOS = (() => {
                     UIBridge.setBrightnessLevel(0.50);
                     UIBridge.setScreenDimmed(true);
                     if (ssOverlay) ssOverlay.classList.add('active');
+                    if (typeof RadarEngine !== 'undefined') {
+                        RadarEngine.startRadarLoop();
+                    }
                     CanvasGraphs.startScreensaver();
                     SensorsLab.stopLiveStream();
                     break;
@@ -1401,8 +1819,8 @@ const DeskOS = (() => {
             window.addEventListener('click', resetAction, { passive: true });
             window.addEventListener('mousemove', resetAction, { passive: true });
 
-            // Overlays tap-to-wake explicitly
-            ['dim-overlay', 'idle-overlay', 'screensaver-overlay'].forEach(id => {
+            // Overlays tap-to-wake explicitly (dim and idle)
+            ['dim-overlay', 'idle-overlay'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
                     el.addEventListener('click', (e) => {

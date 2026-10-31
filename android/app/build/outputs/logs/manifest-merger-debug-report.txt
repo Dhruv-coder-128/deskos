@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:2:1-40:12
-INJECTED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:2:1-40:12
-INJECTED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:2:1-40:12
-INJECTED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:2:1-40:12
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:2:1-62:12
+INJECTED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:2:1-62:12
+INJECTED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:2:1-62:12
+INJECTED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:2:1-62:12
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\88e5ac48bcaae1274ea47960b37b6762\transformed\material-1.12.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.appcompat:appcompat-resources:1.7.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\eef0d1eee970ee3abe9fc916423f6a0f\transformed\appcompat-resources-1.7.0\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.0.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\8b42b221eb48a68ebaa4e8ff69fa72f1\transformed\constraintlayout-2.0.1\AndroidManifest.xml:2:1-11:12
@@ -63,33 +63,119 @@ uses-permission#android.permission.ACCESS_NETWORK_STATE
 ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:6:5-79
 	android:name
 		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:6:22-76
+uses-permission#android.permission.ACCESS_WIFI_STATE
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:7:5-76
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:7:22-73
 uses-permission#android.permission.WAKE_LOCK
-ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:7:5-68
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:8:5-68
 	android:name
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:7:22-65
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:8:22-65
 uses-permission#android.permission.VIBRATE
-ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:8:5-66
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:9:5-66
 	android:name
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:8:22-63
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:9:22-63
 uses-permission#android.permission.POST_NOTIFICATIONS
-ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:9:5-77
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:10:5-77
 	android:name
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:9:22-74
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:10:22-74
+uses-permission#android.permission.CAMERA
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:13:5-65
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:13:22-62
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:16:5-79
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:16:22-76
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:17:5-81
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:17:22-78
+uses-permission#android.permission.BLUETOOTH
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:20:5-95
+	android:maxSdkVersion
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:20:66-92
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:20:22-65
+uses-permission#android.permission.BLUETOOTH_ADMIN
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:21:5-101
+	android:maxSdkVersion
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:21:72-98
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:21:22-71
+uses-permission#android.permission.BLUETOOTH_SCAN
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:22:5-120
+	android:usesPermissionFlags
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:22:71-117
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:22:22-70
+uses-permission#android.permission.BLUETOOTH_CONNECT
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:23:5-76
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:23:22-73
+uses-feature#android.hardware.camera
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:26:5-85
+	android:required
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:26:58-82
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:26:19-57
+uses-feature#android.hardware.camera.autofocus
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:27:5-95
+	android:required
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:27:68-92
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:27:19-67
+uses-feature#android.hardware.bluetooth_le
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:28:5-91
+	android:required
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:28:64-88
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:28:19-63
+uses-feature#android.hardware.location.gps
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:29:5-91
+	android:required
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:29:64-88
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:29:19-63
 uses-feature#android.hardware.sensor.accelerometer
-ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:12:5-99
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:30:5-99
 	android:required
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:12:72-96
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:30:72-96
 	android:name
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:12:19-71
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:30:19-71
+uses-feature#android.hardware.sensor.gyroscope
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:31:5-95
+	android:required
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:31:68-92
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:31:19-67
+uses-feature#android.hardware.sensor.compass
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:32:5-93
+	android:required
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:32:66-90
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:32:19-65
+uses-feature#android.hardware.sensor.light
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:33:5-91
+	android:required
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:33:64-88
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:33:19-63
+uses-feature#android.hardware.sensor.proximity
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:34:5-95
+	android:required
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:34:68-92
+	android:name
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:34:19-67
 uses-feature#android.hardware.touchscreen
-ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:13:5-89
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:35:5-89
 	android:required
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:13:63-86
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:35:63-86
 	android:name
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:13:19-62
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:35:19-62
 application
-ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:15:5-38:19
-INJECTED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:15:5-38:19
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:37:5-60:19
+INJECTED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:37:5-60:19
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\88e5ac48bcaae1274ea47960b37b6762\transformed\material-1.12.0\AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\88e5ac48bcaae1274ea47960b37b6762\transformed\material-1.12.0\AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.0.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\8b42b221eb48a68ebaa4e8ff69fa72f1\transformed\constraintlayout-2.0.1\AndroidManifest.xml:9:5-20
@@ -111,45 +197,45 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\du
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.15.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\72f5d6431f2b839591241e5bb3d9a25c\transformed\core-1.15.0\AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:20:9-36
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:42:9-36
 	android:label
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:18:9-41
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:40:9-41
 	android:hardwareAccelerated
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:23:9-43
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:45:9-43
 	android:roundIcon
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:19:9-61
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:41:9-61
 	android:largeHeap
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:24:9-33
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:46:9-33
 	android:icon
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:17:9-56
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:39:9-56
 	android:allowBackup
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:16:9-36
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:38:9-36
 	android:theme
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:21:9-44
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:43:9-44
 	android:networkSecurityConfig
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:22:9-69
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:44:9-69
 activity#com.deskos.panel.MainActivity
-ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:26:9-36:20
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:48:9-58:20
 	android:launchMode
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:30:13-43
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:52:13-43
 	android:windowSoftInputMode
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:31:13-55
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:53:13-55
 	android:exported
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:28:13-36
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:50:13-36
 	android:configChanges
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:29:13-87
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:51:13-87
 	android:name
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:27:13-41
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:49:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:32:13-35:29
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:54:13-57:29
 action#android.intent.action.MAIN
-ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:33:17-69
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:55:17-69
 	android:name
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:33:25-66
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:55:25-66
 category#android.intent.category.LAUNCHER
-ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:34:17-77
+ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:56:17-77
 	android:name
-		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:34:27-74
+		ADDED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:56:27-74
 uses-sdk
 INJECTED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml

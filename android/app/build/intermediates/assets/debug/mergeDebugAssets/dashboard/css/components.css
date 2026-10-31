@@ -1301,13 +1301,12 @@
 
 .task-window-card {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 46px;
-    height: 46px;
-    min-width: 46px;
-    min-height: 46px;
-    padding: 6px;
+    width: 62px;
+    min-width: 62px;
+    padding: 4px 2px;
     background: var(--color-surface-card-subtle);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--radius-sm);
@@ -1315,6 +1314,7 @@
     transition: all var(--transition-fast);
     position: relative;
     box-sizing: border-box;
+    text-align: center;
 }
 .task-window-card:active {
     transform: scale(0.92);
@@ -1329,9 +1329,36 @@
     border-style: dashed;
 }
 .task-window-icon-img {
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
     object-fit: contain;
+    pointer-events: none;
+}
+.task-badge-initials {
+    width: 26px;
+    height: 26px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, rgba(0, 255, 71, 0.2), rgba(56, 189, 248, 0.25));
+    border: 1px solid var(--color-accent-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--color-accent-primary);
+    pointer-events: none;
+}
+.task-window-name {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-top: 3px;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     pointer-events: none;
 }
 
@@ -1352,5 +1379,85 @@
 #dim-overlay.active {
     display: flex;
 }
+
+/* Radar 2.0 Fullscreen Overlay & HUD Controls */
+#screensaver-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 200;
+    background: #060a0f;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+#screensaver-overlay.active {
+    display: flex;
+}
+#screensaver-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    cursor: crosshair;
+}
+
+.radar-top-hud {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    z-index: 20;
+    pointer-events: auto;
+    flex-wrap: wrap;
+}
+.radar-hud-left {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.radar-hud-right {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.radar-sub-hud {
+    position: absolute;
+    top: 42px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 15;
+    pointer-events: none;
+}
+.radar-target-card {
+    position: absolute;
+    bottom: 24px;
+    left: 12px;
+    right: 12px;
+    max-width: 440px;
+    margin: 0 auto;
+    background: rgba(10, 16, 26, 0.95);
+    border: 1px solid var(--color-accent-primary);
+    box-shadow: 0 0 24px rgba(0, 255, 71, 0.3);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    z-index: 30;
+    backdrop-filter: blur(8px);
+    user-select: text;
+}
+
 
 
