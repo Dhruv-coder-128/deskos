@@ -33,223 +33,252 @@
 20-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:13:5-65
 20-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:13:22-62
 21
-22    <!-- Cyber Radar 2.0: Aircraft Location -->
-23    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-23-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:16:5-79
-23-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:16:22-76
-24    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-24-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:17:5-81
-24-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:17:22-78
-25
-26    <!-- Cyber Radar 2.0: Bluetooth LE Radar (Android 11 through Android 16) -->
-27    <uses-permission
-27-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:20:5-95
-28        android:name="android.permission.BLUETOOTH"
-28-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:20:22-65
-29        android:maxSdkVersion="30" />
-29-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:20:66-92
-30    <uses-permission
-30-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:21:5-101
-31        android:name="android.permission.BLUETOOTH_ADMIN"
-31-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:21:22-71
-32        android:maxSdkVersion="30" />
-32-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:21:72-98
-33    <uses-permission
-33-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:22:5-120
-34        android:name="android.permission.BLUETOOTH_SCAN"
-34-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:22:22-70
-35        android:usesPermissionFlags="neverForLocation" />
-35-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:22:71-117
-36    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-36-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:23:5-76
-36-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:23:22-73
-37
-38    <!-- Optional Hardware Features (Graceful Degradation on Galaxy M01s) -->
-39    <uses-feature
-39-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:26:5-85
-40        android:name="android.hardware.camera"
-40-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:26:19-57
-41        android:required="false" />
-41-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:26:58-82
-42    <uses-feature
-42-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:27:5-95
-43        android:name="android.hardware.camera.autofocus"
-43-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:27:19-67
-44        android:required="false" />
-44-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:27:68-92
-45    <uses-feature
-45-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:28:5-91
-46        android:name="android.hardware.bluetooth_le"
-46-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:28:19-63
-47        android:required="false" />
-47-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:28:64-88
-48    <uses-feature
-48-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:29:5-91
-49        android:name="android.hardware.location.gps"
-49-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:29:19-63
-50        android:required="false" />
-50-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:29:64-88
-51    <uses-feature
-51-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:30:5-99
-52        android:name="android.hardware.sensor.accelerometer"
-52-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:30:19-71
-53        android:required="false" />
-53-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:30:72-96
-54    <uses-feature
-54-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:31:5-95
-55        android:name="android.hardware.sensor.gyroscope"
-55-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:31:19-67
-56        android:required="false" />
-56-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:31:68-92
-57    <uses-feature
-57-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:32:5-93
-58        android:name="android.hardware.sensor.compass"
-58-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:32:19-65
-59        android:required="false" />
-59-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:32:66-90
-60    <uses-feature
-60-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:33:5-91
-61        android:name="android.hardware.sensor.light"
-61-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:33:19-63
-62        android:required="false" />
-62-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:33:64-88
-63    <uses-feature
-63-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:34:5-95
-64        android:name="android.hardware.sensor.proximity"
-64-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:34:19-67
-65        android:required="false" />
-65-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:34:68-92
-66    <uses-feature
-66-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:35:5-89
-67        android:name="android.hardware.touchscreen"
-67-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:35:19-62
-68        android:required="true" />
-68-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:35:63-86
-69
-70    <permission
-70-->[androidx.core:core:1.15.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\72f5d6431f2b839591241e5bb3d9a25c\transformed\core-1.15.0\AndroidManifest.xml:22:5-24:47
-71        android:name="com.deskos.panel.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-71-->[androidx.core:core:1.15.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\72f5d6431f2b839591241e5bb3d9a25c\transformed\core-1.15.0\AndroidManifest.xml:23:9-81
-72        android:protectionLevel="signature" />
-72-->[androidx.core:core:1.15.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\72f5d6431f2b839591241e5bb3d9a25c\transformed\core-1.15.0\AndroidManifest.xml:24:9-44
-73
-74    <uses-permission android:name="com.deskos.panel.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-74-->[androidx.core:core:1.15.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\72f5d6431f2b839591241e5bb3d9a25c\transformed\core-1.15.0\AndroidManifest.xml:26:5-97
-74-->[androidx.core:core:1.15.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\72f5d6431f2b839591241e5bb3d9a25c\transformed\core-1.15.0\AndroidManifest.xml:26:22-94
-75
-76    <application
-76-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:37:5-60:19
-77        android:allowBackup="false"
-77-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:38:9-36
-78        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-78-->[androidx.core:core:1.15.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\72f5d6431f2b839591241e5bb3d9a25c\transformed\core-1.15.0\AndroidManifest.xml:28:18-86
-79        android:debuggable="true"
-80        android:extractNativeLibs="false"
-81        android:hardwareAccelerated="true"
-81-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:45:9-43
-82        android:icon="@drawable/ic_launcher_foreground"
-82-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:39:9-56
-83        android:label="@string/app_name"
-83-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:40:9-41
-84        android:largeHeap="true"
-84-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:46:9-33
-85        android:networkSecurityConfig="@xml/network_security_config"
-85-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:44:9-69
-86        android:roundIcon="@drawable/ic_launcher_foreground"
-86-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:41:9-61
-87        android:supportsRtl="false"
-87-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:42:9-36
-88        android:theme="@style/Theme.DeskOS" >
-88-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:43:9-44
-89        <activity
-89-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:48:9-58:20
-90            android:name="com.deskos.panel.MainActivity"
-90-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:49:13-41
-91            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-91-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:51:13-87
-92            android:exported="true"
-92-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:50:13-36
-93            android:launchMode="singleTop"
-93-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:52:13-43
-94            android:windowSoftInputMode="adjustResize" >
-94-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:53:13-55
-95            <intent-filter>
-95-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:54:13-57:29
-96                <action android:name="android.intent.action.MAIN" />
-96-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:55:17-69
-96-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:55:25-66
-97
-98                <category android:name="android.intent.category.LAUNCHER" />
-98-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:56:17-77
-98-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:56:27-74
-99            </intent-filter>
-100        </activity>
-101
-102        <provider
-102-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\9fd846b4221cf51a9e72080029c35e8b\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
-103            android:name="androidx.startup.InitializationProvider"
-103-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\9fd846b4221cf51a9e72080029c35e8b\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
-104            android:authorities="com.deskos.panel.debug.androidx-startup"
-104-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\9fd846b4221cf51a9e72080029c35e8b\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
-105            android:exported="false" >
-105-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\9fd846b4221cf51a9e72080029c35e8b\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
-106            <meta-data
-106-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\9fd846b4221cf51a9e72080029c35e8b\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
-107                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-107-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\9fd846b4221cf51a9e72080029c35e8b\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
-108                android:value="androidx.startup" />
-108-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\9fd846b4221cf51a9e72080029c35e8b\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
-109            <meta-data
-109-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\dusha\.gradle\caches\9.7.1\transforms\fc7ce391aa426a98deb56e29978fef5f\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:29:13-31:52
-110                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-110-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\dusha\.gradle\caches\9.7.1\transforms\fc7ce391aa426a98deb56e29978fef5f\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:30:17-78
-111                android:value="androidx.startup" />
-111-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\dusha\.gradle\caches\9.7.1\transforms\fc7ce391aa426a98deb56e29978fef5f\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:31:17-49
-112            <meta-data
-112-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
-113                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-113-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
-114                android:value="androidx.startup" />
-114-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
-115        </provider>
-116
-117        <receiver
-117-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
-118            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-118-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
-119            android:directBootAware="false"
-119-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
-120            android:enabled="true"
-120-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
-121            android:exported="true"
-121-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
-122            android:permission="android.permission.DUMP" >
-122-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
-123            <intent-filter>
-123-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
-124                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-124-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
-124-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
-125            </intent-filter>
-126            <intent-filter>
-126-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
-127                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-127-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
-127-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
-128            </intent-filter>
-129            <intent-filter>
-129-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
-130                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-130-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
-130-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
-131            </intent-filter>
-132            <intent-filter>
-132-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
-133                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-133-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
-133-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
-134            </intent-filter>
-135        </receiver>
-136    </application>
-137
-138</manifest>
+22    <!-- Phase 8: Phone-First Desk AI Microphone & Voice Recognition -->
+23    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+23-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:16:5-71
+23-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:16:22-68
+24
+25    <uses-feature
+25-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:17:5-89
+26        android:name="android.hardware.microphone"
+26-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:17:19-61
+27        android:required="false" />
+27-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:17:62-86
+28
+29    <!-- Cyber Radar 2.0: Aircraft Location -->
+30    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+30-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:20:5-79
+30-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:20:22-76
+31    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+31-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:21:5-81
+31-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:21:22-78
+32
+33    <!-- Cyber Radar 2.0: Bluetooth LE Radar (Android 11 through Android 16) -->
+34    <uses-permission
+34-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:24:5-95
+35        android:name="android.permission.BLUETOOTH"
+35-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:24:22-65
+36        android:maxSdkVersion="30" />
+36-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:24:66-92
+37    <uses-permission
+37-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:25:5-101
+38        android:name="android.permission.BLUETOOTH_ADMIN"
+38-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:25:22-71
+39        android:maxSdkVersion="30" />
+39-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:25:72-98
+40    <uses-permission
+40-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:26:5-120
+41        android:name="android.permission.BLUETOOTH_SCAN"
+41-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:26:22-70
+42        android:usesPermissionFlags="neverForLocation" />
+42-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:26:71-117
+43    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+43-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:27:5-76
+43-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:27:22-73
+44
+45    <!-- Optional Hardware Features (Graceful Degradation on Galaxy M01s) -->
+46    <uses-feature
+46-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:30:5-85
+47        android:name="android.hardware.camera"
+47-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:30:19-57
+48        android:required="false" />
+48-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:30:58-82
+49    <uses-feature
+49-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:31:5-95
+50        android:name="android.hardware.camera.autofocus"
+50-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:31:19-67
+51        android:required="false" />
+51-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:31:68-92
+52    <uses-feature
+52-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:32:5-91
+53        android:name="android.hardware.bluetooth_le"
+53-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:32:19-63
+54        android:required="false" />
+54-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:32:64-88
+55    <uses-feature
+55-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:33:5-91
+56        android:name="android.hardware.location.gps"
+56-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:33:19-63
+57        android:required="false" />
+57-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:33:64-88
+58    <uses-feature
+58-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:34:5-99
+59        android:name="android.hardware.sensor.accelerometer"
+59-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:34:19-71
+60        android:required="false" />
+60-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:34:72-96
+61    <uses-feature
+61-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:35:5-95
+62        android:name="android.hardware.sensor.gyroscope"
+62-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:35:19-67
+63        android:required="false" />
+63-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:35:68-92
+64    <uses-feature
+64-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:36:5-93
+65        android:name="android.hardware.sensor.compass"
+65-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:36:19-65
+66        android:required="false" />
+66-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:36:66-90
+67    <uses-feature
+67-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:37:5-91
+68        android:name="android.hardware.sensor.light"
+68-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:37:19-63
+69        android:required="false" />
+69-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:37:64-88
+70    <uses-feature
+70-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:38:5-95
+71        android:name="android.hardware.sensor.proximity"
+71-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:38:19-67
+72        android:required="false" />
+72-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:38:68-92
+73    <uses-feature
+73-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:39:5-89
+74        android:name="android.hardware.touchscreen"
+74-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:39:19-62
+75        android:required="true" />
+75-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:39:63-86
+76
+77    <!-- Android 11+ Package Visibility for Native Speech Recognizer & TTS Engines -->
+78    <queries>
+78-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:42:5-49:15
+79        <intent>
+79-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:43:9-45:18
+80            <action android:name="android.speech.RecognitionService" />
+80-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:44:13-72
+80-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:44:21-69
+81        </intent>
+82        <intent>
+82-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:46:9-48:18
+83            <action android:name="android.intent.action.TTS_SERVICE" />
+83-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:47:13-72
+83-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:47:21-69
+84        </intent>
+85    </queries>
+86
+87    <permission
+87-->[androidx.core:core:1.15.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\72f5d6431f2b839591241e5bb3d9a25c\transformed\core-1.15.0\AndroidManifest.xml:22:5-24:47
+88        android:name="com.deskos.panel.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+88-->[androidx.core:core:1.15.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\72f5d6431f2b839591241e5bb3d9a25c\transformed\core-1.15.0\AndroidManifest.xml:23:9-81
+89        android:protectionLevel="signature" />
+89-->[androidx.core:core:1.15.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\72f5d6431f2b839591241e5bb3d9a25c\transformed\core-1.15.0\AndroidManifest.xml:24:9-44
+90
+91    <uses-permission android:name="com.deskos.panel.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+91-->[androidx.core:core:1.15.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\72f5d6431f2b839591241e5bb3d9a25c\transformed\core-1.15.0\AndroidManifest.xml:26:5-97
+91-->[androidx.core:core:1.15.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\72f5d6431f2b839591241e5bb3d9a25c\transformed\core-1.15.0\AndroidManifest.xml:26:22-94
+92
+93    <application
+93-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:51:5-74:19
+94        android:allowBackup="false"
+94-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:52:9-36
+95        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+95-->[androidx.core:core:1.15.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\72f5d6431f2b839591241e5bb3d9a25c\transformed\core-1.15.0\AndroidManifest.xml:28:18-86
+96        android:debuggable="true"
+97        android:extractNativeLibs="false"
+98        android:hardwareAccelerated="true"
+98-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:59:9-43
+99        android:icon="@drawable/ic_launcher_foreground"
+99-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:53:9-56
+100        android:label="@string/app_name"
+100-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:54:9-41
+101        android:largeHeap="true"
+101-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:60:9-33
+102        android:networkSecurityConfig="@xml/network_security_config"
+102-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:58:9-69
+103        android:roundIcon="@drawable/ic_launcher_foreground"
+103-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:55:9-61
+104        android:supportsRtl="false"
+104-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:56:9-36
+105        android:theme="@style/Theme.DeskOS" >
+105-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:57:9-44
+106        <activity
+106-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:62:9-72:20
+107            android:name="com.deskos.panel.MainActivity"
+107-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:63:13-41
+108            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+108-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:65:13-87
+109            android:exported="true"
+109-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:64:13-36
+110            android:launchMode="singleTop"
+110-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:66:13-43
+111            android:windowSoftInputMode="adjustResize" >
+111-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:67:13-55
+112            <intent-filter>
+112-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:68:13-71:29
+113                <action android:name="android.intent.action.MAIN" />
+113-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:69:17-69
+113-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:69:25-66
+114
+115                <category android:name="android.intent.category.LAUNCHER" />
+115-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:70:17-77
+115-->X:\ALL PROJECTS\deskOS\android\app\src\main\AndroidManifest.xml:70:27-74
+116            </intent-filter>
+117        </activity>
+118
+119        <provider
+119-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\9fd846b4221cf51a9e72080029c35e8b\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+120            android:name="androidx.startup.InitializationProvider"
+120-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\9fd846b4221cf51a9e72080029c35e8b\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+121            android:authorities="com.deskos.panel.debug.androidx-startup"
+121-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\9fd846b4221cf51a9e72080029c35e8b\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+122            android:exported="false" >
+122-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\9fd846b4221cf51a9e72080029c35e8b\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+123            <meta-data
+123-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\9fd846b4221cf51a9e72080029c35e8b\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+124                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+124-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\9fd846b4221cf51a9e72080029c35e8b\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+125                android:value="androidx.startup" />
+125-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dusha\.gradle\caches\9.7.1\transforms\9fd846b4221cf51a9e72080029c35e8b\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+126            <meta-data
+126-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\dusha\.gradle\caches\9.7.1\transforms\fc7ce391aa426a98deb56e29978fef5f\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:29:13-31:52
+127                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+127-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\dusha\.gradle\caches\9.7.1\transforms\fc7ce391aa426a98deb56e29978fef5f\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:30:17-78
+128                android:value="androidx.startup" />
+128-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\dusha\.gradle\caches\9.7.1\transforms\fc7ce391aa426a98deb56e29978fef5f\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:31:17-49
+129            <meta-data
+129-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+130                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+130-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+131                android:value="androidx.startup" />
+131-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+132        </provider>
+133
+134        <receiver
+134-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+135            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+135-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+136            android:directBootAware="false"
+136-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+137            android:enabled="true"
+137-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+138            android:exported="true"
+138-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+139            android:permission="android.permission.DUMP" >
+139-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+140            <intent-filter>
+140-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+141                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+141-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+141-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+142            </intent-filter>
+143            <intent-filter>
+143-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+144                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+144-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+144-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+145            </intent-filter>
+146            <intent-filter>
+146-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+147                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+147-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+147-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+148            </intent-filter>
+149            <intent-filter>
+149-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+150                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+150-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+150-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dusha\.gradle\caches\9.7.1\transforms\c81486a4c8f78b3f6f910ecc32dd1b1f\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+151            </intent-filter>
+152        </receiver>
+153    </application>
+154
+155</manifest>

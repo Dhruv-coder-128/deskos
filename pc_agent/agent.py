@@ -71,6 +71,7 @@ try:
         NetworkDevicesResponse
     )
     from pc_agent.telemetry import TelemetryCollector
+    from pc_agent.rgb_controller import LenovoRgbController
     from pc_agent.controls import (
         AppLauncher,
         VolumeController,
@@ -126,6 +127,7 @@ except ImportError:
         NetworkDevicesResponse
     )
     from telemetry import TelemetryCollector
+    from rgb_controller import LenovoRgbController
     from controls import (
         AppLauncher,
         VolumeController,
@@ -148,6 +150,8 @@ logger = logging.getLogger("desk_os_agent")
 
 telemetry_collector = TelemetryCollector()
 TELEMETRY_INTERVAL_SEC = 1.0
+
+rgb_controller = LenovoRgbController(telemetry_collector)
 
 app_launcher = AppLauncher()
 volume_controller = VolumeController()
@@ -265,6 +269,10 @@ async def lifespan(app: FastAPI):
         await broadcaster_task
     except asyncio.CancelledError:
         pass
+    try:
+        rgb_controller.shutdown()
+    except Exception as e:
+        logger.warning(f"Error shutting down RGB controller: {e}")
 
 
 app = FastAPI(
@@ -498,6 +506,33 @@ async def execute_control_action_rest(cmd: ControlActionMessage, request: Reques
         success, msg = await asyncio.to_thread(media_session.execute_media_action, act, pos_sec)
         return ControlResultResponse(action=action, success=success, message=msg)
 
+    elif action == "search_song" or action == "search_music":
+        query = cmd.search_query or ""
+        if not query and cmd.app_id:
+            query = cmd.app_id
+        success, msg = await asyncio.to_thread(media_session.search_song, query)
+        return ControlResultResponse(action=action, success=success, message=msg, data={"query": query})
+
+    elif action in ("close_window", "close_app"):
+        target = cmd.target_hwnd
+        if target is None and cmd.target_window_id:
+            try:
+                target = int(cmd.target_window_id.replace("win_", ""))
+            except Exception:
+                target = None
+        target_name = (cmd.app_name or cmd.target or cmd.app_id or "").lower().strip()
+        if target is None and target_name:
+            wins, _, _ = await asyncio.to_thread(task_switcher.get_running_windows)
+            for w in wins:
+                if target_name in w.title.lower() or target_name in w.app_name.lower():
+                    target = w.hwnd
+                    break
+        if target is not None:
+            success, msg = await asyncio.to_thread(task_switcher.close_window, target)
+        else:
+            success, msg = False, f"Could not find running window for '{target_name or 'target'}'"
+        return ControlResultResponse(action=action, success=success, message=msg, data={"target_hwnd": target})
+
     else:
         raise HTTPException(status_code=400, detail=f"Unsupported action: '{action}'")
 
@@ -539,6 +574,87 @@ async def get_network_devices_endpoint(request: Request):
     _verify_auth_token(request)
     devs = await asyncio.to_thread(network_discovery.get_network_devices)
     return NetworkDevicesResponse(devices=devs, total_count=len(devs), timestamp=time.time())
+
+
+# -----------------------------------------------------------------------------
+# Lenovo LOQ 4-Zone RGB & Live Video Endpoints
+# -----------------------------------------------------------------------------
+@app.get("/api/v1/rgb/state", tags=["RGB"])
+async def get_rgb_state_endpoint(request: Request):
+    _verify_auth_token(request)
+    return rgb_controller.get_state()
+
+
+@app.get("/api/v1/rgb/profiles", tags=["RGB"])
+async def get_rgb_profiles_endpoint(request: Request):
+    _verify_auth_token(request)
+    return {"profiles": rgb_controller.get_profiles()}
+
+
+@app.post("/api/v1/rgb/action", tags=["RGB"])
+async def post_rgb_action_endpoint(request: Request):
+    _verify_auth_token(request)
+    body = await request.json()
+    act = body.get("action", "")
+    if act == "set_zones":
+        ok, msg = rgb_controller.set_zones(body.get("colors", []), int(body.get("brightness", 2)))
+        return {"success": ok, "message": msg, "state": rgb_controller.get_state()}
+    elif act == "set_effect":
+        ok, msg = rgb_controller.set_effect(
+            mode=body.get("mode", "static"),
+            speed=int(body.get("speed", 2)),
+            brightness=int(body.get("brightness", 2)),
+            direction=body.get("direction", "left_to_right"),
+            colors=body.get("colors")
+        )
+        return {"success": ok, "message": msg, "state": rgb_controller.get_state()}
+    elif act == "apply_profile":
+        ok, msg = rgb_controller.apply_profile(body.get("profile_id", ""))
+        return {"success": ok, "message": msg, "state": rgb_controller.get_state()}
+    elif act == "save_profile":
+        prof = rgb_controller.save_profile(
+            name=body.get("name", "Custom Profile"),
+            mode=body.get("mode", "static"),
+            speed=int(body.get("speed", 2)),
+            brightness=int(body.get("brightness", 2)),
+            direction=body.get("direction", "left_to_right"),
+            colors=body.get("colors", [])
+        )
+        return {"success": True, "profile": prof, "profiles": rgb_controller.get_profiles()}
+    elif act == "update_profile":
+        ok, msg, updated = rgb_controller.update_profile(
+            profile_id=body.get("profile_id", ""),
+            name=body.get("name", ""),
+            mode=body.get("mode", "static"),
+            speed=int(body.get("speed", 2)),
+            brightness=int(body.get("brightness", 2)),
+            direction=body.get("direction", "left_to_right"),
+            colors=body.get("colors", [])
+        )
+        return {"success": ok, "message": msg, "profile": updated, "profiles": rgb_controller.get_profiles()}
+    elif act == "duplicate_profile":
+        ok, msg, dup = rgb_controller.duplicate_profile(body.get("profile_id", ""), body.get("new_name", "Duplicate"))
+        return {"success": ok, "message": msg, "profile": dup, "profiles": rgb_controller.get_profiles()}
+    elif act == "rename_profile":
+        ok, msg = rgb_controller.rename_profile(body.get("profile_id", ""), body.get("new_name", ""))
+        return {"success": ok, "message": msg, "profiles": rgb_controller.get_profiles()}
+    elif act == "delete_profile":
+        ok, msg = rgb_controller.delete_profile(body.get("profile_id", ""))
+        return {"success": ok, "message": msg, "profiles": rgb_controller.get_profiles()}
+    elif act == "import_profiles":
+        ok, msg, count = rgb_controller.import_profiles(body.get("profiles", []))
+        return {"success": ok, "message": msg, "count": count, "profiles": rgb_controller.get_profiles()}
+    elif act == "turn_off":
+        ok, msg = rgb_controller.turn_off()
+        return {"success": ok, "message": msg, "state": rgb_controller.get_state()}
+    return {"success": False, "message": f"Unknown rgb action: '{act}'"}
+
+
+@app.get("/api/v1/media/video_frame", tags=["Media"])
+async def get_media_video_frame_endpoint(request: Request):
+    _verify_auth_token(request)
+    ok, frame, err = await asyncio.to_thread(screenshot_capturer.capture_media_frame)
+    return {"success": ok, "frame": frame, "error": err, "timestamp": time.time()}
 
 
 @app.get("/camera", response_class=HTMLResponse, tags=["Camera"])
@@ -761,6 +877,73 @@ async def websocket_control(websocket: WebSocket):
                         if frame_val and isinstance(frame_val, str) and len(frame_val) < 2000000:
                             latest_camera_frame = frame_val
                             last_camera_frame_timestamp = time.time()
+                    elif msg_type == "get_rgb_state":
+                        await websocket.send_json({"type": "rgb_state", **rgb_controller.get_state()})
+                    elif msg_type == "get_rgb_profiles":
+                        await websocket.send_json({"type": "rgb_profiles", "profiles": rgb_controller.get_profiles()})
+                    elif msg_type == "get_video_frame":
+                        ok, frame, err = await asyncio.to_thread(screenshot_capturer.capture_media_frame)
+                        await websocket.send_json({"type": "video_frame", "success": ok, "frame": frame, "error": err, "timestamp": time.time()})
+                    elif msg_type == "rgb_action":
+                        sub_act = data.get("action", "")
+                        if sub_act == "set_zones":
+                            colors = data.get("colors", [])
+                            brightness = int(data.get("brightness", 2))
+                            ok, msg = rgb_controller.set_zones(colors, brightness)
+                            await websocket.send_json({"type": "rgb_result", "action": "set_zones", "success": ok, "message": msg, "state": rgb_controller.get_state()})
+                            await websocket.send_json({"type": "rgb_state", **rgb_controller.get_state()})
+                        elif sub_act == "set_effect":
+                            mode = data.get("mode", "static")
+                            speed = int(data.get("speed", 2))
+                            brightness = int(data.get("brightness", 2))
+                            direction = data.get("direction", "left_to_right")
+                            colors = data.get("colors")
+                            ok, msg = rgb_controller.set_effect(mode, speed, brightness, direction, colors)
+                            await websocket.send_json({"type": "rgb_result", "action": "set_effect", "success": ok, "message": msg, "state": rgb_controller.get_state()})
+                            await websocket.send_json({"type": "rgb_state", **rgb_controller.get_state()})
+                        elif sub_act == "apply_profile":
+                            pid = data.get("profile_id", "")
+                            ok, msg = rgb_controller.apply_profile(pid)
+                            await websocket.send_json({"type": "rgb_result", "action": "apply_profile", "success": ok, "message": msg, "state": rgb_controller.get_state()})
+                            await websocket.send_json({"type": "rgb_state", **rgb_controller.get_state()})
+                        elif sub_act == "save_profile":
+                            prof = rgb_controller.save_profile(
+                                name=data.get("name", "Custom Profile"),
+                                mode=data.get("mode", "static"),
+                                speed=int(data.get("speed", 2)),
+                                brightness=int(data.get("brightness", 2)),
+                                direction=data.get("direction", "left_to_right"),
+                                colors=data.get("colors", [])
+                            )
+                            await websocket.send_json({"type": "rgb_result", "action": "save_profile", "success": True, "profile": prof, "profiles": rgb_controller.get_profiles()})
+                        elif sub_act == "update_profile":
+                            ok, msg, updated = rgb_controller.update_profile(
+                                profile_id=data.get("profile_id", ""),
+                                name=data.get("name", ""),
+                                mode=data.get("mode", "static"),
+                                speed=int(data.get("speed", 2)),
+                                brightness=int(data.get("brightness", 2)),
+                                direction=data.get("direction", "left_to_right"),
+                                colors=data.get("colors", [])
+                            )
+                            await websocket.send_json({"type": "rgb_result", "action": "update_profile", "success": ok, "message": msg, "profile": updated, "profiles": rgb_controller.get_profiles()})
+                        elif sub_act == "duplicate_profile":
+                            ok, msg, dup = rgb_controller.duplicate_profile(data.get("profile_id", ""), data.get("new_name", "Duplicate"))
+                            await websocket.send_json({"type": "rgb_result", "action": "duplicate_profile", "success": ok, "message": msg, "profile": dup, "profiles": rgb_controller.get_profiles()})
+                        elif sub_act == "rename_profile":
+                            ok, msg = rgb_controller.rename_profile(data.get("profile_id", ""), data.get("new_name", ""))
+                            await websocket.send_json({"type": "rgb_result", "action": "rename_profile", "success": ok, "message": msg, "profiles": rgb_controller.get_profiles()})
+                        elif sub_act == "delete_profile":
+                            pid = data.get("profile_id", "")
+                            ok, msg = rgb_controller.delete_profile(pid)
+                            await websocket.send_json({"type": "rgb_result", "action": "delete_profile", "success": ok, "message": msg, "profiles": rgb_controller.get_profiles()})
+                        elif sub_act == "import_profiles":
+                            ok, msg, count = rgb_controller.import_profiles(data.get("profiles", []))
+                            await websocket.send_json({"type": "rgb_result", "action": "import_profiles", "success": ok, "message": msg, "count": count, "profiles": rgb_controller.get_profiles()})
+                        elif sub_act == "turn_off":
+                            ok, msg = rgb_controller.turn_off()
+                            await websocket.send_json({"type": "rgb_result", "action": "turn_off", "success": ok, "message": msg, "state": rgb_controller.get_state()})
+                            await websocket.send_json({"type": "rgb_state", **rgb_controller.get_state()})
                     elif msg_type == "control_action":
                         action = data.get("action", "")
                         if action == "launch_app":
@@ -797,6 +980,31 @@ async def websocket_control(websocket: WebSocket):
                             await websocket.send_json({
                                 "type": "control_result",
                                 "action": "switch_window",
+                                "success": success,
+                                "message": msg,
+                                "data": {"target_hwnd": target}
+                            })
+                        elif action in ("close_window", "close_app"):
+                            target = data.get("target_hwnd")
+                            if not target and data.get("target_window_id"):
+                                try:
+                                    target = int(str(data["target_window_id"]).replace("win_", ""))
+                                except Exception:
+                                    target = None
+                            target_name = (data.get("app_name") or data.get("target") or data.get("app_id") or "").lower().strip()
+                            if target is None and target_name:
+                                wins, _, _ = await asyncio.to_thread(task_switcher.get_running_windows)
+                                for w in wins:
+                                    if target_name in w.title.lower() or target_name in w.app_name.lower():
+                                        target = w.hwnd
+                                        break
+                            if target is not None:
+                                success, msg = await asyncio.to_thread(task_switcher.close_window, int(target))
+                            else:
+                                success, msg = False, f"Could not find running window for '{target_name or 'target'}'"
+                            await websocket.send_json({
+                                "type": "control_result",
+                                "action": "close_window",
                                 "success": success,
                                 "message": msg,
                                 "data": {"target_hwnd": target}
@@ -850,6 +1058,16 @@ async def websocket_control(websocket: WebSocket):
                                 "success": ok,
                                 "message": "Previous track media key sent"
                             })
+                        elif action == "search_song" or action == "search_music":
+                            query = data.get("search_query") or data.get("query") or ""
+                            success, msg = await asyncio.to_thread(media_session.search_song, query)
+                            await websocket.send_json({
+                                "type": "control_result",
+                                "action": "search_song",
+                                "success": success,
+                                "message": msg,
+                                "data": {"query": query}
+                            })
                         elif action == "screenshot":
                             success, img_b64, err = screenshot_capturer.capture()
                             await websocket.send_json({
@@ -891,6 +1109,15 @@ async def websocket_control(websocket: WebSocket):
                                     "error": str(ac_err),
                                     "timestamp": time.time()
                                 })
+                        elif action == "video_frame" or action == "get_video_frame":
+                            ok, frame, err = await asyncio.to_thread(screenshot_capturer.capture_media_frame)
+                            await websocket.send_json({
+                                "type": "video_frame",
+                                "success": ok,
+                                "frame": frame,
+                                "error": err,
+                                "timestamp": time.time()
+                            })
                         elif action == "lock_workstation":
                             confirm = bool(data.get("confirm", False))
                             if not confirm:

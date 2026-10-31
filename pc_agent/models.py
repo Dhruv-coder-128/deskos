@@ -72,14 +72,16 @@ class WSErrorMessage(BaseModel):
 
 
 # -----------------------------------------------------------------------------
-# Telemetry Models (Phase 4)
+# Telemetry Models (Phase 4 & Live Monitor 2.0)
 # -----------------------------------------------------------------------------
 class CPUMetrics(BaseModel):
+    model_name: Optional[str] = "13th Gen Intel(R) Core(TM) i5-13450HX"
     overall_percent: float
     per_core_percent: List[float]
     core_count_physical: Optional[int] = None
     core_count_logical: int
     frequency_mhz: Optional[float] = None
+    frequency_max_mhz: Optional[float] = None
     temperature_c: Optional[float] = None  # null if unsupported/inaccessible
 
 
@@ -92,6 +94,12 @@ class GPUMetrics(BaseModel):
     vram_total_bytes: Optional[int] = None
     vram_percent: Optional[float] = None
     power_watts: Optional[float] = None
+    clock_graphics_mhz: Optional[int] = None
+    clock_memory_mhz: Optional[int] = None
+    vram_dedicated_used_bytes: Optional[int] = None
+    vram_dedicated_total_bytes: Optional[int] = None
+    vram_shared_used_bytes: Optional[int] = None
+    vram_shared_total_bytes: Optional[int] = None
 
 
 class RAMMetrics(BaseModel):
@@ -115,14 +123,23 @@ class NetworkMetrics(BaseModel):
     upload_speed_bps: float    # Bytes per second
     total_bytes_recv: int
     total_bytes_sent: int
+    latency_ms: Optional[float] = None
 
 
 class SystemMetrics(BaseModel):
     uptime_seconds: float
     host_name: str
+    model_name: Optional[str] = "Lenovo LOQ 15IRX9 (83DV00PQIN)"
     cpu_available: bool
     gpu_available: bool
     status: str
+    battery_percent: Optional[float] = None
+    battery_plugged: Optional[bool] = None
+    battery_secs_left: Optional[int] = None
+    disk_read_bps: Optional[float] = None
+    disk_write_bps: Optional[float] = None
+    power_plan: Optional[str] = None
+    fan_speed_rpm: Optional[int] = None  # null if unsupported/inaccessible
 
 
 class TelemetryPayload(BaseModel):
@@ -165,7 +182,9 @@ class ControlActionMessage(BaseModel):
     target_window_id: Optional[str] = Field(None, max_length=64, description="Target window identifier")
     target_hwnd: Optional[int] = Field(None, description="Target HWND for task switching")
     media_action: Optional[str] = Field(None, max_length=32, description="Media control action")
-    search_query: Optional[str] = Field(None, max_length=64, description="Search query")
+    search_query: Optional[str] = Field(None, max_length=128, description="Search query")
+    app_name: Optional[str] = Field(None, max_length=128, description="App name for search or close")
+    target: Optional[str] = Field(None, max_length=128, description="Generic target name or identifier")
 
 
 class ControlResultResponse(BaseModel):

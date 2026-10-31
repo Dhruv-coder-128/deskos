@@ -26,6 +26,8 @@
                 <!-- Main View Switcher Tabs (Desktop / Landscape) -->
                 <div class="view-nav-tabs desktop-only">
                     <button class="view-tab-btn active" id="tab-btn-cc" onclick="DeskOS.switchView('command-center')">COMMAND CENTER</button>
+                    <button class="view-tab-btn" id="tab-btn-pm" onclick="DeskOS.switchView('pc-monitor')">LIVE MONITOR 2.0</button>
+                    <button class="view-tab-btn" id="tab-btn-rgb" onclick="DeskOS.switchView('rgb-studio')">RGB STUDIO</button>
                     <button class="view-tab-btn" id="tab-btn-ps" onclick="DeskOS.switchView('personal-space')">PERSONAL SPACE</button>
                 </div>
 
@@ -40,8 +42,10 @@
 
             <!-- Mobile View Switcher Bar (Portrait) -->
             <div class="mobile-view-tabs mobile-only">
-                <button class="view-tab-btn active" id="tab-btn-cc-m" onclick="DeskOS.switchView('command-center')">COMMAND CENTER</button>
-                <button class="view-tab-btn" id="tab-btn-ps-m" onclick="DeskOS.switchView('personal-space')">PERSONAL SPACE</button>
+                <button class="view-tab-btn active" id="tab-btn-cc-m" onclick="DeskOS.switchView('command-center')">COMMAND</button>
+                <button class="view-tab-btn" id="tab-btn-pm-m" onclick="DeskOS.switchView('pc-monitor')">MONITOR</button>
+                <button class="view-tab-btn" id="tab-btn-rgb-m" onclick="DeskOS.switchView('rgb-studio')">RGB</button>
+                <button class="view-tab-btn" id="tab-btn-ps-m" onclick="DeskOS.switchView('personal-space')">SPACE</button>
             </div>
         </header>
 
@@ -888,6 +892,313 @@
 
             </div>
 
+            <!-- =============================================================== -->
+            <!-- VIEW 2: LIVE MONITOR 2.0 (SCIENTIFIC WORKSTATION TELEMETRY)      -->
+            <!-- =============================================================== -->
+            <div id="view-pc-monitor" class="view-panel" style="display: none; padding: 12px;">
+                <!-- Telemetry 2.0 Top Strip -->
+                <div class="panel-header-strip">
+                    <div class="header-strip-left">
+                        <span class="status-pill active" id="mon-pc-model">LENOVO LOQ 15IRX9 (83DV00PQIN)</span>
+                        <span class="status-pill" id="mon-pc-powerplan">LENOVO VANTAGE PERFORMANCE</span>
+                        <span class="status-pill" id="mon-battery-badge">BAT: 80% ⚡ [AC PLUGGED]</span>
+                    </div>
+                    <div class="header-strip-right">
+                        <span class="telemetry-label">PING: <strong id="mon-ping-val" style="color:var(--color-accent-primary);">4.2 ms</strong></span>
+                        <div class="refresh-rate-group">
+                            <span class="telemetry-label">REFRESH:</span>
+                            <button type="button" class="rate-toggle-btn" data-rate="0.5">0.5s</button>
+                            <button type="button" class="rate-toggle-btn active" data-rate="1.0">1.0s</button>
+                            <button type="button" class="rate-toggle-btn" data-rate="2.0">2.0s</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="monitor-grid">
+                    <!-- CPU Scientific Matrix Card -->
+                    <div class="cyber-card monitor-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <span class="pulse-dot"></span>
+                                <span class="card-title" id="mon-cpu-name">13TH GEN INTEL CORE i5-13450HX</span>
+                            </div>
+                            <div class="card-badges">
+                                <span class="badge-hud" id="mon-cpu-freq">2400 MHz</span>
+                                <span class="badge-hud" id="mon-cpu-cores">10P / 16T</span>
+                                <span class="badge-hud" id="mon-cpu-temp" style="color:var(--color-accent-amber);">N/A</span>
+                            </div>
+                        </div>
+
+                        <div class="gauge-hero-row">
+                            <div class="hero-pct-display" id="mon-cpu-pct">0.0%</div>
+                            <div class="meter-track-hud">
+                                <div class="meter-fill-hud" id="mon-cpu-meter-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- 16-Thread Visual Grid -->
+                        <div class="section-subhead">LOGICAL CORES UTILIZATION (16 THREADS)</div>
+                        <div class="threads-grid" id="mon-threads-grid">
+                            <!-- Dynamically rendered T01 - T16 thread cards -->
+                        </div>
+
+                        <!-- CPU History Canvas -->
+                        <div class="section-subhead" style="margin-top: 10px;">CPU REAL-TIME OSCILLOSCOPE</div>
+                        <canvas id="graph-cpu-hist" class="monitor-canvas" height="90"></canvas>
+                        <div class="analytics-badges-row">
+                            <span>MIN: <strong id="mon-stat-cpu-min">0%</strong></span>
+                            <span>AVG: <strong id="mon-stat-cpu-avg">0%</strong></span>
+                            <span>PEAK: <strong id="mon-stat-cpu-peak">0%</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- GPU Scientific Matrix Card -->
+                    <div class="cyber-card monitor-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <span class="pulse-dot" style="background:#FF007F;"></span>
+                                <span class="card-title" id="mon-gpu-name">NVIDIA GEFORCE RTX 3050 LAPTOP GPU</span>
+                            </div>
+                            <div class="card-badges">
+                                <span class="badge-hud" id="mon-gpu-clock-gfx">210 MHz GFX</span>
+                                <span class="badge-hud" id="mon-gpu-clock-mem">405 MHz MEM</span>
+                                <span class="badge-hud" id="mon-gpu-power">3.7 W</span>
+                                <span class="badge-hud" id="mon-gpu-temp" style="color:#FF007F;">53.0°C</span>
+                            </div>
+                        </div>
+
+                        <div class="gauge-hero-row">
+                            <div class="hero-pct-display" id="mon-gpu-pct" style="color:#FF007F;">0.0%</div>
+                            <div class="meter-track-hud">
+                                <div class="meter-fill-hud" id="mon-gpu-meter-fill" style="width: 0%; background: #FF007F;"></div>
+                            </div>
+                        </div>
+
+                        <!-- VRAM Breakdown -->
+                        <div class="section-subhead">DEDICATED VRAM (6.0 GB GDDR6)</div>
+                        <div class="vram-stat-bar">
+                            <div class="vram-text-row">
+                                <span id="mon-vram-text">0.47 GB / 6.0 GB (7.4%)</span>
+                            </div>
+                            <div class="meter-track-hud">
+                                <div class="meter-fill-hud" id="mon-vram-fill" style="width: 7.4%; background: #FF007F;"></div>
+                            </div>
+                        </div>
+
+                        <!-- GPU History Canvas -->
+                        <div class="section-subhead" style="margin-top: 10px;">GPU WORKLOAD OSCILLOSCOPE</div>
+                        <canvas id="graph-gpu-hist" class="monitor-canvas" height="90"></canvas>
+                        <div class="analytics-badges-row">
+                            <span>MIN: <strong id="mon-stat-gpu-min">0%</strong></span>
+                            <span>AVG: <strong id="mon-stat-gpu-avg">0%</strong></span>
+                            <span>PEAK: <strong id="mon-stat-gpu-peak">0%</strong></span>
+                            <span>PEAK TEMP: <strong id="mon-stat-temp-peak">0°C</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- System Memory & Storage Card -->
+                    <div class="cyber-card monitor-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <span class="pulse-dot" style="background:var(--color-accent-secondary);"></span>
+                                <span class="card-title">RAM & MULTI-DRIVE STORAGE</span>
+                            </div>
+                        </div>
+
+                        <div class="section-subhead">SYSTEM RAM (16.0 GB DDR5)</div>
+                        <div class="ram-stat-bar">
+                            <div class="ram-text-row">
+                                <span id="mon-ram-text">8.2 GB / 15.7 GB (52.2%)</span>
+                            </div>
+                            <div class="meter-track-hud">
+                                <div class="meter-fill-hud" id="mon-ram-fill" style="width: 52%; background: var(--color-accent-secondary);"></div>
+                            </div>
+                        </div>
+
+                        <div class="section-subhead" style="margin-top: 12px;">ACTIVE DRIVES & HIGH-SPEED I/O</div>
+                        <div id="mon-storage-list" class="storage-list-wrap">
+                            <!-- Dynamically populated storage drives and read/write I/O -->
+                        </div>
+                    </div>
+
+                    <!-- Network Matrix & Oscilloscope Card -->
+                    <div class="cyber-card monitor-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <span class="pulse-dot" style="background:#00FF41;"></span>
+                                <span class="card-title">NETWORK TELEMETRY & ADAPTERS</span>
+                            </div>
+                            <div class="card-badges">
+                                <span class="badge-hud">DOWN: <strong id="mon-net-down" style="color:#00FF41;">0.0 KB/s</strong></span>
+                                <span class="badge-hud">UP: <strong id="mon-net-up" style="color:var(--color-accent-primary);">0.0 KB/s</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="section-subhead">REAL-TIME THROUGHPUT OSCILLOSCOPE</div>
+                        <canvas id="graph-net-hist" class="monitor-canvas" height="90"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================================================== -->
+            <!-- VIEW 3: LENOVO LOQ 4-ZONE RGB STUDIO                             -->
+            <!-- =============================================================== -->
+            <div id="view-rgb-studio" class="view-panel" style="display: none; padding: 12px;">
+                <div class="panel-header-strip">
+                    <div class="header-strip-left">
+                        <span class="status-pill active">LENOVO LOQ 4-ZONE RGB</span>
+                        <span class="status-pill" id="rgb-device-status">CONNECTED (ITE 8295 / C993)</span>
+                        <span class="status-pill" id="rgb-profile-status">PRESET: CYBERPUNK</span>
+                    </div>
+                    <div class="header-strip-right">
+                        <button type="button" class="cyber-btn active" id="rgb-master-toggle">BACKLIGHT: ON</button>
+                        <button type="button" class="cyber-btn" id="rgb-btn-save-profile">SAVE PROFILE</button>
+                        <button type="button" class="cyber-btn" id="rgb-btn-export-profiles">EXPORT</button>
+                        <button type="button" class="cyber-btn" id="rgb-btn-import-profiles">IMPORT</button>
+                    </div>
+                </div>
+
+                <!-- Interactive 4-Zone Laptop Keyboard Layout -->
+                <div class="cyber-card rgb-keyboard-card">
+                    <div class="kb-visual-top">
+                        <span class="section-subhead" style="margin: 0;">PHYSICAL 4-ZONE KEYBOARD MAPPING</span>
+                        <div class="zone-pills-row">
+                            <button type="button" class="zone-pill-btn active" id="zone-pill-1" onclick="RGBStudio.selectZone(0)"><span class="zone-dot" style="background:#00F0FF;"></span>ZONE 1 (LEFT)</button>
+                            <button type="button" class="zone-pill-btn" id="zone-pill-2" onclick="RGBStudio.selectZone(1)"><span class="zone-dot" style="background:#FF007F;"></span>ZONE 2 (CENTER-L)</button>
+                            <button type="button" class="zone-pill-btn" id="zone-pill-3" onclick="RGBStudio.selectZone(2)"><span class="zone-dot" style="background:#8A2BE2;"></span>ZONE 3 (CENTER-R)</button>
+                            <button type="button" class="zone-pill-btn" id="zone-pill-4" onclick="RGBStudio.selectZone(3)"><span class="zone-dot" style="background:#FFE600;"></span>ZONE 4 (NUMPAD)</button>
+                            <button type="button" class="zone-pill-btn" id="rgb-btn-all-zones">ALL ZONES</button>
+                        </div>
+                    </div>
+
+                    <div class="laptop-keyboard-chassis">
+                        <div class="kb-zone-block zone-1 selected" id="kb-zone-1">
+                            <div class="zone-tag">ZONE 1 // ESC-TAB-QWEASD</div>
+                            <div class="kb-keys-cluster">
+                                <span class="key-cap">ESC</span><span class="key-cap">F1-F4</span><span class="key-cap">TAB</span><span class="key-cap">Q W E</span><span class="key-cap">A S D</span><span class="key-cap">Z X</span>
+                            </div>
+                        </div>
+                        <div class="kb-zone-block zone-2" id="kb-zone-2">
+                            <div class="zone-tag">ZONE 2 // RTY-FGH-VBN</div>
+                            <div class="kb-keys-cluster">
+                                <span class="key-cap">F5-F8</span><span class="key-cap">R T Y</span><span class="key-cap">F G H</span><span class="key-cap">C V B</span><span class="key-cap">SPACE</span>
+                            </div>
+                        </div>
+                        <div class="kb-zone-block zone-3" id="kb-zone-3">
+                            <div class="zone-tag">ZONE 3 // UIO-JKL-ENTER</div>
+                            <div class="kb-keys-cluster">
+                                <span class="key-cap">F9-F12</span><span class="key-cap">U I O P</span><span class="key-cap">J K L</span><span class="key-cap">N M</span><span class="key-cap">ENTER</span>
+                            </div>
+                        </div>
+                        <div class="kb-zone-block zone-4" id="kb-zone-4">
+                            <div class="zone-tag">ZONE 4 // ARROWS & NUMPAD</div>
+                            <div class="kb-keys-cluster">
+                                <span class="key-cap">INS/DEL</span><span class="key-cap">NUM 7-9</span><span class="key-cap">NUM 4-6</span><span class="key-cap">NUM 1-3</span><span class="key-cap">ARROWS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tuning & Color Control Deck -->
+                <div class="rgb-controls-grid">
+                    <!-- Color Selection Card -->
+                    <div class="cyber-card">
+                        <div class="card-header-row">
+                            <span class="card-title">COLOR PICKER (<span id="rgb-selected-zone-label">ZONE 1</span>)</span>
+                            <span class="badge-hud" id="rgb-hex-display">#00F0FF</span>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center; margin: 10px 0;">
+                            <input type="color" id="rgb-native-picker" value="#00F0FF" class="rgb-native-input">
+                            <span style="font-size: 11px; color: var(--color-text-dim);">Tap square to choose custom color</span>
+                        </div>
+                        <div class="section-subhead">CYBERPUNK QUICK PALETTE</div>
+                        <div class="rgb-swatches-grid" id="rgb-swatches-grid">
+                            <!-- 12 Cyberpunk Quick Swatches -->
+                        </div>
+                    </div>
+
+                    <!-- Effects Library Card -->
+                    <div class="cyber-card">
+                        <div class="card-header-row">
+                            <span class="card-title">EFFECTS LIBRARY</span>
+                            <span class="badge-hud" id="rgb-effect-status-badge">READY</span>
+                        </div>
+
+                        <div class="effect-category-label">BASIC HARDWARE</div>
+                        <div class="effects-btn-row">
+                            <button type="button" class="cyber-btn rgb-effect-btn active" data-effect="static">STATIC</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="breath_hw">BREATHING</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="hue_hw">RAINBOW</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="wave_hw">RAINBOW WAVE</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="hue_hw">HUE CYCLE</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="gradient">SMOOTH GRADIENT</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="color_transition">COLOR TRANSITION</button>
+                        </div>
+
+                        <div class="effect-category-label" style="margin-top: 8px;">DYNAMIC SOFTWARE ANIMATIONS</div>
+                        <div class="effects-btn-row">
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="wave_lr">WAVE L→R</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="wave_rl">WAVE R→L</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="ripple">RIPPLE</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="lightning">LIGHTNING</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="fire">FIRE & EMBER</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="ocean">OCEAN</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="aurora">AURORA</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="pulse">PULSE</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="random">GLITCH</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="reactive_typing">REACTIVE TYPING</button>
+                        </div>
+
+                        <div class="effect-category-label" style="margin-top: 8px;">SMART REACTIVE MODES</div>
+                        <div class="effects-btn-row">
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="reactive_cpu">CPU LOAD REACTIVE</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="reactive_gpu_temp">GPU TEMP REACTIVE</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="reactive_gpu_load">GPU LOAD REACTIVE</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="reactive_audio">AUDIO VISUALIZER</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="music_reactive">MUSIC REACTIVE</button>
+                            <button type="button" class="cyber-btn rgb-effect-btn" data-effect="reactive_screen">SCREEN REACTIVE</button>
+                        </div>
+
+                        <!-- Tuning Sliders -->
+                        <div class="tuning-sliders-wrap">
+                            <div class="tuning-slider-row">
+                                <span class="telemetry-label">SPEED: <strong id="rgb-speed-val" style="color:var(--color-accent-primary);">2x</strong></span>
+                                <input type="range" id="rgb-speed-slider" min="1" max="5" value="2" class="cyber-slider">
+                            </div>
+                            <div class="tuning-slider-row">
+                                <span class="telemetry-label">BRIGHTNESS: <strong id="rgb-bright-val" style="color:var(--color-accent-primary);">100% (HIGH)</strong></span>
+                                <input type="range" id="rgb-bright-slider" min="0" max="2" value="2" class="cyber-slider">
+                            </div>
+                            <div style="margin-top: 6px;">
+                                <button type="button" class="cyber-btn" id="rgb-direction-toggle" style="width: 100%;">DIRECTION: L → R</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Saved Profiles Manager Card -->
+                    <div class="cyber-card" style="grid-column: 1 / -1;">
+                        <div class="card-header-row">
+                            <span class="card-title">SAVED PROFILES (PERMANENT HARDWARE STORAGE)</span>
+                            <span class="badge-hud">1-TAP APPLY</span>
+                        </div>
+                        <div class="rgb-profiles-grid" id="rgb-profiles-list">
+                            <!-- Profile Cards -->
+                        </div>
+
+                        <details class="rgb-diag-accordion" style="margin-top: 12px; font-family: var(--font-mono); font-size: 10px; color: var(--color-text-dim);">
+                            <summary style="cursor: pointer; padding: 4px 0; color: var(--color-accent-primary);">▶ HARDWARE CONTROLLER DIAGNOSTICS & TELEMETRY</summary>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.3); border-radius: var(--radius-sm);">
+                                <div><span style="color:var(--color-text-dim);">DEVICE:</span> <strong id="rgb-diag-model">Lenovo LOQ 15IRX9 (ITE 8295 / C993)</strong></div>
+                                <div><span style="color:var(--color-text-dim);">WORKER:</span> <strong id="rgb-diag-worker" style="color:var(--color-accent-primary);">ACTIVE</strong></div>
+                                <div><span style="color:var(--color-text-dim);">STATE:</span> <strong id="rgb-diag-applied">CONFIRMED</strong></div>
+                                <div><span style="color:var(--color-text-dim);">LAST RESULT:</span> <strong id="rgb-diag-result" style="color:var(--color-accent-primary);">SUCCESS</strong></div>
+                                <div style="grid-column: 1 / -1;"><span style="color:var(--color-text-dim);">LAST ERROR:</span> <span id="rgb-diag-error">None</span></div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+
         </main>
 
         <!-- Mode 2A: Subtle Power Dim Mode Indicator Overlay -->
@@ -899,13 +1210,124 @@
             </div>
         </div>
 
-        <!-- Mode 2B: Dimmed Idle Mode Overlay -->
-        <div id="idle-overlay" class="mode-view" style="cursor: pointer;" onclick="DeskOS.setMode('active')">
-            <div class="idle-clock" id="idle-clock-display">00:00:00</div>
-            <div style="font-family: var(--font-mono); font-size: 12px; color: var(--color-text-primary); margin-top: 4px;" id="idle-date-display">-- --- ----</div>
-            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--color-accent-primary); margin-top: 6px;" id="idle-battery-display">BATTERY: --% // -- mV</div>
-            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--color-accent-secondary); margin-top: 10px;">IDLE STANDBY // SUBTLE BACKLIGHT</div>
-            <div class="idle-hint">[ TAP SCREEN TO RESUME WORKSTATION ]</div>
+        <!-- Mode 2B: Premium Idle Mode Overlay 2.0 (5 Switchable Ambient Themes) -->
+        <div id="idle-overlay" class="mode-view idle-mode-container theme-minimal" onclick="IdleModeManager.handleContainerClick(event)">
+            <canvas id="idle-ambient-canvas"></canvas>
+
+            <div id="idle-burn-in-wrapper" class="idle-burn-in-wrapper">
+                <!-- Top Header: 1-Tap Theme Switcher Bar + Exit / Wake Button -->
+                <div class="idle-top-bar" onclick="event.stopPropagation()">
+                    <div class="idle-brand">
+                        <span class="idle-brand-dot"></span>
+                        <span class="idle-brand-text" id="idle-theme-title">NEURAL SCIENCE LAB</span>
+                    </div>
+                    <div class="idle-theme-dock">
+                        <button type="button" class="idle-theme-btn active" data-theme="neural" onclick="IdleModeManager.setTheme('neural')">NEURAL SCIENCE</button>
+                        <button type="button" class="idle-theme-btn" data-theme="space" onclick="IdleModeManager.setTheme('space')">SPACE STATION</button>
+                        <button type="button" class="idle-theme-btn" data-theme="cyber" onclick="IdleModeManager.setTheme('cyber')">CYBER LAB</button>
+                        <button type="button" class="idle-theme-btn" data-theme="quantum" onclick="IdleModeManager.setTheme('quantum')">QUANTUM CORE</button>
+                    </div>
+                    <div class="idle-intensity-dock">
+                        <button type="button" class="idle-intensity-btn" data-intensity="minimal" onclick="IdleModeManager.setIntensity('minimal')">MINIMAL</button>
+                        <button type="button" class="idle-intensity-btn active" data-intensity="balanced" onclick="IdleModeManager.setIntensity('balanced')">BALANCED</button>
+                        <button type="button" class="idle-intensity-btn" data-intensity="advanced" onclick="IdleModeManager.setIntensity('advanced')">ADVANCED</button>
+                    </div>
+                    <button type="button" class="idle-wake-btn" onclick="DeskOS.setMode('active', event)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        <span>WAKE</span>
+                    </button>
+                </div>
+
+                <!-- Main Layout: Left Hero (Clock + Battery + Mini Core) & Right Telemetry/Music Cards -->
+                <div class="idle-main-layout">
+                    <!-- Left Hero Section -->
+                    <div class="idle-hero-card">
+                        <div class="idle-clock-wrap" onclick="IdleModeManager.toggleClockFormat()" title="Tap to switch 12h / 24h format" style="cursor: pointer;">
+                            <div class="idle-clock-digits" id="idle-clock-digits">00:00:00</div>
+                            <div class="idle-date-badge" id="idle-date-badge">TODAY // DESK OS</div>
+                            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--color-accent-primary); margin-top: 4px;" id="idle-theme-desc">SYNAPTIC TRANSMISSION // EEG FREQUENCIES</div>
+                        </div>
+
+                        <!-- System Status Row (Battery, Uptime, Pending Tasks) -->
+                        <div class="idle-sys-pills">
+                            <div class="idle-pill" id="idle-pill-battery">
+                                <span class="pill-dot green"></span>
+                                <span class="pill-val" id="idle-battery-val">BATTERY: 85%</span>
+                            </div>
+                            <div class="idle-pill" id="idle-pill-uptime">
+                                <span class="pill-dot blue"></span>
+                                <span class="pill-val" id="idle-uptime-val">UPTIME: --:--</span>
+                            </div>
+                            <div class="idle-pill" id="idle-pill-tasks">
+                                <span class="pill-dot amber"></span>
+                                <span class="pill-val" id="idle-tasks-val">0 TASKS</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Telemetry & Media Cards Section -->
+                    <div class="idle-side-cards">
+                        <!-- Card 1: Live Hardware Telemetry (CPU, GPU, RAM, NET) -->
+                        <div class="idle-telemetry-card" id="idle-telemetry-card">
+                            <div class="idle-card-header">
+                                <span class="idle-card-title">PC TELEMETRY // LENOVO LOQ</span>
+                                <span class="idle-card-badge" id="idle-pc-badge">ONLINE</span>
+                            </div>
+                            <div class="idle-gauges-grid">
+                                <div class="idle-gauge-item">
+                                    <div class="gauge-label">CPU USAGE</div>
+                                    <div class="gauge-bar-bg"><div class="gauge-bar-fill green" id="idle-bar-cpu" style="width: 14%;"></div></div>
+                                    <div class="gauge-val" id="idle-val-cpu">--%</div>
+                                </div>
+                                <div class="idle-gauge-item">
+                                    <div class="gauge-label">RTX 3050 GPU</div>
+                                    <div class="gauge-bar-bg"><div class="gauge-bar-fill cyan" id="idle-bar-gpu" style="width: 8%;"></div></div>
+                                    <div class="gauge-val" id="idle-val-gpu">--% // --°C</div>
+                                </div>
+                                <div class="idle-gauge-item">
+                                    <div class="gauge-label">SYSTEM RAM</div>
+                                    <div class="gauge-bar-bg"><div class="gauge-bar-fill purple" id="idle-bar-ram" style="width: 60%;"></div></div>
+                                    <div class="gauge-val" id="idle-val-ram">--% (-- GB)</div>
+                                </div>
+                                <div class="idle-gauge-item">
+                                    <div class="gauge-label">NETWORK TRAFFIC</div>
+                                    <div class="gauge-bar-bg"><div class="gauge-bar-fill amber" id="idle-bar-net" style="width: 20%;"></div></div>
+                                    <div class="gauge-val" id="idle-val-net">↓ 0 kB/s ↑ 0 kB/s</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Live GSMTC Music Card -->
+                        <div class="idle-music-card" id="idle-music-card" onclick="event.stopPropagation()">
+                            <div class="idle-music-artwork-wrap">
+                                <div class="idle-music-disc" id="idle-music-disc">
+                                    <div class="disc-groove"></div>
+                                    <div class="disc-center"></div>
+                                </div>
+                            </div>
+                            <div class="idle-music-meta">
+                                <div class="idle-music-badge" id="idle-music-status">MEDIA SESSION IDLE</div>
+                                <div class="idle-music-title" id="idle-music-title">No Active Media</div>
+                                <div class="idle-music-artist" id="idle-music-artist">Windows Media Session Idle</div>
+
+                                <div class="idle-music-progress-bar">
+                                    <div class="idle-music-progress-fill" id="idle-music-progress-fill" style="width: 0%;"></div>
+                                </div>
+                                <div class="idle-music-controls">
+                                    <button type="button" class="idle-media-btn" onclick="IdleModeManager.mediaControl('prev', event)" title="Previous">⏮</button>
+                                    <button type="button" class="idle-media-btn primary" id="idle-media-playpause" onclick="IdleModeManager.mediaControl('play_pause', event)" title="Play/Pause">▶</button>
+                                    <button type="button" class="idle-media-btn" onclick="IdleModeManager.mediaControl('next', event)" title="Next">⏭</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Hint -->
+                <div class="idle-bottom-hint">
+                    <span class="hint-bullet">●</span> TAP SCREEN TO WAKE WORKSTATION &bull; 1-TAP THEMES ABOVE &bull; BURN-IN SHIFT PROTECTED
+                </div>
+            </div>
         </div>
 
         <!-- Mode 3: Futuristic Cybersecurity Radar Overlay 2.0 -->
@@ -1110,6 +1532,7 @@
             </div>
         </div>
 
+        <!-- Mode 9: AI Settings Modal (Phase 8: Phone-First Desk AI) -->
     </div>
 
     <!-- Subsystem Scripts -->
@@ -1124,6 +1547,9 @@
     <script src="js/tasks.js"></script>
     <script src="js/timers.js"></script>
     <script src="js/calendar.js"></script>
+    <script src="js/pc-monitor.js"></script>
+    <script src="js/rgb-studio.js"></script>
+    <script src="js/idle-mode.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

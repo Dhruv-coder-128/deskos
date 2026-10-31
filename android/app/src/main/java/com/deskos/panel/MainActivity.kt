@@ -20,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewAssetLoader.AssetsPathHandler
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var securityHelper: SecurityHelper
     private lateinit var pcAgentManager: PcAgentManager
     private lateinit var bluetoothRadarHelper: BluetoothRadarHelper
+    private lateinit var geminiAiManager: GeminiAiManager
+    private lateinit var voiceAssistantHelper: VoiceAssistantHelper
     private lateinit var assetLoader: WebViewAssetLoader
     private var pendingCameraPermissionRequest: PermissionRequest? = null
     private var pendingGeoCallback: GeolocationPermissions.Callback? = null
@@ -45,6 +48,18 @@ class MainActivity : AppCompatActivity() {
         securityHelper = SecurityHelper(this)
         pcAgentManager = PcAgentManager(this, securityHelper)
         bluetoothRadarHelper = BluetoothRadarHelper(this)
+        geminiAiManager = GeminiAiManager(this, securityHelper)
+
+        voiceAssistantHelper = VoiceAssistantHelper(this) { eventName, payloadJson ->
+            runOnUiThread {
+                try {
+                    val quoted = JSONObject.quote(payloadJson)
+                    webView.evaluateJavascript("window.onDeskAiEvent && window.onDeskAiEvent(JSON.parse($quoted));", null)
+                } catch (e: Exception) {
+                    Log.e("DESK_OS_AI", "Failed to dispatch event $eventName: ${e.message}")
+                }
+            }
+        }
 
         // Configure hardened WebViewAssetLoader (serves local assets under virtual HTTPS origin)
         assetLoader = WebViewAssetLoader.Builder()
@@ -77,7 +92,9 @@ class MainActivity : AppCompatActivity() {
                     sensorHelper,
                     notificationHelper,
                     pcAgentManager,
-                    bluetoothRadarHelper
+                    bluetoothRadarHelper,
+                    geminiAiManager,
+                    voiceAssistantHelper
                 ),
                 "DeskOSBridge"
             )
@@ -191,7 +208,7 @@ class MainActivity : AppCompatActivity() {
         setupKioskWindow()
 
         // Load the locally bundled DESK OS dashboard (with version parameter to guarantee cache refresh)
-        webView.loadUrl("https://appassets.androidplatform.net/assets/dashboard/index.html?v=1.2.0")
+        webView.loadUrl("https://appassets.androidplatform.net/assets/dashboard/index.html?v=1.4.1")
     }
 
     private fun setupKioskWindow() {
@@ -225,6 +242,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        voiceAssistantHelper.stopSpeaking()
+        voiceAssistantHelper.stopListening()
         bluetoothRadarHelper.stopScan()
         sensorHelper.stopListening()
         powerHelper.stopListening()
@@ -234,12 +253,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        voiceAssistantHelper.stopSpeaking()
+        voiceAssistantHelper.stopListening()
         bluetoothRadarHelper.stopScan()
         restoreDefaultBrightness()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        voiceAssistantHelper.destroy()
         bluetoothRadarHelper.stopScan()
         restoreDefaultBrightness()
         pcAgentManager.disconnect()
@@ -267,6 +289,17 @@ class MainActivity : AppCompatActivity() {
                     pendingCameraPermissionRequest?.deny()
                 }
                 pendingCameraPermissionRequest = null
+            }
+            2004 -> {
+                val granted = grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED
+                runOnUiThread {
+                    val statusObj = org.json.JSONObject().apply {
+                        put("type", "permission_result")
+                        put("permission", "RECORD_AUDIO")
+                        put("granted", granted)
+                    }
+                    webView.evaluateJavascript("window.onDeskAiEvent && window.onDeskAiEvent($statusObj);", null)
+                }
             }
         }
     }

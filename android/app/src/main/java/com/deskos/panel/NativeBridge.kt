@@ -20,13 +20,15 @@ class NativeBridge(
     private val sensorHelper: SensorHelper,
     private val notificationHelper: NotificationHelper,
     private val pcAgentManager: PcAgentManager,
-    private val bluetoothRadarHelper: BluetoothRadarHelper
+    private val bluetoothRadarHelper: BluetoothRadarHelper,
+    private val geminiAiManager: GeminiAiManager,
+    private val voiceAssistantHelper: VoiceAssistantHelper
 ) {
 
     @JavascriptInterface
     fun getDeviceInfo(): String {
         val json = JSONObject().apply {
-            put("appVersion", "1.3.0 (Cyber Radar 2.0 & Phase 7 Active)")
+            put("appVersion", "1.4.0 (Phase 8: Phone-First Desk AI Active)")
             put("manufacturer", Build.MANUFACTURER)
             put("model", Build.MODEL)
             put("device", Build.DEVICE)
@@ -441,5 +443,113 @@ class NativeBridge(
                 put("states", org.json.JSONArray())
             }.toString()
         }
+    }
+
+    // -------------------------------------------------------------------------
+    // Phase 8: Phone-First Desk AI Native Bridge
+    // -------------------------------------------------------------------------
+    @JavascriptInterface
+    fun checkMicrophonePermission(): Boolean {
+        return voiceAssistantHelper.hasMicrophonePermission()
+    }
+
+    @JavascriptInterface
+    fun requestMicrophonePermission() {
+        voiceAssistantHelper.requestMicrophonePermission()
+    }
+
+    @JavascriptInterface
+    fun startVoiceRecognition(languageMode: String?): Boolean {
+        return voiceAssistantHelper.startListening(languageMode ?: "AUTO")
+    }
+
+    @JavascriptInterface
+    fun stopVoiceRecognition() {
+        voiceAssistantHelper.stopListening()
+    }
+
+    @JavascriptInterface
+    fun speakText(text: String?, language: String?, speed: Float): Boolean {
+        if (text.isNullOrBlank()) return false
+        return voiceAssistantHelper.speak(text, language ?: "AUTO", if (speed <= 0f) 1.0f else speed)
+    }
+
+    @JavascriptInterface
+    fun stopSpeaking() {
+        voiceAssistantHelper.stopSpeaking()
+    }
+
+    @JavascriptInterface
+    fun getVoiceCapabilities(): String {
+        return voiceAssistantHelper.getVoiceCapabilitiesJson()
+    }
+
+    @JavascriptInterface
+    fun hasGeminiApiKey(): Boolean {
+        return geminiAiManager.hasApiKey()
+    }
+
+    @JavascriptInterface
+    fun saveGeminiApiKey(apiKey: String?): Boolean {
+        if (apiKey.isNullOrBlank()) return false
+        return geminiAiManager.saveApiKey(apiKey)
+    }
+
+    @JavascriptInterface
+    fun removeGeminiApiKey(): Boolean {
+        return geminiAiManager.removeApiKey()
+    }
+
+    @JavascriptInterface
+    fun getGeminiModel(): String {
+        return geminiAiManager.getModel()
+    }
+
+    @JavascriptInterface
+    fun setGeminiModel(model: String?) {
+        if (!model.isNullOrBlank()) {
+            geminiAiManager.setModel(model)
+        }
+    }
+
+    @JavascriptInterface
+    fun testGeminiApiKey(candidateKey: String?): String {
+        return geminiAiManager.testApiKey(candidateKey)
+    }
+
+    @JavascriptInterface
+    fun testGeminiApiKey(): String {
+        return geminiAiManager.testApiKey(null)
+    }
+
+    @JavascriptInterface
+    fun testStoredGeminiApiKey(): String {
+        return geminiAiManager.testApiKey(null)
+    }
+
+    @JavascriptInterface
+    fun sendAiPrompt(userText: String?, languageMode: String?, contextJson: String?): String {
+        if (userText.isNullOrBlank()) {
+            return JSONObject().apply {
+                put("error", "EMPTY_PROMPT")
+                put("message", "User prompt is empty.")
+            }.toString()
+        }
+        return geminiAiManager.sendPrompt(
+            userText = userText,
+            languageMode = languageMode ?: "AUTO",
+            contextJson = contextJson ?: "{}"
+        )
+    }
+
+    @JavascriptInterface
+    fun searchSongOnPc(query: String?): Boolean {
+        if (query.isNullOrBlank()) return false
+        val msg = JSONObject().apply {
+            put("type", "control_action")
+            put("action", "search_song")
+            put("query", query)
+        }
+        return pcAgentManager.sendWsMessage(msg.toString())
     }
 }

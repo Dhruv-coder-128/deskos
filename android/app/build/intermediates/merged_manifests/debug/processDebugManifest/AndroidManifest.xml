@@ -19,6 +19,13 @@
     <!-- Phase 7: Security Camera -->
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <!-- Phase 8: Phone-First Desk AI Microphone & Voice Recognition -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="false" />
+
     <!-- Cyber Radar 2.0: Aircraft Location -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -66,6 +73,16 @@
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="true" />
+
+    <!-- Android 11+ Package Visibility for Native Speech Recognizer & TTS Engines -->
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
 
     <permission
         android:name="com.deskos.panel.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"

@@ -1,0 +1,29 @@
+{
+  "active_profile_id": "cyberpunk",
+  "mode": "off",
+  "speed": 1,
+  "brightness": 0,
+  "direction": "right_to_left",
+  "colors": [
+    [
+      0,
+      240,
+      255
+    ],
+    [
+      255,
+      0,
+      127
+    ],
+    [
+      138,
+      43,
+      226
+    ],
+    [
+      255,
+      230,
+      0
+    ]
+  ]
+}

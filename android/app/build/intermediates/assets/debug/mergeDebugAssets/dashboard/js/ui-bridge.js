@@ -404,6 +404,150 @@ const UIBridge = (() => {
                 lamax: Number(lamax),
                 lomax: Number(lomax)
             });
+        },
+
+        // =====================================================================
+        // Phase 8: DESK AI & Multilingual Voice Bridge Methods
+        // =====================================================================
+        checkMicrophonePermission() {
+            if (isNative && window.DeskOSBridge.checkMicrophonePermission) {
+                return window.DeskOSBridge.checkMicrophonePermission();
+            }
+            return false;
+        },
+
+        requestMicrophonePermission() {
+            if (isNative && window.DeskOSBridge.requestMicrophonePermission) {
+                window.DeskOSBridge.requestMicrophonePermission();
+            }
+        },
+
+        startVoiceRecognition(lang = 'AUTO') {
+            if (isNative && window.DeskOSBridge.startVoiceRecognition) {
+                return window.DeskOSBridge.startVoiceRecognition(lang);
+            }
+            return false;
+        },
+
+        stopVoiceRecognition() {
+            if (isNative && window.DeskOSBridge.stopVoiceRecognition) {
+                return window.DeskOSBridge.stopVoiceRecognition();
+            }
+            return false;
+        },
+
+        speakText(text, lang = 'gu-IN', rate = 1.0) {
+            if (isNative && window.DeskOSBridge.speakText) {
+                return window.DeskOSBridge.speakText(text, lang, Number(rate));
+            }
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.rate = rate;
+                window.speechSynthesis.speak(utter);
+                return true;
+            }
+            return false;
+        },
+
+        stopSpeaking() {
+            if (isNative && window.DeskOSBridge.stopSpeaking) {
+                return window.DeskOSBridge.stopSpeaking();
+            }
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+                return true;
+            }
+            return false;
+        },
+
+        getVoiceCapabilities() {
+            if (isNative && window.DeskOSBridge.getVoiceCapabilities) {
+                try {
+                    return JSON.parse(window.DeskOSBridge.getVoiceCapabilities());
+                } catch (_) {}
+            }
+            return {
+                speechRecognizerAvailable: false,
+                ttsAvailable: true,
+                gujaratiTtsSupported: false,
+                englishTtsSupported: true
+            };
+        },
+
+        hasGeminiApiKey() {
+            if (isNative && window.DeskOSBridge.hasGeminiApiKey) {
+                return window.DeskOSBridge.hasGeminiApiKey();
+            }
+            return false;
+        },
+
+        saveGeminiApiKey(key) {
+            if (isNative && window.DeskOSBridge.saveGeminiApiKey) {
+                return window.DeskOSBridge.saveGeminiApiKey(key);
+            }
+            return false;
+        },
+
+        removeGeminiApiKey() {
+            if (isNative && window.DeskOSBridge.removeGeminiApiKey) {
+                return window.DeskOSBridge.removeGeminiApiKey();
+            }
+            return false;
+        },
+
+        getGeminiModel() {
+            if (isNative && window.DeskOSBridge.getGeminiModel) {
+                return window.DeskOSBridge.getGeminiModel();
+            }
+            return 'gemini-1.5-flash';
+        },
+
+        setGeminiModel(model) {
+            if (isNative && window.DeskOSBridge.setGeminiModel) {
+                return window.DeskOSBridge.setGeminiModel(model);
+            }
+            return false;
+        },
+
+        testGeminiApiKey(key) {
+            if (isNative && window.DeskOSBridge.testGeminiApiKey) {
+                try {
+                    const candidate = (typeof key === 'string') ? key : '';
+                    const raw = window.DeskOSBridge.testGeminiApiKey(candidate);
+                    const parsed = JSON.parse(raw);
+                    return {
+                        success: parsed.status === 'ok' || parsed.success === true,
+                        ...parsed
+                    };
+                } catch (e) {
+                    return { success: false, error: e.message };
+                }
+            }
+            return { success: false, error: 'Native bridge unavailable' };
+        },
+
+        sendAiPrompt(userText, lang = 'AUTO', systemContext = {}) {
+            if (isNative && window.DeskOSBridge.sendAiPrompt) {
+                try {
+                    const ctxStr = typeof systemContext === 'string' ? systemContext : JSON.stringify(systemContext);
+                    return JSON.parse(window.DeskOSBridge.sendAiPrompt(userText, lang, ctxStr));
+                } catch (e) {
+                    return { success: false, error: e.message };
+                }
+            }
+            return { success: false, error: 'Native bridge unavailable' };
+        },
+
+        searchSongOnPc(query) {
+            if (isNative && window.DeskOSBridge.searchSongOnPc) {
+                return window.DeskOSBridge.searchSongOnPc(query);
+            }
+            return this.sendWsJson({
+                type: 'control_action',
+                action: 'search_song',
+                search_query: query
+            });
         }
     };
 })();

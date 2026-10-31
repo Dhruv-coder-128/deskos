@@ -1,0 +1,706 @@
+[
+  {
+    "id": "cyberpunk",
+    "name": "Cyberpunk Neon",
+    "mode": "wave_lr",
+    "effect": "wave_lr",
+    "speed": 2,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        0,
+        240,
+        255
+      ],
+      [
+        255,
+        0,
+        127
+      ],
+      [
+        138,
+        43,
+        226
+      ],
+      [
+        255,
+        230,
+        0
+      ]
+    ]
+  },
+  {
+    "id": "matrix_green",
+    "name": "Matrix Green",
+    "mode": "random",
+    "effect": "random",
+    "speed": 2,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        0,
+        255,
+        65
+      ],
+      [
+        0,
+        200,
+        50
+      ],
+      [
+        0,
+        140,
+        30
+      ],
+      [
+        0,
+        255,
+        100
+      ]
+    ]
+  },
+  {
+    "id": "glacier_ice",
+    "name": "Glacier Ice",
+    "mode": "ocean",
+    "effect": "ocean",
+    "speed": 2,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        0,
+        210,
+        255
+      ],
+      [
+        58,
+        123,
+        213
+      ],
+      [
+        0,
+        242,
+        254
+      ],
+      [
+        79,
+        172,
+        254
+      ]
+    ]
+  },
+  {
+    "id": "fire_ember",
+    "name": "Fire and Ember",
+    "mode": "fire",
+    "effect": "fire",
+    "speed": 3,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        255,
+        30,
+        0
+      ],
+      [
+        255,
+        90,
+        0
+      ],
+      [
+        255,
+        160,
+        0
+      ],
+      [
+        255,
+        220,
+        0
+      ]
+    ]
+  },
+  {
+    "id": "purple_galaxy",
+    "name": "Purple Galaxy",
+    "mode": "aurora",
+    "effect": "aurora",
+    "speed": 2,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        74,
+        0,
+        224
+      ],
+      [
+        142,
+        45,
+        226
+      ],
+      [
+        217,
+        70,
+        239
+      ],
+      [
+        121,
+        40,
+        202
+      ]
+    ]
+  },
+  {
+    "id": "ocean_abyss",
+    "name": "Ocean Abyss",
+    "mode": "ocean",
+    "effect": "ocean",
+    "speed": 2,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        0,
+        114,
+        255
+      ],
+      [
+        0,
+        198,
+        255
+      ],
+      [
+        0,
+        245,
+        212
+      ],
+      [
+        0,
+        180,
+        216
+      ]
+    ]
+  },
+  {
+    "id": "aurora_borealis",
+    "name": "Aurora Borealis",
+    "mode": "aurora",
+    "effect": "aurora",
+    "speed": 2,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        0,
+        255,
+        136
+      ],
+      [
+        0,
+        212,
+        255
+      ],
+      [
+        147,
+        51,
+        234
+      ],
+      [
+        16,
+        185,
+        129
+      ]
+    ]
+  },
+  {
+    "id": "pure_white",
+    "name": "Pure Studio White",
+    "mode": "static",
+    "effect": "static",
+    "speed": 1,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        255,
+        255,
+        255
+      ],
+      [
+        255,
+        255,
+        255
+      ],
+      [
+        255,
+        255,
+        255
+      ],
+      [
+        255,
+        255,
+        255
+      ]
+    ]
+  },
+  {
+    "id": "gaming_red",
+    "name": "Gaming Aggression",
+    "mode": "pulse",
+    "effect": "pulse",
+    "speed": 2,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        255,
+        0,
+        50
+      ],
+      [
+        200,
+        0,
+        0
+      ],
+      [
+        255,
+        20,
+        0
+      ],
+      [
+        150,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "id": "deep_space",
+    "name": "Deep Space",
+    "mode": "wave_lr",
+    "effect": "wave_lr",
+    "speed": 1,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        11,
+        0,
+        51
+      ],
+      [
+        55,
+        0,
+        179
+      ],
+      [
+        98,
+        0,
+        238
+      ],
+      [
+        3,
+        218,
+        198
+      ]
+    ]
+  },
+  {
+    "id": "toxic_green",
+    "name": "Toxic Green",
+    "mode": "ripple",
+    "effect": "ripple",
+    "speed": 3,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        57,
+        255,
+        20
+      ],
+      [
+        118,
+        255,
+        3
+      ],
+      [
+        0,
+        230,
+        118
+      ],
+      [
+        29,
+        233,
+        182
+      ]
+    ]
+  },
+  {
+    "id": "neon_sunset",
+    "name": "Neon Sunset",
+    "mode": "gradient",
+    "effect": "gradient",
+    "speed": 2,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        255,
+        0,
+        127
+      ],
+      [
+        255,
+        119,
+        0
+      ],
+      [
+        255,
+        221,
+        0
+      ],
+      [
+        121,
+        40,
+        202
+      ]
+    ]
+  },
+  {
+    "id": "electric_blue",
+    "name": "Electric Blue",
+    "mode": "wave_rl",
+    "effect": "wave_rl",
+    "speed": 2,
+    "brightness": 2,
+    "direction": "right_to_left",
+    "is_preset": true,
+    "colors": [
+      [
+        0,
+        102,
+        255
+      ],
+      [
+        0,
+        180,
+        216
+      ],
+      [
+        144,
+        224,
+        239
+      ],
+      [
+        0,
+        240,
+        255
+      ]
+    ]
+  },
+  {
+    "id": "crimson_storm",
+    "name": "Crimson Storm",
+    "mode": "lightning",
+    "effect": "lightning",
+    "speed": 3,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        128,
+        0,
+        0
+      ],
+      [
+        255,
+        0,
+        0
+      ],
+      [
+        178,
+        34,
+        34
+      ],
+      [
+        255,
+        69,
+        0
+      ]
+    ]
+  },
+  {
+    "id": "midnight_purple",
+    "name": "Midnight Purple",
+    "mode": "breath_hw",
+    "effect": "breath_hw",
+    "speed": 2,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        46,
+        8,
+        84
+      ],
+      [
+        75,
+        0,
+        130
+      ],
+      [
+        128,
+        0,
+        128
+      ],
+      [
+        153,
+        50,
+        204
+      ]
+    ]
+  },
+  {
+    "id": "rainbow_spectrum",
+    "name": "Rainbow Spectrum",
+    "mode": "hue_hw",
+    "effect": "hue_hw",
+    "speed": 2,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        255,
+        0,
+        0
+      ],
+      [
+        0,
+        255,
+        0
+      ],
+      [
+        0,
+        0,
+        255
+      ],
+      [
+        255,
+        255,
+        0
+      ]
+    ]
+  },
+  {
+    "id": "quantum_energy",
+    "name": "Quantum Energy",
+    "mode": "random",
+    "effect": "random",
+    "speed": 3,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        0,
+        240,
+        255
+      ],
+      [
+        112,
+        0,
+        255
+      ],
+      [
+        255,
+        0,
+        127
+      ],
+      [
+        0,
+        255,
+        163
+      ]
+    ]
+  },
+  {
+    "id": "arctic_storm",
+    "name": "Arctic Storm",
+    "mode": "wave_lr",
+    "effect": "wave_lr",
+    "speed": 2,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        224,
+        247,
+        250
+      ],
+      [
+        128,
+        222,
+        234
+      ],
+      [
+        38,
+        198,
+        218
+      ],
+      [
+        0,
+        151,
+        167
+      ]
+    ]
+  },
+  {
+    "id": "reactive_cpu",
+    "name": "CPU Workload Reactive",
+    "mode": "reactive_cpu",
+    "effect": "reactive_cpu",
+    "speed": 3,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        0,
+        255,
+        100
+      ],
+      [
+        255,
+        220,
+        0
+      ],
+      [
+        255,
+        100,
+        0
+      ],
+      [
+        255,
+        0,
+        50
+      ]
+    ]
+  },
+  {
+    "id": "reactive_gpu",
+    "name": "GPU Temp Reactive",
+    "mode": "reactive_gpu_temp",
+    "effect": "reactive_gpu_temp",
+    "speed": 3,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        0,
+        150,
+        255
+      ],
+      [
+        0,
+        255,
+        150
+      ],
+      [
+        255,
+        180,
+        0
+      ],
+      [
+        255,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "id": "reactive_gpu_temp",
+    "name": "GPU Temp Reactive",
+    "mode": "reactive_gpu_temp",
+    "effect": "reactive_gpu_temp",
+    "speed": 3,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        0,
+        150,
+        255
+      ],
+      [
+        0,
+        255,
+        150
+      ],
+      [
+        255,
+        180,
+        0
+      ],
+      [
+        255,
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "id": "cyberpunk_neon_(copy)",
+    "name": "Cyberpunk Neon (Copy)",
+    "mode": "wave_lr",
+    "effect": "wave_lr",
+    "speed": 2,
+    "brightness": 2,
+    "direction": "left_to_right",
+    "is_preset": true,
+    "colors": [
+      [
+        0,
+        240,
+        255
+      ],
+      [
+        255,
+        0,
+        127
+      ],
+      [
+        138,
+        43,
+        226
+      ],
+      [
+        255,
+        230,
+        0
+      ]
+    ]
+  }
+]

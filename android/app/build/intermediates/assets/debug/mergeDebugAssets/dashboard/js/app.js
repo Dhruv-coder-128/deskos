@@ -49,6 +49,8 @@ const DeskOS = (() => {
                 const payload = (msg.type === 'telemetry' && msg.data) ? msg.data : (msg.cpu ? msg : null);
                 if (payload) {
                     this.renderLiveTelemetry(payload);
+                    if (typeof PCMonitor !== 'undefined') PCMonitor.updateTelemetry(payload);
+                    if (typeof IdleModeManager !== 'undefined') IdleModeManager.updateTelemetry(payload);
                 }
             };
 
@@ -66,6 +68,15 @@ const DeskOS = (() => {
             await TasksModule.init();
             await TimersModule.init();
             await CalendarModule.init();
+
+            // Initialize Live PC Monitor 2.0 and Lenovo LOQ RGB Studio 2.0
+            if (typeof PCMonitor !== 'undefined') PCMonitor.init();
+            if (typeof RGBStudio !== 'undefined') RGBStudio.init();
+
+            // Initialize Scientific Futuristic Idle Mode
+            if (typeof IdleModeManager !== 'undefined') {
+                IdleModeManager.init();
+            }
 
             // Set initial active views
             this.switchView('command-center', true);
@@ -380,8 +391,13 @@ const DeskOS = (() => {
 
         renderLiveTelemetry(telem) {
             if (!telem || !telem.cpu) return;
+            this._lastTelemData = telem;
             this._lastTelemReceipt = Date.now();
             this._lastTelemTime = telem.timestamp ? telem.timestamp * 1000 : Date.now();
+
+            if (typeof IdleModeManager !== 'undefined') {
+                IdleModeManager.updateTelemetry(telem);
+            }
 
             // 1. Uptime
             const uptimeEl = document.getElementById('pc-uptime-val');
@@ -748,13 +764,36 @@ const DeskOS = (() => {
                     break;
                 case 'discovered_apps':
                     if (Array.isArray(msg.apps)) {
+                        this._discoveredApps = msg.apps;
                         this.renderDiscoveredApps(msg.apps, msg.diagnostic);
                     }
                     break;
                 case 'media_state':
+                    this._lastMediaState = msg;
                     this.renderMediaState(msg);
+                    if (typeof IdleModeManager !== 'undefined') {
+                        IdleModeManager.updateMediaState(msg);
+                    }
+                    break;
+                case 'rgb_state':
+                    if (typeof RGBStudio !== 'undefined') {
+                        RGBStudio.onServerStateReceived(msg);
+                    }
+                    break;
+                case 'rgb_result':
+                    if (typeof RGBStudio !== 'undefined') {
+                        RGBStudio.onServerResultReceived(msg);
+                    }
+                    break;
+                case 'rgb_profiles':
+                    if (typeof RGBStudio !== 'undefined' && Array.isArray(msg.profiles)) {
+                        RGBStudio.onServerProfilesReceived(msg.profiles);
+                    }
                     break;
                 case 'running_windows':
+                    if (Array.isArray(msg.windows)) {
+                        this._runningWindows = msg.windows;
+                    }
                     const wCount = typeof msg.window_count === 'number' ? msg.window_count : (typeof msg.open_count === 'number' ? msg.open_count : (Array.isArray(msg.windows) ? msg.windows.length : 0));
                     this.renderRunningWindows(msg.windows, wCount, msg.foreground_hwnd, msg.diagnostic);
                     break;
@@ -789,6 +828,10 @@ const DeskOS = (() => {
                     UIBridge.requestRunningWindows();
                     if (UIBridge.requestNetworkDevices) {
                         UIBridge.requestNetworkDevices();
+                    }
+                    if (typeof DeskOS !== 'undefined' && DeskOS.sendWebSocketMessage) {
+                        DeskOS.sendWebSocketMessage({ type: 'get_rgb_state' });
+                        DeskOS.sendWebSocketMessage({ type: 'get_rgb_profiles' });
                     }
                     break;
             }
@@ -1002,6 +1045,9 @@ const DeskOS = (() => {
 
         renderMediaState(state) {
             _lastMediaState = state;
+            if (typeof IdleModeManager !== 'undefined') {
+                IdleModeManager.updateMediaState(state);
+            }
             const pill = document.getElementById('pc-media-status-pill');
             const titleEl = document.getElementById('pc-media-title');
             const artistEl = document.getElementById('pc-media-artist');
@@ -1274,26 +1320,53 @@ const DeskOS = (() => {
         },
 
         // =====================================================================
-        // VIEW SWITCHING (COMMAND CENTER vs PERSONAL SPACE)
+        // VIEW SWITCHING (5 INTEGRATED WORKSTATION VIEWS)
         // =====================================================================
+        sendWebSocketMessage(obj) {
+            return UIBridge.sendWsJson(obj);
+        },
+
         switchView(viewName, quiet = false) {
+            const previousView = activeMainView;
             activeMainView = viewName;
-            const ccView = document.getElementById('view-command-center');
-            const psView = document.getElementById('view-personal-space');
 
-            const isCC = viewName === 'command-center';
-            if (ccView) ccView.style.display = isCC ? 'block' : 'none';
-            if (psView) psView.style.display = isCC ? 'none' : 'flex';
+            const views = {
+                'command-center': document.getElementById('view-command-center'),
+                'pc-monitor': document.getElementById('view-pc-monitor'),
+                'rgb-studio': document.getElementById('view-rgb-studio'),
+                'personal-space': document.getElementById('view-personal-space')
+            };
 
-            ['tab-btn-cc', 'tab-btn-cc-m'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.toggle('active', isCC);
+            Object.keys(views).forEach(k => {
+                const el = views[k];
+                if (el) {
+                    if (k === 'personal-space') {
+                        el.style.display = (viewName === k) ? 'flex' : 'none';
+                    } else {
+                        el.style.display = (viewName === k) ? 'block' : 'none';
+                    }
+                }
             });
 
-            ['tab-btn-ps', 'tab-btn-ps-m'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.toggle('active', !isCC);
+            // Update tab button highlights
+            const tabMap = {
+                'command-center': ['tab-btn-cc', 'tab-btn-cc-m'],
+                'pc-monitor': ['tab-btn-pm', 'tab-btn-pm-m'],
+                'rgb-studio': ['tab-btn-rgb', 'tab-btn-rgb-m'],
+                'personal-space': ['tab-btn-ps', 'tab-btn-ps-m']
+            };
+
+            Object.keys(tabMap).forEach(k => {
+                const isTarget = (viewName === k);
+                tabMap[k].forEach(id => {
+                    const btn = document.getElementById(id);
+                    if (btn) btn.classList.toggle('active', isTarget);
+                });
             });
+
+            if (viewName === 'pc-monitor' && typeof PCMonitor !== 'undefined') {
+                PCMonitor.setupGraphCanvases();
+            }
 
             if (!quiet) {
                 AudioSynth.playChime('tick');
@@ -1715,6 +1788,13 @@ const DeskOS = (() => {
                 }
             }
 
+            // Clean up IdleModeManager if leaving idle mode
+            if (currentMode === MODES.IDLE && mode !== MODES.IDLE) {
+                if (typeof IdleModeManager !== 'undefined') {
+                    IdleModeManager.stop();
+                }
+            }
+
             currentMode = mode;
 
             const idleOverlay = document.getElementById('idle-overlay');
@@ -1771,6 +1851,9 @@ const DeskOS = (() => {
                     UIBridge.setScreenDimmed(true);
                     if (idleOverlay) idleOverlay.classList.add('active');
                     SensorsLab.stopLiveStream();
+                    if (typeof IdleModeManager !== 'undefined') {
+                        IdleModeManager.start();
+                    }
                     break;
 
                 case MODES.SCREENSAVER:

@@ -531,6 +531,24 @@ class MediaSessionController:
             return True, f"Dispatched media action '{clean_action}'"
         return False, f"Media action '{clean_action}' could not be applied (no compatible session)"
 
+    def search_song(self, query: str) -> Tuple[bool, str]:
+        """
+        Search and play song query on YouTube in default browser.
+        Uses os.startfile with safe encoded URL.
+        """
+        import urllib.parse
+        clean_q = query.strip()
+        if not clean_q:
+            return False, "Search query is empty"
+        safe_url = f"https://www.youtube.com/results?search_query={urllib.parse.quote_plus(clean_q)}"
+        try:
+            os.startfile(safe_url)
+            logger.info(f"[CONTROL] Dispatched song search to default browser: '{clean_q}' -> {safe_url}")
+            return True, f"Searching '{clean_q}' on YouTube"
+        except Exception as e:
+            logger.error(f"[CONTROL] Failed to launch song search: {e}")
+            return False, f"Failed to search song: {e}"
+
 
 # =============================================================================
 # PART 4: WINDOWS TASK SWITCHER CONTROLLER
@@ -786,6 +804,18 @@ class TaskSwitcherController:
         logger.warning(f"[CONTROL] Focus requested for HWND={target_hwnd}, but active foreground is HWND={now_fg}")
         return False, f"Windows did not focus requested window (Active HWND: {now_fg})."
 
+    def close_window(self, target_hwnd: int) -> Tuple[bool, str]:
+        """Send WM_CLOSE to window for clean closure with confirmation."""
+        if not user32.IsWindow(target_hwnd):
+            return False, f"Window (HWND: {target_hwnd}) does not exist."
+        try:
+            WM_CLOSE = 0x0010
+            user32.PostMessageW(target_hwnd, WM_CLOSE, 0, 0)
+            logger.info(f"[CONTROL] Dispatched WM_CLOSE to HWND={target_hwnd}")
+            return True, "Close signal sent to application window."
+        except Exception as e:
+            return False, f"Failed to close window: {e}"
+
 
 # =============================================================================
 # LEGACY PHASE 5 CONTROLLERS (PRESERVED)
@@ -1015,6 +1045,82 @@ class ScreenshotCapturer:
         except Exception as e:
             logger.exception(f"[Screenshot] Capture error: {e}")
             return False, None, f"Screenshot error: {e}"
+        finally:
+            if old_desk and h_desk:
+                try:
+                    user32.SetThreadDesktop(old_desk)
+                except Exception:
+                    pass
+            if h_desk:
+                try:
+                    user32.CloseDesktop(h_desk)
+                except Exception:
+                    pass
+
+    def capture_media_frame(self) -> Tuple[bool, Optional[str], Optional[str]]:
+        """
+        Captures a high-speed lightweight frame (640px, quality 55) for live video preview streaming.
+        Returns Base64 JPEG data URL.
+        """
+        h_desk = None
+        old_desk = None
+        cur_thread = kernel32.GetCurrentThreadId()
+
+        try:
+            h_desk = user32.OpenInputDesktop(0, False, MAXIMUM_ALLOWED)
+            if not h_desk:
+                return False, None, "Desktop station inaccessible"
+
+            old_desk = user32.GetThreadDesktop(cur_thread)
+            if not user32.SetThreadDesktop(h_desk):
+                return False, None, "Cannot attach to interactive desktop"
+
+            w = user32.GetSystemMetrics(0)
+            h = user32.GetSystemMetrics(1)
+            if w <= 0 or h <= 0:
+                return False, None, "Invalid display dimensions"
+
+            h_dc = user32.GetDC(None)
+            if not h_dc:
+                return False, None, "Could not acquire DC"
+
+            h_mem = gdi32.CreateCompatibleDC(h_dc)
+            h_bmp = gdi32.CreateCompatibleBitmap(h_dc, w, h)
+            old_obj = gdi32.SelectObject(h_mem, h_bmp)
+
+            success = gdi32.BitBlt(h_mem, 0, 0, w, h, h_dc, 0, 0, SRCCOPY)
+            if not success:
+                gdi32.SelectObject(h_mem, old_obj)
+                user32.ReleaseDC(None, h_dc)
+                gdi32.DeleteDC(h_mem)
+                gdi32.DeleteObject(h_bmp)
+                return False, None, "BitBlt failed"
+
+            bmi = BITMAPINFO()
+            bmi.bmiHeader.biSize = ctypes.sizeof(BITMAPINFOHEADER)
+            bmi.bmiHeader.biWidth = w
+            bmi.bmiHeader.biHeight = -h
+            bmi.bmiHeader.biPlanes = 1
+            bmi.bmiHeader.biBitCount = 32
+            bmi.bmiHeader.biCompression = 0
+
+            raw_bytes = ctypes.create_string_buffer(w * h * 4)
+            lines = gdi32.GetDIBits(h_dc, h_bmp, 0, h, raw_bytes, ctypes.byref(bmi), 0)
+
+            gdi32.SelectObject(h_mem, old_obj)
+            user32.ReleaseDC(None, h_dc)
+            gdi32.DeleteDC(h_mem)
+            gdi32.DeleteObject(h_bmp)
+
+            if lines != h:
+                return False, None, "Incomplete scanlines"
+
+            from PIL import Image
+            img = Image.frombuffer("RGBA", (w, h), raw_bytes, "raw", "BGRA", 0, 1)
+            return True, self._compress_to_jpeg_b64(img, max_width=640, quality=55), None
+
+        except Exception as e:
+            return False, None, str(e)
         finally:
             if old_desk and h_desk:
                 try:
